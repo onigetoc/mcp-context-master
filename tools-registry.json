@@ -1,0 +1,85 @@
+{
+  "projectType": "test-project",
+  "createdAt": "2025-09-12T04:07:45.133Z",
+  "updatedAt": "2025-09-12T04:07:45.136Z",
+  "tools": [
+    {
+      "name": "search_github",
+      "description": "Search GitHub repositories to find the most relevant projects for development context. Returns detailed analysis with popularity metrics and Context7 URLs.",
+      "category": "search",
+      "required": true,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          },
+          "sort": {
+            "type": "string",
+            "enum": [
+              "stars",
+              "forks",
+              "updated"
+            ]
+          },
+          "per_page": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "query"
+        ]
+      }
+    },
+    {
+      "name": "convert_to_context7",
+      "description": "Convert GitHub URL to Context7 url, providing a direct link to the Context7 llms.txt content for that repository.",
+      "category": "conversion",
+      "required": true,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "githubUrl": {
+            "type": "string"
+          },
+          "topic": {
+            "type": "string"
+          },
+          "tokens": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "githubUrl"
+        ]
+      }
+    },
+    {
+      "name": "download_context",
+      "description": "Download Context7 content as .md file",
+      "category": "download",
+      "required": true,
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "context7Url": {
+            "type": "string"
+          },
+          "outputFilename": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "context7Url",
+          "outputFilename"
+        ]
+      }
+    },
+    {
+      "name": "manage_tools_registry",
+      "description": "Manage the tools registry JSON file",
+      "category": "management",
+      "required": false
+    }
+  ]
+}

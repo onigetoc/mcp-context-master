@@ -1,0 +1,40 @@
+# Exclude everything by default
+
+# Then whitelist only what we want to track
+!src/
+!src/**/*.ts
+!package.json
+!tsconfig.json
+!README.md
+!.gitignore
+# Always ignore these, even if they're in a whitelisted directory
+node_modules/
+.tmp/
+GEMINI.md
+.temp/
+backup/
+build/
+dist/
+docs-infos/
+imgs/
+*copy*
+*config.providersTEST*
+*.log
+bun.lockb
+package-lock.json
+
+# files with certain keywords
+*copy*
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.aider*
+.env
