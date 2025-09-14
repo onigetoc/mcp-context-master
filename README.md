@@ -1,6 +1,6 @@
 # MCP Context Master
 
-A Model Context Protocol (MCP) server for GitHub search and Context7 integration to help start programming projects with comprehensive context.
+Context Master is a Model Context Protocol (MCP) server for GitHub search and Context7 integration to help start programming projects with comprehensive context.
 
 ## Overview
 
@@ -196,20 +196,33 @@ const filePath = await downloadContext({
 ```
 mcp-context-master/
 ├── src/
-│   ├── tools/
-│   │   ├── search-tool.ts           # GitHub search functionality
-│   │   ├── context7-converter.ts    # URL conversion to Context7
-│   │   ├── context-downloader.ts    # Download Context7 content
-│   │   ├── registry-manager.ts      # Tools registry management
-│   │   ├── init-tool.ts             # Initializes the environment
-│   │   ├── project-master.ts       # Analyzes dependencies and downloads docs
 │   ├── apis/
-│   │   └── github-api.ts           # GitHub API integration
-│   └── server/
-│       └── mcp-server.ts           # MCP server implementation
-├── docs/                           # Downloaded context files
-├── tools-registry.json            # JSON registry of tools
-└── README.md
+│   │   └── github-api.ts
+│   ├── parsers/
+│   │   ├── package-parser.ts
+│   │   └── readme-parser.ts
+│   ├── server/
+│   │   └── mcp-server.ts
+│   ├── services/
+│   ├── tools/
+│   │   ├── context-downloader.ts
+│   │   ├── context7-converter.ts
+│   │   ├── index.ts
+│   │   ├── init-tool.ts
+│   │   ├── project-master.ts
+│   │   ├── registry-manager.ts
+│   │   └── search-tool.ts
+│   ├── types/
+│   │   ├── index.ts
+│   │   ├── mcp-types.ts
+│   │   └── schemas.ts
+│   ├── utils/
+│   │   ├── file-system.ts
+│   │   └── logger.ts
+│   └── index.ts
+│   ├── docs/                           # Downloaded context files
+│   ├── tools-registry.json            # JSON registry of tools
+│   └── README.md
 ```
 
 ## Requirements
@@ -289,31 +302,31 @@ node test/test-project-master.js
 **Basic GitHub Search:**
 
 ```bash
-node search-test.js "Remotion"
+node test/search-test.js "Remotion"
 ```
 
 **Search with Context7 Topic Filter:**
 
 ```bash
-node search-test.js "Next.js" --topic "app-router"
+node test/search-test.js "Next.js" --topic "app-router"
 ```
 
 **Advanced CLI Tool Testing:**
 
 ```bash
-node search-test.js "react components" --topic "ui library" --tokens=2000
+node test/search-test.js "react components" --topic "ui library" --tokens=2000
 ```
 
 **Simple Test (no token required):**
 
 ```bash
-node test-simple.js
+node test/test-simple.js
 ```
 
 **Protocol Testing (all tools):**
 
 ```bash
-node test-tools.js
+node test/test-tools.js
 ```
 
 ### Environment Setup

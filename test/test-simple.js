@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 // Test simple pour la recherche GitHub
-import { searchGithubRepos } from './build/apis/github-api.js';
+import { searchGithubRepos } from '../build/apis/github-api.js';
 
 console.log('🔍 Test Simple - Recherche GitHub\n');
 

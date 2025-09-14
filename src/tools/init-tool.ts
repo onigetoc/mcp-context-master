@@ -6,7 +6,7 @@ import os from 'os';
 
 export const initTool = {
   name: "init_context_master",
-  description: "Initializes the Context Master environment. Creates AGENTS.md and the .agents directory with cm-init.md if they don't exist. Triggered by 'init context master', etc.",
+  description: "Initializes the Context Master environment. Creates AGENTS.md and the .agents directory with cm-init.md if they don't exist. Triggered by 'init context master' Or 'initiate context-master', etc.",
   inputSchema: {
     type: 'object',
     properties: {},

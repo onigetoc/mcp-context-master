@@ -103,3 +103,5 @@ process.on('uncaughtException', (error) => {
   protocolLog('Error', 'Stack trace', error.stack || 'No stack trace available');
   process.exit(1);
 });
+
+// Rechercher la configuration du port ou du transport

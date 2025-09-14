@@ -84,15 +84,21 @@ async function updateContextManifest(): Promise<void> {
     return; // No directory, no manifest
   }
 
+  // TOUJOURS scanner le dossier physique
   const files = await fs.readdir(contextDir);
-  const cmFiles = files.filter(file => file.startsWith('cm-') && file.endsWith('.md'));
+  const mdFiles = files
+    .filter(file => file.endsWith('.md') && file !== 'context-manifest.yaml')
+    .sort((a, b) => a.localeCompare(b));
+
+  console.log(`[project-master] Physical scan found ${mdFiles.length} .md files:`, mdFiles);
 
   const manifest = {
     lastUpdated: new Date().toISOString(),
-    files: cmFiles,
+    files: mdFiles,
   };
 
   await fs.writeFile(manifestPath, yaml.dump(manifest));
+  console.log(`[project-master] FORCE updated manifest with ${mdFiles.length} files`);
 }
 
 export async function handleProjectMasterTool(request: any): Promise<McpToolResponse> {
@@ -378,8 +384,8 @@ class ProjectStarterExecutor {
     // Replace any other problematic characters for filenames
     cleanName = cleanName.replace(/[<>:"|?*]/g, '-');
     
-    // Add context suffix and .md extension
-    return `cm-${cleanName}-context.md`;
+    // GÉNÉRATION: Force le préfixe "cm-" pour les fichiers auto-générés
+    return `cm-${cleanName}-context-${new Date().toISOString().split('T')[0]}.md`;
   }
 
   private async ensureDocsFolder(docsPath: string): Promise<void> {

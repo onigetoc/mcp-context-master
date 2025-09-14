@@ -13,14 +13,16 @@ const args = process.argv.slice(2);
 const query = args.find(arg => !arg.startsWith('--')) || '';
 const topicIndex = args.indexOf('--topic');
 const tokensIndex = args.indexOf('--tokens');
-const downloadIndex = args.indexOf('--download');
+
+// By default download is ENABLED. Use --read or --readonly to disable writing.
+const readIndex = args.findIndex(arg => arg === '--read' || arg === '--readonly');
 
 const topic = topicIndex !== -1 && args[topicIndex + 1] ? args[topicIndex + 1] : '';
 const tokens = tokensIndex !== -1 && args[tokensIndex + 1] ? parseInt(args[tokensIndex + 1]) : 2000;
-const shouldDownload = downloadIndex !== -1;
+const shouldDownload = readIndex === -1; // default true
 
 if (!query) {
-  console.log('Usage: node test/search-test.js "query" [--topic "topic"] [--tokens number] [--download]');
+  console.log('Usage: node test/search-test.js "query" [--topic "topic"] [--tokens number] [--read|--readonly]');
   process.exit(1);
 }
 
@@ -48,15 +50,16 @@ async function updateContextManifest() {
   }
 
   const files = await fs.readdir(contextDir);
-  const cmFiles = files.filter(file => file.startsWith('cm-') && file.endsWith('.md'));
+  // SCAN: Inclut TOUS les fichiers .md (peu importe le préfixe)
+  const mdFiles = files.filter(file => file.endsWith('.md') && file !== 'context-manifest.yaml');
 
   const manifest = {
     lastUpdated: new Date().toISOString(),
-    files: cmFiles,
+    files: mdFiles,
   };
 
   await fs.writeFile(manifestPath, yaml.dump(manifest));
-  console.log('Manifest YAML updated.');
+  console.log('Manifest YAML updated with ALL .md files.');
 }
 
 function generateContextFileName(query, topic = '') {
@@ -64,9 +67,11 @@ function generateContextFileName(query, topic = '') {
   const querySlug = query.replace(/[<>:"|?*@/\\]/g, '-').replace(/\s+/g, '-').toLowerCase();
   if (topic) {
     const topicSlug = topic.replace(/[<>:"|?*@/\\]/g, '-').replace(/\s+/g, '-').toLowerCase();
+    // GÉNÉRATION: Force le préfixe "cm-" pour les fichiers auto-générés
     return `cm-${querySlug}-${topicSlug}-${date}.md`;
   }
-  return `cm-${querySlug}-context-${date}.md`;
+  // GÉNÉRATION: Force le préfixe "cm-" pour les fichiers auto-générés
+  return `cm-${querySlug}-full-context-${date}.md`;
 }
 
 async function downloadContext7File(context7Url, fileName) {
