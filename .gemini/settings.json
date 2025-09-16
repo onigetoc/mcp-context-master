@@ -8,9 +8,41 @@
     }
   },
   "mcpServers": {
+"mcp-easy-installer": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Users\\LENOVO\\APPS\\0-MCP\\mcp-easy-installer\\build\\index.js"
+      ],
+      "env": {
+        "GITHUB_TOKEN": "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"
+      }
+    },
+    "gc-youtube-transcript": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "C:\\Users\\LENOVO\\APPS\\0-MCP\\GC-test-youtube-transcript\\build\\index.js"
+      ]
+    },
+    "brave-search": {
+      "type": "stdio",
+      "command": "cmd.exe",
+      "args": [
+        "/c",
+        "C:\\Program Files\\nodejs\\npx.cmd",
+        "--y",
+        "@modelcontextprotocol/server-brave-search"
+      ],
+      "env": {
+        "BRAVE_API_KEY": "BSAKlSCTPJvLNMZi6gssALNrSbNoRLq"
+      }
+    },
     "serena": {
-        "command": "C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\uvx.exe",
-        "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"]
+      "type": "stdio",
+      "command": "C:\\Users\\LENOVO\\AppData\\Local\\Programs\\Python\\Python313\\Scripts\\uvx.exe",
+      "args": ["--from", "git+https://github.com/oraios/serena", "serena", "start-mcp-server"]
     }
+
   }
 }

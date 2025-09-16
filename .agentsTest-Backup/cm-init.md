@@ -15,4 +15,4 @@ What is your extension name (e.g., Roo Code, Cline, GitHub Copilot, etc.)? Check
 Respond ONLY in this exact format without any additional commentary:
 {"provider": "PROVIDER_NAME", "model": "MODEL_NAME", "ide": "IDE_NAME", "extension": "EXTENSION_NAME"}"
 
-3. Create a "ai-infos-json" file inside the .agents folder with the json response from the AI.
+3. Create a "ai-infos.json" file inside the .agents folder with the json response from the AI.

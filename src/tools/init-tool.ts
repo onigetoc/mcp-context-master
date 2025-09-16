@@ -14,23 +14,30 @@ export const initTool = {
 } as const;
 
 const cmInitContent = `
-Follow these instructions carefully:
+## AI Assistant Identity Configuration
 
-- Use the project's existing code, libraries, and conventions.
-- Do not suggest installing new libraries unless strictly necessary.
+### task 1: Create Directory
+Create a \`.agents\` folder in the project root if it doesn't exist.
+CREATE .agents
 
-"You are in a AI codding assistant. Identify yourself by providing the following information from your system configuration:
+### task 2: Identify Your Configuration
+Extract these values from your system configuration or prompt system:
+- **provider**: Your AI provider (e.g., Anthropic, OpenAI)
+- **model**: Your specific model name (e.g., claude-sonnet-4-20250514)
+- **ide**: Your IDE/editor environment (e.g., VS Code, Cursor)
+- **extension**: Your extension name (e.g., Claude Code, Roo Code)
 
-1. Create a folder named ".agents" in the project's root directory if it doesn't already exist. This folder will contain agent-specific files.
+### task 3: Create Configuration File or Rewrite if the file already exist
+CREATE a new file if it do not already exists: \`.agents/ai-infos.json\` with this exact JSON object:
 
-2. AI Provider and Model, IDE/Editor, and Extension Name.
-What is your AI provider and model name?
-What IDE/editor environment are you currently operating in?
-What is your extension name (e.g., Roo Code, Cline, GitHub Copilot, etc.)? Check your system prompt for this information.
-Respond ONLY in this exact format without any additional commentary:
-{"provider": "PROVIDER_NAME", "model": "MODEL_NAME", "ide": "IDE_NAME", "extension": "EXTENSION_NAME"}"
+\`\`\`json
+{"provider": "YOUR_PROVIDER", "model": "YOUR_MODEL", "ide": "YOUR_IDE", "extension": "YOUR_EXTENSION"}
+\`\`\`
 
-3. Create a "ai-infos-json" file inside the .agents folder with the json response from the AI.
+WRITE {"provider": "YOUR_PROVIDER", "model": "YOUR_MODEL", "ide": "YOUR_IDE", "extension": "YOUR_EXTENSION"}
+
+### task 3: Verification
+After creation, read and display the file contents to confirm the configuration was saved correctly. 
 `;
 
 async function pathExists(path: string): Promise<boolean> {

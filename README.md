@@ -130,6 +130,14 @@ A comprehensive project starter that analyzes dependencies, searches GitHub, and
 - `downloadDocs` (optional): Whether to download Context7 documentation (default: true).
 - `docsFolder` (optional): Folder to store downloaded docs (default: .agents/context).
 
+### 7. `coding_assistant`
+
+Reads the `.agents/ai-infos.json` file to determine the user's current coding assistant and the appropriate context file to use.
+
+**Parameters:**
+
+- This tool takes no parameters.
+
 ## Usage Examples
 
 ### 1. Search for AI SDK repositories
@@ -271,10 +279,16 @@ node test/search-test.js "Next.js" --topic "app-router"
 node test/search-test.js "Remotion" --topic "caption from srt"
 
 # Quick search & download test
-node test/search-test.js "Remotion" --topic "caption from srt" --download
-node test/search-test.js "Next.js" --topic "app-router" --tokens 2000 --download
+node test/search-test.js "Remotion" --topic "caption from srt" --read
+node test/search-test.js "Next.js" --topic "app-router" --tokens 2000 --read
 
 # Advanced CLI testing with multiple options
+
+# Test the initialization tool
+node test/test-init-tool.js
+
+# Setup environment
+node setup.js
  
 node test/search-test.js "AI SDK" --topic "chatbot"
 
@@ -287,14 +301,12 @@ node test/test-simple.js "mcp server typescript"
 # Protocol compliance testing
 node test/test-tools.js
 
-# Setup environment
-node setup.js
-
-# Test the initialization tool
-node test/test-init-tool.js
-
 # Test the project starter tool
 node test/test-project-master.js
+
+# Test to view coding assistant
+node test/test-coding-assistant.js
+# example: [{"provider": "Anthropic", "model": "claude-sonnet-4-20250514", "ide": "VS Code", "extension": "Claude Code"}]
 ```
 
 ### Test Examples

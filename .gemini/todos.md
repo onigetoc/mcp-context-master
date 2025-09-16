@@ -1,0 +1,4 @@
+- [x] Create the `src/tools/coding-assistant.ts` file with the logic from your script, adapted for the project.
+- [x] Register the new tool in `src/tools/index.ts`.
+- [x] Create a test file `test/test-coding-assistant.js` to ensure it works correctly.
+- [x] Update `README.md` to document the new tool.

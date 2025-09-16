@@ -5,6 +5,7 @@ export { contextDownloaderTool, handleContextDownloaderTool } from './context-do
 export { registryManagerTool, handleRegistryManagerTool } from './registry-manager.js';
 export { projectStarterTool, handleProjectMasterTool } from './project-master.js';
 export { initTool, handleInitTool } from './init-tool.js';
+export { codingAssistantTool, handleCodingAssistantTool } from './coding-assistant.js';
 
 // Import for local use
 import { searchTool, handleSearchTool } from './search-tool.js';
@@ -13,6 +14,7 @@ import { contextDownloaderTool, handleContextDownloaderTool } from './context-do
 import { registryManagerTool, handleRegistryManagerTool } from './registry-manager.js';
 import { projectStarterTool, handleProjectMasterTool } from './project-master.js';
 import { initTool, handleInitTool } from './init-tool.js';
+import { codingAssistantTool, handleCodingAssistantTool } from './coding-assistant.js';
 
 // Tool registry for easy access
 export const tools = [
@@ -21,7 +23,8 @@ export const tools = [
   contextDownloaderTool,
   registryManagerTool,
   projectStarterTool,
-  initTool
+  initTool,
+  codingAssistantTool
 ];
 
 // Import types
@@ -35,4 +38,5 @@ export const toolHandlers: Record<string, ToolHandler> = {
   'manage_tools_registry': handleRegistryManagerTool,
   'project_starter': handleProjectMasterTool,
   'init_context_master': handleInitTool,
+  'coding_assistant': handleCodingAssistantTool,
 };
