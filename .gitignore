@@ -1,5 +1,7 @@
 # Exclude everything by default
 
+DOMAIN-IDEAS.md
+
 # Then whitelist only what we want to track
 !src/
 !src/**/*.ts
