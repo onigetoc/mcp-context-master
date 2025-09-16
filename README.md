@@ -274,13 +274,17 @@ npm run build
 # Test all tools (comprehensive testing)
 npm run test-tools
 
-# Quick search test
+# Quick search test(defaut tokens 10 000)
+node test/search-test.js "AI SDK"
+node test/test-simple.js "mcp server typescript"
+
+# Quick search test with topic filter (defaut tokens 10 000)
 node test/search-test.js "Next.js" --topic "app-router"
 node test/search-test.js "Remotion" --topic "caption from srt"
 
-# Quick search & download test
+# Quick search & read test (--read | --readonly) will work
 node test/search-test.js "Remotion" --topic "caption from srt" --read
-node test/search-test.js "Next.js" --topic "app-router" --tokens 2000 --read
+node test/search-test.js "Next.js" --topic "app-router" --tokens 2000 --readonly
 
 # Advanced CLI testing with multiple options
 
@@ -289,14 +293,9 @@ node test/test-init-tool.js
 
 # Setup environment
 node setup.js
- 
-node test/search-test.js "AI SDK" --topic "chatbot"
 
 # Simple connectivity test
 node test/test-simple.js
-
-# Custom search with arguments
-node test/test-simple.js "mcp server typescript"
 
 # Protocol compliance testing
 node test/test-tools.js
