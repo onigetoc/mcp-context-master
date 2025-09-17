@@ -834,24 +834,3 @@ axios.get('/user/12345')
     console.error(error);
   });
 ```
-
---------------------------------
-
-TITLE: Iterating Over AxiosHeaders
-DESCRIPTION: Shows how to iterate through the key-value pairs of an AxiosHeaders instance using a for...of loop.
-
-SOURCE: https://github.com/axios/axios/blob/v1.x/README.md#_snippet_63
-
-LANGUAGE: js
-CODE:
-```
-const headers = new AxiosHeaders({
-  foo: '1',
-  bar: '2',
-  baz: '3'
-});
-
-for(const [header, value] of headers) {
-  console.log(header, value);
-}
-```

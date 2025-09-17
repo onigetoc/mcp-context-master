@@ -278,9 +278,10 @@ npm run test-tools
 node test/search-test.js "AI SDK"
 node test/test-simple.js "mcp server typescript"
 
-# Quick search test with topic filter (defaut tokens 10 000)
+# Quick search test with topic filter (defaut tokens 10 000) and tokens
 node test/search-test.js "Next.js" --topic "app-router"
 node test/search-test.js "Remotion" --topic "caption from srt"
+node test/search-test.js "Next.js" --topic "app-router" --tokens 2000
 
 # Quick search & read test (--read | --readonly) will work
 node test/search-test.js "Remotion" --topic "caption from srt" --read

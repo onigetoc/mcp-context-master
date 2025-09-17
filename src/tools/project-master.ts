@@ -1,5 +1,6 @@
 import { ErrorCode, McpError } from '@modelcontextprotocol/sdk/types.js';
 import { searchGithubRepos } from '../apis/github-api.js';
+import { lookupPackageRepository } from '../apis/npm-registry.js';
 import { PackageParser } from '../parsers/package-parser.js';
 import { ReadmeParser } from '../parsers/readme-parser.js';
 import { McpToolResponse } from '../types/mcp-types.js';
@@ -48,7 +49,7 @@ export const projectStarterTool = {
       maxDependencies: {
         type: 'number',
         description: 'Maximum number of dependencies to search for (default: 10)',
-        default: 10,
+        default: 25,
         minimum: 1,
         maximum: 50
       },
@@ -102,6 +103,37 @@ async function updateContextManifest(): Promise<void> {
 }
 
 export async function handleProjectMasterTool(request: any): Promise<McpToolResponse> {
+  // EARLY DIAGNOSTICS: inspect request object and prototypes before any code runs
+  try {
+    console.log('HANDLER EARLY: typeof request =', typeof request);
+    console.log('HANDLER EARLY: request.params =', request.params);
+    if (request && request.params && request.params.arguments) {
+      console.log('HANDLER EARLY: params.arguments keys =', Object.keys(request.params.arguments));
+      console.log('HANDLER EARLY: params.arguments raw =', request.params.arguments);
+      console.log('HANDLER EARLY: params.arguments proto =', Object.getPrototypeOf(request.params.arguments));
+    }
+  } catch (e) { }
+  debugLog(`handleProjectMasterTool received arguments: ${JSON.stringify(request.params?.arguments)}`);
+  // Extra explicit logging to stdout to help debug argument mutation between caller and handler
+  try {
+    // Use console.log (stdout) in addition to debugLog (stderr) so test output shows both
+    console.log('HANDLER: raw request.params.arguments =', request.params?.arguments);
+    console.log('HANDLER: maxDependencies (raw) =', request.params?.arguments?.maxDependencies, 'typeof=', typeof request.params?.arguments?.maxDependencies);
+    // If the value is unexpectedly small, emit additional diagnostics
+    const md = request.params?.arguments?.maxDependencies;
+    if (typeof md === 'number' && md < 5) {
+      try {
+        console.log('HANDLER: maxDependencies is <5 — printing property descriptor and stack trace');
+        const desc = Object.getOwnPropertyDescriptor(request.params.arguments, 'maxDependencies');
+        console.log('HANDLER: property descriptor =', desc);
+      } catch (e) {
+        // ignore
+      }
+      console.trace('HANDLER: stack trace for diagnostics');
+    }
+  } catch (e) {
+    // ignore logging errors
+  }
   const { 
     projectPath, 
     searchQuery, 
@@ -151,6 +183,7 @@ class ProjectStarterExecutor {
   }): Promise<ProjectStarterResult> {
     debugLog('===== PROJECT STARTER EXECUTION =====');
     debugLog(`Project path: ${args.projectPath}`);
+  debugLog(`maxDependencies passed: ${args.maxDependencies}`);
     
     const result: ProjectStarterResult = {
       success: false,
@@ -187,8 +220,10 @@ class ProjectStarterExecutor {
       dependenciesToSearch = dependenciesToSearch.slice(0, args.maxDependencies);
       debugLog(`Searching for ${dependenciesToSearch.length} dependencies`);
 
-      // Step 3: Search GitHub for each dependency (with rate limiting)
-      const searchResults = await this.searchDependencies(dependenciesToSearch);
+  // Step 3: Resolve repository URLs for each dependency.
+  // If project is a Node project (package.json), prefer npm registry lookup only (no GitHub fallback)
+  const enforceNpmOnly = projectInfo?.type === 'node';
+  const searchResults = await this.searchDependencies(dependenciesToSearch, enforceNpmOnly);
       result.searchResults = searchResults || [];
 
       // Step 4: Download Context7 documentation if requested
@@ -265,41 +300,54 @@ class ProjectStarterExecutor {
     }
   }
 
-  private async searchDependencies(dependencies: string[]): Promise<ProjectStarterResult['searchResults']> {
+  private async searchDependencies(dependencies: string[], npmOnly = false): Promise<ProjectStarterResult['searchResults']> {
     debugLog('===== SEARCHING DEPENDENCIES =====');
     const results: NonNullable<ProjectStarterResult['searchResults']> = [];
     
     // Add delay between searches to respect rate limits
-    const SEARCH_DELAY = 1000; // 1 second between searches
+    const SEARCH_DELAY = 100; // 1 second between searches
     
     for (let i = 0; i < dependencies.length; i++) {
       const dep = dependencies[i];
       debugLog(`Searching for dependency ${i + 1}/${dependencies.length}: ${dep}`);
       
       try {
-        const token = process.env.GITHUB_TOKEN;
-        // Normalize package name for better search results
-        const searchQuery = PackageParser.normalizePackageForSearch(dep);
-        const searchResults = await searchGithubRepos(searchQuery, token, 1);
+        // Try npm registry lookup first
+        let repoUrl: string | undefined;
+        const npmLookup = await lookupPackageRepository(dep).catch(() => null);
+        if (npmLookup && npmLookup.repositoryUrl) {
+          repoUrl = npmLookup.repositoryUrl;
+          debugLog(`✓ npm registry lookup matched for ${dep}: ${repoUrl}`);
+        } else if (npmOnly) {
+          // If we're enforcing npm-only (project init from package.json) and npm lookup failed,
+          // record a debug message and skip fallback to GitHub search.
+          debugLog(`✗ npm registry lookup failed for ${dep} and npm-only mode is active; skipping GitHub fallback`);
+        } else {
+          // Fallback to GitHub search when not in npmOnly mode
+          const token = process.env.GITHUB_TOKEN;
+          const searchQuery = PackageParser.normalizePackageForSearch(dep);
+          const searchResults = await searchGithubRepos(searchQuery, token, 1);
+          if (searchResults.length > 0) {
+            repoUrl = searchResults[0].html_url;
+            debugLog(`✓ GitHub search matched for ${dep}: ${repoUrl}`);
+          } else {
+            debugLog(`✗ No GitHub search results for: ${dep}`);
+          }
+        }
 
-        if (searchResults.length > 0) {
-          const repo = searchResults[0];
-          const context7Url = this.convertGitHubToContext7(repo.html_url, {
+        if (repoUrl) {
+          const context7Url = this.convertGitHubToContext7(repoUrl, {
             topic: 'programming',
             tokens: 5000
           });
 
           results.push({
             originalPackageName: dep, // Garde le nom original du package
-            repoName: repo.name,
-            url: repo.html_url,
+            repoName: path.basename(repoUrl),
+            url: repoUrl,
             context7Url,
             downloaded: false
           });
-
-          debugLog(`✓ Found: ${repo.name} (${repo.stargazers_count} stars)`);
-        } else {
-          debugLog(`✗ No results for: ${dep}`);
         }
 
         // Rate limiting delay (except for last item)
@@ -350,13 +398,60 @@ class ProjectStarterExecutor {
         debugLog(`Downloading: ${result.originalPackageName} (${result.repoName})`);
         
         // Download using axios
-        const response = await axios.get(result.context7Url, {
-          timeout: 30000,
-          headers: {
-            'User-Agent': 'MCP-Context-Master/1.0.0'
+        // Try primary context7 URL, if 404 try simple variants (strip .js suffix from repo name, etc.)
+        let response;
+        try {
+          response = await axios.get(result.context7Url, {
+            timeout: 30000,
+            headers: {
+              'User-Agent': 'MCP-Context-Master/1.0.0'
+            }
+          });
+        } catch (err: any) {
+          // If 404, attempt simple fallbacks by mutating the github URL pattern
+          const status = err && err.response && err.response.status;
+          if (status === 404) {
+            debugLog(`Primary Context7 URL returned 404 for ${result.originalPackageName}, trying variants`);
+            // Derive candidate repo variants
+            const variants: string[] = [];
+            const m = result.url.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+            if (m) {
+              const owner = m[1];
+              const repo = m[2];
+              // If repo ends with .js, try without
+              if (repo.endsWith('.js')) variants.push(`https://context7.com/${owner}/${repo.replace(/\.js$/,'')}/llms.txt`);
+              // Try without .js even if it doesn't end with it (some packages use rest.js vs rest)
+              variants.push(`https://context7.com/${owner}/${repo.replace(/\.js$/,'')}/llms.txt`);
+              // Try repo name only (owner/repo)
+              variants.push(`https://context7.com/${owner}/${repo}/llms.txt`);
+            }
+
+            // add query params from original context7Url
+            const origParams = result.context7Url.split('?')[1] || '';
+            let tried = false;
+            for (const v of variants) {
+              const candidate = origParams ? `${v}?${origParams}` : v;
+              try {
+                response = await axios.get(candidate, { timeout: 30000, headers: { 'User-Agent': 'MCP-Context-Master/1.0.0' } });
+                debugLog(`✓ Context7 variant succeeded: ${candidate}`);
+                tried = true;
+                break;
+              } catch (err2) {
+                // continue trying
+                debugLog(`✗ Variant failed: ${candidate}`);
+              }
+            }
+
+            if (!tried) throw err; // rethrow original error if no variant succeeded
+          } else {
+            throw err;
           }
-        });
-        
+        }
+
+        if (!response || !response.data) {
+          throw new Error(`No response data when downloading ${result.context7Url}`);
+        }
+
         await fs.writeFile(filePath, response.data, 'utf8');
         
         result.downloaded = true;
