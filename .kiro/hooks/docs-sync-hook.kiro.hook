@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "name": "Documentation Sync",
+  "description": "Listens to TypeScript source files, configuration files, and package changes to automatically update project documentation in README.md and docs folder",
+  "version": "1",
+  "when": {
+    "type": "userTriggered",
+    "patterns": [
+      "src/**/*.ts",
+      "*.ts",
+      "*.js",
+      "package.json",
+      "tsconfig.json",
+      "*.md",
+      "test/**/*.js"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Source code or configuration files have been modified in this TypeScript project. Please review the changes and update the documentation accordingly. Focus on:\n\n1. Update README.md if there are significant changes to the project structure, new features, or API changes\n2. Update relevant files in the /docs folder if specific documentation needs to be modified\n3. Ensure that any new TypeScript interfaces, classes, or functions are properly documented\n4. Update usage examples if the API has changed\n5. Check if package.json changes require documentation updates\n\nPlease analyze the changed files and determine what documentation updates are needed to keep everything in sync."
+  }
+}

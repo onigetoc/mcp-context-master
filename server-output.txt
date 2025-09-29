@@ -1,0 +1,6 @@
+﻿node : [Setup] Initializing server...
+    + CategoryInfo          : NotSpecified: ([Setup] Initializing server...:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[Setup] Server initialized successfully
+[Setup] MCP server transport connected

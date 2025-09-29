@@ -1,0 +1,3 @@
+- [x] Créer le dossier `src/templates`.
+- [x] Déplacer le fichier `src/tools/cm-init.md` vers `src/templates/cm-init.md`.
+- [x] Mettre à jour le chemin d'accès dans `src/tools/context-master.tool.ts`.
