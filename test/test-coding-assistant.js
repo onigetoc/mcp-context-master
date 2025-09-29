@@ -4,7 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 function determineExpectedFile(realJson) {
-  if (!realJson || typeof realJson !== 'object') return '.DEFAULT.md';
+  if (!realJson || typeof realJson !== 'object') return 'AGENTS.md';
 
   // Helper function to check if value is valid (not empty, not "unknown")
   const isValid = (val) => val && val.trim() !== "" && val.trim().toLowerCase() !== "unknown";
@@ -76,7 +76,7 @@ function determineExpectedFile(realJson) {
     if (match) return match.file;
   }
 
-  return '.DEFAULT.md';
+  return 'AGENTS.md';
 }
 
 async function runTest() {

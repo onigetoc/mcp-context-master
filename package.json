@@ -10,8 +10,8 @@
     "build": "tsc",
     "test": "npm run build && node test/test-context-tools.js",
     "test-tools": "npm run build && node test/test-tools.js",
-    "setup": "node setup.js",
-    "search": "node test/search-test.js"
+    "setup": "node test/test-setup-tool.js",
+    "search": "node test/test/search-test.js"
   },
   "keywords": [
     "mcp",

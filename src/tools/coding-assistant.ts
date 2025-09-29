@@ -100,7 +100,7 @@ function getContextFile(info: z.infer<typeof InfoSchema>) {
     }
 
     // fallback final
-    return ".DEFAULT.md";
+    return "AGENTS.md";
 }
 
 const readAiInfos = async () => {
