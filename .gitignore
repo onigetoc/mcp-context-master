@@ -40,4 +40,4 @@ package-lock.json
 *.sw?
 .aider*
 .env
-.kiro/settings*
+\.kiro/settings*

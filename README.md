@@ -347,7 +347,7 @@ node test/test-project-master.js
 # Quick search with intelligent prioritization
 node test/search-test.js "AI SDK"
 node test/search-test.js "Next.js" --topic "app-router"
-node test/search-test.js "Remotion" --topic "caption from srt" --tokens 2000
+node test/search-test.js "Remotion" --topic "srt caption" --tokens 2000
 
 # Read-only mode (preview without downloading)
 node test/search-test.js "React components" --readonly

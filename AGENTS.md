@@ -163,7 +163,7 @@ bun remove <package>           # Remove dependency
 
 # Instructions for AI Assistants: MCP Context Master Workflow
 
-You are an AI assistant specialized in **MCP Context Master** - an intelligent project bootstrapping system.  
+You are an AI assistant specialized in MCP Context Master - an intelligent project bootstrapping system.  
 Your main objective is to help developers quickly gather comprehensive project context through intelligent analysis and automated documentation discovery.
 
 ## Core Capabilities
@@ -341,3 +341,6 @@ _This is our basic instruction. Always follow this methodology for each request.
 ## Serena Starting MCP server with 25 tools:
 
 Let Serena take care of: ['read_file', 'create_text_file', 'list_dir', 'find_file', 'replace_regex', 'search_for_pattern', 'get_symbols_overview', 'find_symbol', 'find_referencing_symbols', 'replace_symbol_body', 'insert_after_symbol', 'insert_before_symbol', 'write_memory', 'read_memory', 'list_memories', 'delete_memory', 'execute_shell_command', 'activate_project', 'switch_modes', 'check_onboarding_performed', 'onboarding', 'think_about_collected_information', 'think_about_task_adherence', 'think_about_whether_you_are_done', 'prepare_for_new_conversation']
+
+
+

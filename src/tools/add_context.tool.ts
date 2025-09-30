@@ -8,7 +8,7 @@ import * as path from 'path';
 
 export const addProjectContextTool = {
   name: "add_project_context",
-  description: "Fetches and downloads the context for a single, new library and adds it to the project. if user talk about adding context for a library, or adding context for a package, or adding context for a framework, or adding context for a tool, or adding context for a sdk, or adding context for a api, or adding context for a cli, or adding context for a module, or adding context for a dependency, or adding context for a plugin, or adding context for a package name, or adding context for a library name, etc. Example: 'add project context for react' or 'add project context for @reduxjs/toolkit' or 'add project context for lodash' etc. Quick access: Type '/cm-add $ARGUMENTS'",
+  description: "Adds context for a library using EXACT package names from package.json or confirmed library names. IMPORTANT: This tool requires exact, confirmed library names. If you're unsure about the exact name, use the search workflow first: 1) Search GitHub for the library, 2) Confirm the correct repository, 3) Use this tool with the exact name. For example: Use 'remotion' (not '@remotion/captions'), 'react' (not 'react-dom'), '@tanstack/react-query' (not 'react-query'). If the user mentions a feature or topic (like 'captions', 'routing'), that should be used as a topic parameter in Context7, not as part of the library name.",
   inputSchema: {
     type: 'object',
     properties: {
