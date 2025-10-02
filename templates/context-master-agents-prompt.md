@@ -1,7 +1,7 @@
 ## Context Master (mcp-context-master) Instructions
 
 ### Overview
-Context Master is an MCP server that provides focused, up-to-date documentation for libraries and frameworks via Context7 and GitHub.
+Context Master is an MCP server designed to enhance AI coding assistance by providing up-to-date, contextual documentation for libraries and frameworks. It leverages Context7's documentation service and GitHub and NPM registry search API to deliver relevant information precisely when needed during development.
 
 ### Core Philosophy: Use Selectively
 
@@ -181,7 +181,7 @@ User: "Help with React Query mutations"
 ```typescript
 // Context Master finds repo automatically
 add_project_context(
-  absolutePath,
+  absoluteProjectPath,
   "React Query",    // Finds: TanStack/query
   "mutations"
 )
@@ -291,7 +291,7 @@ setup_project_context("C:\\Users\\dev\\my-app")
 // 1. Assess: Is Y well-known? → Skip if yes
 // 2. Check existing contexts
 // 3. If needed:
-add_project_context(absolutePath, "library-y", "feature x")
+add_project_context(absoluteProjectPath, "library-y", "feature x")
 ```
 
 ### Advanced Usage
@@ -344,5 +344,34 @@ add_project_context(path, "react", "hooks typescript patterns")
 - Windows: `C:\\Users\\name\\project`
 - macOS: `/Users/name/project`
 - Linux: `/home/user/project`
+
+### Context Handling Rules for MCP-Context-Master
+
+Before responding to the user, always follow these steps:
+
+1. **Check for Library or API References**  
+   Determine if the user prompt is related to a specific **library** or **API** that may require documentation support.
+
+2. **Verify Existing Context**  
+   - First, check if the relevant documentation is already available in the  
+     `.context-master/context` folder or already stored in memory.  
+   - If it is found, use that existing context directly.
+
+3. **Add Missing Context**  
+   - If the required documentation is **not** available, use the `add_project_context` tool.  
+   - This tool automatically downloads and stores the retrieved documentation inside `.context-master/context`.  
+   - Example usage:  
+     ```
+     library: remotion  
+     topic: srt
+     ```
+
+4. **Consult and Reuse Context Anytime**  
+   - At any point, you may consult the available documents or run `add_project_context` again if additional material is needed.  
+   - This ensures that the MCP server always provides the most relevant and up-to-date documentation.
+
+---
+
+By following these rules, MCP-Context-Master ensures that coding LLMs (such as GitHub Copilot, Cursor, Roo Code, Cline, Gemini CLI, Claude Code, etc.) always have the right context and documentation to assist the user effectively.
 
 <!-- END: CONTEXT-MASTER -->

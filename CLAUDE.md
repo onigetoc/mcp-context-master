@@ -199,3 +199,7 @@ bun run build && bun run test-tools
 - **Refactor**: Split large files into modules
 - **Import**: Use clean imports/exports
 - **Modular**: Keep each module focused
+
+
+## Context Master Instructions
+Use and follow the Context Master instructions from here: .context-master/context-master-agents-instructions.md
