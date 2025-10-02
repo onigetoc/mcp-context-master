@@ -12,7 +12,7 @@ import axios from 'axios';
 
 export const setupProjectContextTool = {
   name: "setup_project_context",
-  description: "Initialize and setup Context Master for a project. Use when user says init context master, setup context master, or /cm-init. Creates .context-master directory, downloads templates from GitHub, analyzes project dependencies, and downloads documentation for important libraries.",
+  description: "Initialize and setup Context Master for a project. Use when user says init context master, setup context master, or /cm-init or /cm-setup. Creates .context-master directory, downloads templates from GitHub, analyzes project dependencies, and downloads documentation for important libraries.",
   inputSchema: {
     type: 'object',
     properties: {

@@ -42,7 +42,7 @@ Context Master helps you download up-to-date documentation for libraries and fra
 ## Command System
 Use `/cm-` commands for quick actions:
 - `/cm-help`: Show available commands
-- `/cm-init`: Initialize project
+- `/cm-init` or `/cm-setup`: Initialize project
 - `/cm-analyze`: Analyze dependencies
 - `/cm-search [library]`: Search for library documentation
 
