@@ -62,4 +62,4 @@ Use `/cm-` commands for quick actions:
 - Documentation is saved in `.context-master/context/` directory
 - Files are automatically included in your AI context when relevant
 
----------- Context Master instructions end ----------
+<!-- END: CONTEXT-MASTER -->

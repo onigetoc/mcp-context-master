@@ -24,17 +24,9 @@ async function testAgentsUpdate() {
         // Simulate the updateAgentsFile function (simplified version for testing)
         const agentsFilePath = path.join(testDir, 'AGENTS.md');
         
-        // Mock Context Master instructions (since we can't download from GitHub in test)
-        const mockInstructions = `## Context Master (mcp-context-master) Instructions
-
-### Overview
-Context Master is an MCP server that helps you download up-to-date documentation.
-
-### Available MCP Tools
-- \`search_library_advisor\`: Search for libraries and get proper workflow guidance
-- \`setup_project_context\`: Initialize Context Master for a project
-
----------- Context Master instructions end ----------`;
+        // Read the actual template file
+        const templatePath = path.join(__dirname, '..', 'templates', 'context-master-agents-prompt.md');
+        const mockInstructions = await fs.readFile(templatePath, 'utf8');
 
         // Create new AGENTS.md
         await fs.writeFile(agentsFilePath, mockInstructions, 'utf8');
@@ -80,11 +72,11 @@ UPDATED: Context Master is an MCP server with new features!
 - Enhanced search capabilities
 - Better error handling
 
----------- Context Master instructions end ----------`;
+<!-- END: CONTEXT-MASTER -->`;
 
         // Simulate replacement
         const startMarker = '## Context Master (mcp-context-master) Instructions';
-        const endMarker = '---------- Context Master instructions end ----------';
+        const endMarker = '<!-- END: CONTEXT-MASTER -->';
         
         const startIndex = content2.indexOf(startMarker);
         const endIndex = content2.indexOf(endMarker);

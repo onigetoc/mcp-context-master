@@ -78,6 +78,75 @@ function validateAbsolutePath(projectPath: string): { isValid: boolean; errorMes
   return { isValid: true };
 }
 
+async function updateAgentsFileWithTemplate(projectPath: string): Promise<string[]> {
+  const logs: string[] = [];
+  const fullPath = path.resolve(projectPath);
+  
+  // Check if .context-master directory exists
+  const contextMasterDir = path.join(fullPath, '.context-master');
+  if (!await fs.pathExists(contextMasterDir)) {
+    logs.push(`Context Master directory not found, skipping AGENTS.md update`);
+    return logs;
+  }
+
+  // Read the template from .context-master directory
+  const templatePath = path.join(contextMasterDir, 'context-master-agents-prompt.md');
+  if (!await fs.pathExists(templatePath)) {
+    logs.push(`Template file not found: ${templatePath}, skipping AGENTS.md update`);
+    return logs;
+  }
+
+  const contextMasterInstructions = await fs.readFile(templatePath, 'utf8');
+  logs.push(`Read template from: ${templatePath}`);
+
+  // Path to AGENTS.md in project root
+  const agentsFilePath = path.join(fullPath, 'AGENTS.md');
+  
+  // Check if AGENTS.md exists
+  const agentsFileExists = await fs.pathExists(agentsFilePath);
+  
+  if (!agentsFileExists) {
+    // Create new AGENTS.md file with Context Master instructions
+    await fs.writeFile(agentsFilePath, contextMasterInstructions, 'utf8');
+    logs.push(`Created new AGENTS.md file with Context Master instructions`);
+  } else {
+    // Read existing AGENTS.md content
+    const existingContent = await fs.readFile(agentsFilePath, 'utf8');
+    
+    // Check if Context Master instructions already exist
+    const startMarker = '## Context Master (mcp-context-master) Instructions';
+    const endMarker = '<!-- END: CONTEXT-MASTER -->';
+    
+    const startIndex = existingContent.indexOf(startMarker);
+    const endIndex = existingContent.indexOf(endMarker);
+    
+    let updatedContent: string;
+    
+    if (startIndex !== -1 && endIndex !== -1) {
+      // Replace existing Context Master section
+      const beforeSection = existingContent.substring(0, startIndex);
+      const afterSection = existingContent.substring(endIndex + endMarker.length);
+      updatedContent = beforeSection + contextMasterInstructions + afterSection;
+      logs.push(`Replaced existing Context Master section in AGENTS.md`);
+    } else if (startIndex !== -1) {
+      // Found start marker but no end marker - replace from start marker to end of file
+      const beforeSection = existingContent.substring(0, startIndex);
+      updatedContent = beforeSection + contextMasterInstructions;
+      logs.push(`Updated Context Master section from start marker to end of file`);
+    } else {
+      // No existing Context Master section - append to end
+      updatedContent = existingContent + '\n\n' + contextMasterInstructions;
+      logs.push(`Appended Context Master instructions to existing AGENTS.md`);
+    }
+    
+    // Write updated content back to file
+    await fs.writeFile(agentsFilePath, updatedContent, 'utf8');
+  }
+
+  logs.push(`AGENTS.md updated successfully: ${agentsFilePath}`);
+  return logs;
+}
+
 async function initializeContextMaster(projectPath: string): Promise<{ logs: string[], dependencies: string[], projectType: string }> {
   const fullPath = path.resolve(projectPath);
   const logs: string[] = [];
@@ -97,7 +166,8 @@ async function initializeContextMaster(projectPath: string): Promise<{ logs: str
   const templateFiles = [
     'cm-init.md',
     'cm-analyze.md',
-    'cm-status.md'
+    'cm-status.md',
+    'context-master-agents-prompt.md'
   ];
 
   const downloadedTemplates: string[] = [];
@@ -105,10 +175,13 @@ async function initializeContextMaster(projectPath: string): Promise<{ logs: str
   for (const templateFile of templateFiles) {
     try {
       const response = await axios.get(`${githubBaseUrl}/${templateFile}`);
+      
+      // All template files go to .context-master directory
       const templatePath = path.join(contextMasterDir, templateFile);
       await fs.writeFile(templatePath, response.data, 'utf8');
-      downloadedTemplates.push(templateFile);
       logs.push(`Downloaded template: ${templateFile}`);
+      
+      downloadedTemplates.push(templateFile);
     } catch (error) {
       logs.push(`Failed to download template ${templateFile}: ${error instanceof Error ? error.message : String(error)}`);
     }
@@ -172,6 +245,14 @@ files:
   await fs.writeFile(aiInfosPath, JSON.stringify(initialAiInfos, null, 2), 'utf8');
   logs.push(`Created initial ai-infos.json placeholder`);
 
+  // Update AGENTS.md with Context Master instructions
+  try {
+    const agentsLogs = await updateAgentsFileWithTemplate(fullPath);
+    logs.push(...agentsLogs);
+  } catch (error) {
+    logs.push(`Failed to update AGENTS.md: ${error instanceof Error ? error.message : String(error)}`);
+  }
+
   // Analyze project type and dependencies
   const packageJsonPath = path.join(fullPath, 'package.json');
   const hasPackageJson = await fs.pathExists(packageJsonPath);
@@ -198,66 +279,7 @@ files:
   return { logs, dependencies, projectType };
 }
 
-async function updateAgentsFile(projectPath: string): Promise<string[]> {
-  const logs: string[] = [];
-  const agentsFilePath = path.join(projectPath, 'AGENTS.md');
-  
-  try {
-    // Download the Context Master agents prompt template from GitHub
-    const githubTemplateUrl = 'https://raw.githubusercontent.com/Onigetoc/mcp-context-master/main/templates/context-master-agents-prompt.md';
-    const response = await axios.get(githubTemplateUrl);
-    const contextMasterInstructions = response.data;
-    logs.push('Downloaded Context Master instructions template from GitHub');
 
-    // Check if AGENTS.md exists
-    const agentsFileExists = await fs.pathExists(agentsFilePath);
-    
-    if (!agentsFileExists) {
-      // Create new AGENTS.md file with Context Master instructions
-      await fs.writeFile(agentsFilePath, contextMasterInstructions, 'utf8');
-      logs.push('Created new AGENTS.md file with Context Master instructions');
-    } else {
-      // Read existing AGENTS.md content
-      const existingContent = await fs.readFile(agentsFilePath, 'utf8');
-      
-      // Check if Context Master instructions already exist
-      const startMarker = '## Context Master (mcp-context-master) Instructions';
-      const endMarker = '---------- Context Master instructions end ----------';
-      
-      const startIndex = existingContent.indexOf(startMarker);
-      const endIndex = existingContent.indexOf(endMarker);
-      
-      let updatedContent: string;
-      
-      if (startIndex !== -1 && endIndex !== -1) {
-        // Replace existing Context Master section
-        const beforeSection = existingContent.substring(0, startIndex);
-        const afterSection = existingContent.substring(endIndex + endMarker.length);
-        updatedContent = beforeSection + contextMasterInstructions + afterSection;
-        logs.push('Replaced existing Context Master instructions in AGENTS.md');
-      } else if (startIndex !== -1) {
-        // Found start marker but no end marker - replace from start marker to end of file
-        const beforeSection = existingContent.substring(0, startIndex);
-        updatedContent = beforeSection + contextMasterInstructions;
-        logs.push('Replaced incomplete Context Master instructions in AGENTS.md');
-      } else {
-        // No existing Context Master section - append to end
-        updatedContent = existingContent + '\n\n' + contextMasterInstructions;
-        logs.push('Appended Context Master instructions to existing AGENTS.md');
-      }
-      
-      // Write updated content back to file
-      await fs.writeFile(agentsFilePath, updatedContent, 'utf8');
-    }
-    
-    logs.push(`AGENTS.md updated successfully: ${agentsFilePath}`);
-    
-  } catch (error) {
-    logs.push(`Failed to update AGENTS.md: ${error instanceof Error ? error.message : String(error)}`);
-  }
-  
-  return logs;
-}
 
 export async function handleSetupProjectContextTool(request: any): Promise<McpToolResponse> {
   const { projectPath = '.', maxDependencies = 10 } = request.params.arguments || {};
@@ -308,15 +330,11 @@ Please retry with the correct absolute path format for your operating system.`;
   }
 
   try {
-    // 1. Initialize Context Master (create directory, download templates)
+    // 1. Initialize Context Master (create directory, download templates, update AGENTS.md)
     const { logs: initLogs, dependencies, projectType } = await initializeContextMaster(projectPath);
     debugLog('Context Master initialization complete.', initLogs);
 
-    // 2. Update AGENTS.md file with Context Master instructions
-    const agentsLogs = await updateAgentsFile(projectPath);
-    debugLog('AGENTS.md update complete.', agentsLogs);
-
-    // 3. If no dependencies found, return initialization result only
+    // 2. If no dependencies found, return initialization result only
     if (dependencies.length === 0) {
       const initGuide = `# Context Master Initialization Complete
 
@@ -328,13 +346,9 @@ Please retry with the correct absolute path format for your operating system.`;
 - **Commands Downloaded**: Check .context-master/commands directory
 - **Context Directory**: .context-master/context created
 - **Initial Files**: context-manifest.yaml and ai-infos.json created
-- **AGENTS.md**: Updated with Context Master instructions
 
 ## Initialization Logs
 ${initLogs.map(log => `- ${log}`).join('\n')}
-
-## AGENTS.md Update Logs
-${agentsLogs.map(log => `- ${log}`).join('\n')}
 
 ## Available Commands
 Use these slash commands to interact with Context Master:
@@ -345,6 +359,7 @@ Use these slash commands to interact with Context Master:
 ## Next Steps
 1. Update \\\`.context-master/ai-infos.json\\\` with your AI assistant information
 2. Add context for specific libraries using: \\\`add_project_context\\\` with libraryName: "[library-name]"
+3. Check your updated AGENTS.md file for Context Master integration
 
 ---
 **Context Master is ready!**`;
@@ -354,7 +369,7 @@ Use these slash commands to interact with Context Master:
       };
     }
 
-    // 4. Execute dependency analysis and context gathering
+    // 3. Execute dependency analysis and context gathering
     const analyzer = new ProjectAnalyzer();
     const searcher = new SearchService();
     const downloader = new DownloaderService();
@@ -365,24 +380,33 @@ Use these slash commands to interact with Context Master:
     }
 
     let dependenciesToSearch = projectInfo.dependencies.slice(0, maxDependencies);
-    const searchResults = await searcher.searchDependencies(dependenciesToSearch, projectInfo.type === 'node');
+    const searchResults = await searcher.searchDependencies(dependenciesToSearch, projectInfo.type === 'node', undefined, undefined);
 
     const docsPath = path.join(projectPath, '.context-master', 'context');
     await downloader.ensureDocsFolder(docsPath);
-    const downloadedFiles = await downloader.downloadDocumentation(searchResults, docsPath);
+    const downloadedFiles = await downloader.downloadDocumentation(searchResults, docsPath, true);
 
     if (downloadedFiles.length > 0) {
       await updateContextManifest();
+      
+      // Nettoyage final pour s'assurer qu'il n'y a pas de doublons
+      try {
+        const { CleanupService } = await import('../services/cleanup.service.js');
+        const cleanupService = new CleanupService();
+        const globalCleanedFiles = await cleanupService.cleanupAllOldContextFiles(docsPath, 1);
+        if (globalCleanedFiles.length > 0) {
+          debugLog(`Setup cleanup: Removed ${globalCleanedFiles.length} additional old files`);
+        }
+      } catch (cleanupError) {
+        debugLog(`Setup cleanup warning: ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`);
+      }
     }
 
-    // 5. Generate comprehensive result
+    // 4. Generate comprehensive result
     const successGuide = `# Context Master Setup Complete ✅
 
 ## Initialization Results
 ${initLogs.map(log => `- ${log}`).join('\n')}
-
-## AGENTS.md Update Results
-${agentsLogs.map(log => `- ${log}`).join('\n')}
 
 ## Project Analysis
 - **Project Type**: ${projectInfo.type}
@@ -396,11 +420,11 @@ ${downloadedFiles.length > 0 ? downloadedFiles.map(file => `- ${file}`).join('\n
 ${searchResults.map(result => `- **${result.originalPackageName}**: ${result.repoName} - ${result.url}`).join('\n')}
 
 ## Created/Updated Files
-- **Templates**: cm-init.md, cm-analyze.md, cm-status.md
+- **Templates**: cm-init.md, cm-analyze.md, cm-status.md, context-master-agents-prompt.md
 - **Commands**: cm-commands.md, command-dispatcher.md  
 - **Context**: context-manifest.yaml (updated with new files)
 - **Configuration**: ai-infos.json (placeholder - needs update)
-- **AGENTS.md**: Updated with Context Master MCP instructions
+- **AGENTS.md**: Created or updated with Context Master instructions
 
 ## Available Commands
 Use these slash commands to interact with Context Master:
@@ -414,6 +438,10 @@ Use these slash commands to interact with Context Master:
 1. **add_project_context** - Download documentation for additional libraries
 2. **list_available_contexts** - See what documentation is available
 3. **read_specific_context** - Read downloaded documentation
+
+## Next Steps
+1. Review the updated AGENTS.md file for Context Master integration
+2. Update ai-infos.json with your AI assistant details
 
 ---
 **Context Master is fully configured and ready to use!**`;

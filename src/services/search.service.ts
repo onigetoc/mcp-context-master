@@ -14,7 +14,7 @@ export interface SearchResult {
 }
 
 export class SearchService {
-    public async searchDependencies(dependencies: string[], npmOnly = false): Promise<SearchResult[]> {
+    public async searchDependencies(dependencies: string[], npmOnly = false, topic?: string, tokens?: number): Promise<SearchResult[]> {
         debugLog('===== SEARCHING DEPENDENCIES =====');
         const results: SearchResult[] = [];
         
@@ -45,7 +45,7 @@ export class SearchService {
                 }
 
                 if (repoUrl) {
-                    const context7Url = convertToContext7Url({githubUrl: repoUrl, topic: 'programming', tokens: 5000});
+                    const context7Url = convertToContext7Url({githubUrl: repoUrl, topic: topic || 'programming', tokens: tokens || 5000});
 
                     results.push({
                         originalPackageName: dep,

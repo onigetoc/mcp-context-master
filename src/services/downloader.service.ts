@@ -2,6 +2,7 @@ import axios from 'axios';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { debugLog } from '../utils/logger.js';
+import { CleanupService } from './cleanup.service.js';
 
 export interface SearchResult {
     originalPackageName: string;
@@ -12,17 +13,19 @@ export interface SearchResult {
 }
 
 export class DownloaderService {
+    private cleanupService = new CleanupService();
 
     public async downloadDocumentation(
         searchResults: SearchResult[], 
-        docsPath: string
+        docsPath: string,
+        isFullContext: boolean = false
     ): Promise<string[]> {
         debugLog('===== DOWNLOADING DOCUMENTATION =====');
         const downloadedFiles: string[] = [];
 
         for (const result of searchResults) {
             try {
-                const fileName = this.generateContextFileName(result.originalPackageName);
+                const fileName = this.generateContextFileName(result.originalPackageName, isFullContext);
                 const filePath = path.join(docsPath, fileName);
                 
                 debugLog(`Downloading: ${result.originalPackageName} (${result.repoName})`);
@@ -79,6 +82,20 @@ export class DownloaderService {
                 downloadedFiles.push(fileName);
                 debugLog(`✓ Downloaded: ${fileName}`);
 
+                // Nettoyer les anciens fichiers de la même bibliothèque
+                try {
+                    const deletedFiles = await this.cleanupService.cleanupOldContextFiles(
+                        docsPath, 
+                        result.originalPackageName, 
+                        1 // Garder seulement le plus récent
+                    );
+                    if (deletedFiles.length > 0) {
+                        debugLog(`✓ Cleanup: Removed ${deletedFiles.length} old files for ${result.originalPackageName}`);
+                    }
+                } catch (cleanupError) {
+                    debugLog(`✗ Cleanup warning for ${result.originalPackageName}: ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`);
+                }
+
                 await new Promise(resolve => setTimeout(resolve, 500));
 
             } catch (error) {
@@ -89,11 +106,16 @@ export class DownloaderService {
         return downloadedFiles;
     }
 
-    private generateContextFileName(packageName: string): string {
+    private generateContextFileName(packageName: string, isFullContext: boolean = false): string {
         let cleanName = packageName;
         cleanName = cleanName.replace('@', '').replace('/', '-');
         cleanName = cleanName.replace(/[<>:"|?*]/g, '-');
-        return `cm-${cleanName}-context-${new Date().toISOString().split('T')[0]}.md`;
+        const date = new Date().toISOString().split('T')[0];
+        
+        if (isFullContext) {
+            return `cm-${cleanName}-full-context-${date}.md`;
+        }
+        return `cm-${cleanName}-context-${date}.md`;
     }
 
     public async ensureDocsFolder(docsPath: string): Promise<void> {

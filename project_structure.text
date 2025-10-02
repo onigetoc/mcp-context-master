@@ -1,0 +1,91 @@
+- .context-master
+  - ai-infos.json
+  - cm-analyze.md
+  - cm-init.md
+  - cm-status.md
+  - commands
+    - cm-commands.md
+    - command-dispatcher.md
+  - context
+    - cm-axios-context-2025-09-29.md
+    - cm-fs-extra-context-2025-09-29.md
+    - cm-modelcontextprotocol-sdk-context-2025-09-29.md
+    - cm-octokit-rest-context-2025-09-29.md
+    - cm-remotion-context-2025-09-30.md
+    - cm-remotion-src-caption-2025-09-30.md
+    - context-manifest.yaml
+  - context-master-agents-prompt.md
+- .env
+- .env.example
+- AGENTS.md
+- bun.lock
+- CLAUDE.md
+- GEMINI.md
+- package-lock.json
+- package.json
+- protocol-test.js
+- README.md
+- ROADMAP.md
+- server-output.txt
+- SOLUTION_SUMMARY.md
+- src
+  - apis
+    - github-api.ts
+    - npm-registry.ts
+  - index.ts
+  - parsers
+    - context-parser.ts
+    - package-parser.ts
+    - readme-parser.ts
+  - server
+    - mcp-server.ts
+  - services
+    - analyzer.service.ts
+    - context-service.ts
+    - converter.service.ts
+    - downloader.service.ts
+    - init-tool-copy.ts
+    - registry.service.ts
+    - search.service.ts
+  - tasks
+    - cm-analyze.md
+    - cm-clean.md
+    - cm-download.md
+    - cm-help.md
+    - cm-selective.md
+    - cm-status.md
+  - tools
+    - add_context.tool.ts
+    - agents-updater.tool.ts
+    - coding-assistant.ts
+    - index.ts
+    - project-master copy.ts
+    - read-template.tool.ts
+    - read_context.tool.ts
+    - search-advisor.tool.ts
+    - setup.tool.ts
+  - types
+    - index.ts
+    - mcp-types.ts
+    - schemas.ts
+  - utils
+    - logger.ts
+- templates
+  - agent-prompt.md
+  - cm-analyze.md
+  - cm-guide.md
+  - cm-init.md
+  - cm-status.md
+  - commands
+    - cm-commands.md
+    - command-dispatcher.md
+  - context-master-agents-prompt copy.md
+  - context-master-agents-prompt.md
+- test
+  - cleanup-tests.ps1
+  - cli-test.js
+  - old-setup-legacy.js
+  - README-TESTS.md
+  - I hide all test, not usefull for you
+- tools-registry.json
+- tsconfig.json

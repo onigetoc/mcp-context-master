@@ -30,13 +30,13 @@ export async function lookupPackageRepository(packageName: string): Promise<NpmS
     }
 
     if (repositoryUrl) {
-      // Normalize: remove leading git+ and trailing .git
-      repositoryUrl = repositoryUrl.replace(/^git\+/, '').replace(/\.git$/i, '');
+      // Normalize: remove leading git+, trailing .git, and any branch/tag references (#branch, #tag)
+      repositoryUrl = repositoryUrl.replace(/^git\+/, '').replace(/#.*$/, '').replace(/\.git$/i, '');
       // If it's an ssh URL like git@github.com:owner/repo, convert to https
       const sshMatch = repositoryUrl.match(/^git@([^:]+):(.+)$/);
       if (sshMatch) {
         const host = sshMatch[1];
-        const path = sshMatch[2];
+        const path = sshMatch[2].replace(/#.*$/, ''); // Also remove branch refs from SSH URLs
         repositoryUrl = `https://${host}/${path}`;
       }
       // Ensure https scheme
