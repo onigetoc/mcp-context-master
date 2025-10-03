@@ -1,6 +1,6 @@
-========================
+================
 CODE SNIPPETS
-========================
+================
 TITLE: serializeSrt() Example Usage
 DESCRIPTION: Demonstrates how to use the serializeSrt function to convert an array of Caption objects into an SRT formatted string. The example shows the structure of the Caption object and how to pass it to the function.
 
@@ -54,7 +54,7 @@ You can use SRT files to add subtitles to your videos.
 */
 ```
 
-----------------------------------------
+--------------------------------
 
 TITLE: parseSrt() Usage Example
 DESCRIPTION: Demonstrates how to use the parseSrt() function to parse an SRT string into an array of Caption objects. The function takes an input string containing the SRT content and returns an object with a 'captions' property, which is an array of Caption items, each with start and end times in milliseconds, text content, and a confidence score.
@@ -108,7 +108,7 @@ const {captions} = parseSrt({input});
 */
 ```
 
-----------------------------------------
+--------------------------------
 
 TITLE: Create TikTok Style Captions
 DESCRIPTION: Demonstrates how to use createTikTokStyleCaptions to segment caption data into pages for animation. It shows the input caption structure and the resulting page structure, highlighting the `combineTokensWithinMilliseconds` option.
@@ -194,7 +194,7 @@ const {pages} = createTikTokStyleCaptions({
 ] */
 ```
 
-----------------------------------------
+--------------------------------
 
 TITLE: Caption Data Structure Definition
 DESCRIPTION: Defines the structure of a caption object, including text, start and end times, timestamp, and confidence.
@@ -208,7 +208,7 @@ import type {Caption} from '@remotion/captions';
 //            ^?
 ```
 
-----------------------------------------
+--------------------------------
 
 TITLE: Captioning Specific Video File with Node.js
 DESCRIPTION: This Node.js command captions a single specified video file. Replace `<path-to-video-file>` with the actual path to the video you wish to caption.
@@ -221,7 +221,7 @@ CODE:
 node sub.mjs <path-to-video-file>
 ```
 
-----------------------------------------
+--------------------------------
 
 TITLE: Generate Captions via CLI
 DESCRIPTION: This command initiates the caption generation process for external recordings using a TypeScript script. Ensure your recording files are prefixed with 'webcam' for processing. The generated JSON caption files will be saved in the `public/<composition-id>/` directory.
@@ -234,7 +234,29 @@ CODE:
 bun sub.ts
 ```
 
-----------------------------------------
+--------------------------------
+
+TITLE: Remotion Caption Item Type
+DESCRIPTION: Captions are treated as a first-class item type within the Remotion Editor Starter, allowing them to be manipulated like other layers on the timeline and canvas.
+
+SOURCE: https://github.com/remotion-dev/remotion/blob/main/packages/docs/docs/editor-starter/captioning.mdx#_snippet_2
+
+LANGUAGE: APIDOC
+CODE:
+```
+Caption Item Type:
+  Description: Represents a caption track in Remotion.
+  Properties:
+    - text: The caption text.
+    - start: The start time of the caption in milliseconds.
+    - duration: The duration of the caption in milliseconds.
+    - style: Optional styling properties for the caption.
+  Usage:
+    - Can be added to the timeline like video, image, or audio items.
+    - Supports editing of individual tokens, typography, page duration, and word timings via the inspector.
+```
+
+--------------------------------
 
 TITLE: Generate Captions with toCaptions()
 DESCRIPTION: This example demonstrates how to use the toCaptions() function to convert the output of transcribe() into a usable array of Caption objects. It shows the necessary imports, the transcription process, and the subsequent conversion to captions. The output is a structured array of caption objects, each containing text, start and end timestamps, and confidence scores.
@@ -262,64 +284,18 @@ const {captions} = toCaptions({
 console.log(captions);
 ```
 
-----------------------------------------
+--------------------------------
 
-TITLE: serializeSrt() API Documentation
-DESCRIPTION: Provides details on the serializeSrt function's API, including its input parameters, return value, and how it processes caption data. It explains the structure of the 'lines' parameter, which is a two-dimensional array of Caption items, and how timestamps and text are handled.
+TITLE: Captioning Features
+DESCRIPTION: The Remotion Recorder provides advanced captioning capabilities, including word-level timings, avoidance of orphan words, and the ability to highlight technical terms using backticks. It integrates with Whisper.cpp for local caption generation and allows for easy correction of AI-generated captions.
 
-SOURCE: https://github.com/remotion-dev/remotion/blob/main/packages/docs/docs/captions/serialize-srt.mdx#_snippet_1
+SOURCE: https://github.com/remotion-dev/remotion/blob/main/packages/docs/docs/recorder/index.mdx#_snippet_1
 
-LANGUAGE: APIDOC
+LANGUAGE: javascript
 CODE:
 ```
-serializeSrt(options: {
-  lines: Caption[][]
-}): string
-
-Parameters:
-  options.lines: An two-dimensional array of Caption items. Each top-level item represents a line in the SubRip file. The second-level items represent the words in that line. Words get concatenated together during serialization. No spaces are added between the words. The start timestamp is determined from the startMs value of the first word in the line. The end timestamp is determined from the endMs value of the last word in the line. Arrays with no items will be ignored.
-
-Return value:
-A string in the SubRip format (.srt).
-
-See also:
-- Source code for this function: https://github.com/remotion-dev/remotion/blob/main/packages/captions/src/serialize-srt.ts
-- @remotion/captions: /docs/captions
+function fixCommonMisspellings(text) {
+  // Example: Replace common misspellings
+  return text.replace(/teh/g, 'the').replace(/adn/g, 'and');
+}
 ```
-
-========================
-QUESTIONS AND ANSWERS
-========================
-TOPIC: Caption - Remotion Docs
-Q: Which Remotion function can be used to parse SRT files into the Caption data structure?
-A: The `parseSrt()` function from `@remotion/captions` can be used to parse SRT files into the standard Remotion Caption data structure.
-
-
-SOURCE: https://github.com/remotion-dev/remotion/blob/main/packages/docs/docs/captions/caption.mdx#_qa_7
-
-----------------------------------------
-
-TOPIC: Caption - Remotion Docs
-Q: How can Remotion captions be serialized to a .srt file?
-A: Remotion captions can be serialized to a .srt file using the `serializeSrt()` function.
-
-
-SOURCE: https://github.com/remotion-dev/remotion/blob/main/packages/docs/docs/captions/caption.mdx#_qa_8
-
-----------------------------------------
-
-TOPIC: serializeSrt() - @remotion/captions
-Q: What is the output format of the `serializeSrt` function?
-A: The `serializeSrt` function outputs a string in the SubRip (`.srt`) format. This format is commonly used for displaying subtitles in videos.
-
-
-SOURCE: https://github.com/remotion-dev/remotion/blob/main/packages/docs/docs/captions/serialize-srt.mdx#_qa_5
-
-----------------------------------------
-
-TOPIC: Generate captions - Remotion Docs
-Q: For which files does the Remotion Recorder generate captions?
-A: The Remotion Recorder only generates captions for files that have the 'webcam' prefix. All other files are ignored for caption generation.
-
-
-SOURCE: https://github.com/remotion-dev/remotion/blob/main/packages/docs/docs/recorder/captions.mdx#_qa_3

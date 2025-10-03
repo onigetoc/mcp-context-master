@@ -87,9 +87,7 @@ Add to your MCP client configuration:
       ],
       "env": {
         "GITHUB_TOKEN": "your_github_token_here"
-      },
-      "disabled": false,
-      "alwaysAllow": ["setup_project_context", "add_project_context", "list_available_contexts"]
+      }
     }
   }
 }

@@ -11,6 +11,8 @@ export interface SearchResult {
     url: string;
     context7Url: string;
     downloaded: boolean;
+    topic?: string;  // Added to support topic-based file naming
+    tokens?: number; // Added to track token limit used
 }
 
 export class SearchService {
@@ -52,7 +54,9 @@ export class SearchService {
                         repoName: path.basename(repoUrl),
                         url: repoUrl,
                         context7Url,
-                        downloaded: false
+                        downloaded: false,
+                        topic: topic,      // Store topic for file naming
+                        tokens: tokens     // Store tokens for reference
                     });
                 }
 

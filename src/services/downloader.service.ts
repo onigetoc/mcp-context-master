@@ -2,6 +2,12 @@ import axios from 'axios';
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import { debugLog } from '../utils/logger.js';
+import { 
+    downloadWithRetry, 
+    validateContext7Url, 
+    isValidContext7Content,
+    analyzeNetworkError 
+} from '../utils/network-utils.js';
 import { CleanupService } from './cleanup.service.js';
 
 export interface SearchResult {
@@ -10,6 +16,8 @@ export interface SearchResult {
     url: string;
     context7Url: string;
     downloaded: boolean;
+    topic?: string;  // Added to support topic-based file naming
+    tokens?: number; // Added to track token limit used
 }
 
 export class DownloaderService {
@@ -22,95 +30,187 @@ export class DownloaderService {
     ): Promise<string[]> {
         debugLog('===== DOWNLOADING DOCUMENTATION =====');
         const downloadedFiles: string[] = [];
+        const failedDownloads: Array<{package: string, reason: string}> = [];
 
-        for (const result of searchResults) {
+        for (let i = 0; i < searchResults.length; i++) {
+            const result = searchResults[i];
+            
             try {
-                const fileName = this.generateContextFileName(result.originalPackageName, isFullContext);
+                const fileName = this.generateContextFileName(
+                    result.originalPackageName, 
+                    isFullContext,
+                    result.topic
+                );
                 const filePath = path.join(docsPath, fileName);
                 
-                debugLog(`Downloading: ${result.originalPackageName} (${result.repoName})`);
+                debugLog(`📦 [${i+1}/${searchResults.length}] Processing: ${result.originalPackageName} (${result.repoName})`);
                 
+                // Step 1: Quick validation (skip if obviously invalid)
+                const isValid = await validateContext7Url(result.context7Url);
+                if (!isValid) {
+                    debugLog(`⚠️  Context7 URL validation failed, trying next result if available...`);
+                    failedDownloads.push({
+                        package: result.originalPackageName,
+                        reason: 'Library not found on Context7 (404)'
+                    });
+                    
+                    // Try next result if this was a GitHub search with multiple results
+                    continue;
+                }
+                
+                // Step 2: Download with retry logic
                 let response;
                 try {
-                    response = await axios.get(result.context7Url, {
-                        timeout: 30000,
-                        headers: {
-                            'User-Agent': 'MCP-Context-Master/1.0.0'
-                        }
+                    response = await downloadWithRetry(result.context7Url, {}, {
+                        maxRetries: 3,
+                        initialDelay: 2000,
+                        backoffMultiplier: 2
                     });
-                } catch (err: any) {
-                    const status = err && err.response && err.response.status;
-                    if (status === 404) {
-                        debugLog(`Primary Context7 URL returned 404 for ${result.originalPackageName}, trying variants`);
-                        const variants: string[] = [];
-                        const m = result.url.match(/github\.com\/([^\/]+)\/([^\/]+)/);
-                        if (m) {
-                            const owner = m[1];
-                            const repo = m[2];
-                            if (repo.endsWith('.js')) variants.push(`https://context7.com/${owner}/${repo.replace(/\.js$/,'')}/llms.txt`);
-                            variants.push(`https://context7.com/${owner}/${repo.replace(/\.js$/,'')}/llms.txt`);
-                            variants.push(`https://context7.com/${owner}/${repo}/llms.txt`);
+                } catch (downloadError) {
+                    const errorInfo = analyzeNetworkError(downloadError);
+                    debugLog(`❌ Download failed after retries: ${errorInfo.message}`);
+                    
+                    // Try URL variants for .js repos
+                    if (errorInfo.type === 'not_found') {
+                        debugLog(`🔄 Trying URL variants...`);
+                        const variantResponse = await this.tryUrlVariants(result);
+                        if (variantResponse) {
+                            response = variantResponse;
+                        } else {
+                            failedDownloads.push({
+                                package: result.originalPackageName,
+                                reason: errorInfo.message
+                            });
+                            continue;
                         }
-
-                        const origParams = result.context7Url.split('?')[1] || '';
-                        let tried = false;
-                        for (const v of variants) {
-                            const candidate = origParams ? `${v}?${origParams}` : v;
-                            try {
-                                response = await axios.get(candidate, { timeout: 30000, headers: { 'User-Agent': 'MCP-Context-Master/1.0.0' } });
-                                debugLog(`✓ Context7 variant succeeded: ${candidate}`);
-                                tried = true;
-                                break;
-                            } catch (err2) {
-                                debugLog(`✗ Variant failed: ${candidate}`);
-                            }
-                        }
-
-                        if (!tried) throw err;
                     } else {
-                        throw err;
+                        // Network/server error - fail this download
+                        failedDownloads.push({
+                            package: result.originalPackageName,
+                            reason: errorInfo.message
+                        });
+                        continue;
                     }
                 }
 
+                // Step 3: Validate content
                 if (!response || !response.data) {
-                    throw new Error(`No response data when downloading ${result.context7Url}`);
+                    debugLog(`❌ No response data received`);
+                    failedDownloads.push({
+                        package: result.originalPackageName,
+                        reason: 'Empty response from Context7'
+                    });
+                    continue;
+                }
+                
+                const content = typeof response.data === 'string' ? response.data : JSON.stringify(response.data);
+                
+                if (!isValidContext7Content(content)) {
+                    debugLog(`❌ Invalid content detected (error page or too short)`);
+                    failedDownloads.push({
+                        package: result.originalPackageName,
+                        reason: 'Context7 returned error message or invalid content'
+                    });
+                    continue;
                 }
 
-                await fs.writeFile(filePath, response.data, 'utf8');
+                // Step 4: Save file
+                await fs.writeFile(filePath, content, 'utf8');
                 
                 result.downloaded = true;
                 downloadedFiles.push(fileName);
-                debugLog(`✓ Downloaded: ${fileName}`);
+                debugLog(`✅ Downloaded: ${fileName}`);
 
-                // Nettoyer les anciens fichiers de la même bibliothèque
+                // Step 5: Cleanup old files
                 try {
                     const deletedFiles = await this.cleanupService.cleanupOldContextFiles(
                         docsPath, 
                         result.originalPackageName, 
-                        1 // Garder seulement le plus récent
+                        1
                     );
                     if (deletedFiles.length > 0) {
-                        debugLog(`✓ Cleanup: Removed ${deletedFiles.length} old files for ${result.originalPackageName}`);
+                        debugLog(`🧹 Cleanup: Removed ${deletedFiles.length} old files for ${result.originalPackageName}`);
                     }
                 } catch (cleanupError) {
-                    debugLog(`✗ Cleanup warning for ${result.originalPackageName}: ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`);
+                    debugLog(`⚠️  Cleanup warning: ${cleanupError instanceof Error ? cleanupError.message : String(cleanupError)}`);
                 }
 
+                // Rate limiting: small delay between downloads
                 await new Promise(resolve => setTimeout(resolve, 500));
 
             } catch (error) {
-                debugLog(`✗ Download failed for ${result.originalPackageName}: ${error instanceof Error ? error.message : String(error)}`);
+                const errorInfo = analyzeNetworkError(error);
+                debugLog(`❌ Unexpected error for ${result.originalPackageName}: ${errorInfo.message}`);
+                failedDownloads.push({
+                    package: result.originalPackageName,
+                    reason: errorInfo.message
+                });
             }
+        }
+
+        // Log summary
+        debugLog('===== DOWNLOAD SUMMARY =====');
+        debugLog(`✅ Successful: ${downloadedFiles.length}`);
+        debugLog(`❌ Failed: ${failedDownloads.length}`);
+        
+        if (failedDownloads.length > 0) {
+            debugLog('Failed downloads:');
+            failedDownloads.forEach(f => debugLog(`  - ${f.package}: ${f.reason}`));
         }
 
         return downloadedFiles;
     }
 
-    private generateContextFileName(packageName: string, isFullContext: boolean = false): string {
+    /**
+     * Tries URL variants for repositories ending with .js (e.g., next.js -> next)
+     */
+    private async tryUrlVariants(result: SearchResult): Promise<any> {
+        const variants: string[] = [];
+        const m = result.url.match(/github\.com\/([^\/]+)\/([^\/]+)/);
+        
+        if (m) {
+            const owner = m[1];
+            const repo = m[2];
+            
+            // Generate variants
+            if (repo.endsWith('.js')) {
+                variants.push(`https://context7.com/${owner}/${repo.replace(/\.js$/, '')}/llms.txt`);
+            }
+            variants.push(`https://context7.com/${owner}/${repo}/llms.txt`);
+        }
+
+        const origParams = result.context7Url.split('?')[1] || '';
+        
+        for (const variantUrl of variants) {
+            const fullUrl = origParams ? `${variantUrl}?${origParams}` : variantUrl;
+            
+            try {
+                debugLog(`🔄 Trying variant: ${fullUrl}`);
+                const response = await downloadWithRetry(fullUrl, {}, { maxRetries: 1 });
+                
+                if (response && response.data && isValidContext7Content(response.data)) {
+                    debugLog(`✅ Variant succeeded: ${fullUrl}`);
+                    return response;
+                }
+            } catch (error) {
+                debugLog(`❌ Variant failed: ${fullUrl}`);
+            }
+        }
+        
+        return null;
+    }
+
+    private generateContextFileName(packageName: string, isFullContext: boolean = false, topic?: string): string {
         let cleanName = packageName;
         cleanName = cleanName.replace('@', '').replace('/', '-');
         cleanName = cleanName.replace(/[<>:"|?*]/g, '-');
         const date = new Date().toISOString().split('T')[0];
+        
+        // If topic is provided, include it in the filename (similar to search-test.js)
+        if (topic) {
+            const topicSlug = topic.replace(/[<>:"|?*@/\\]/g, '-').replace(/\s+/g, '-').toLowerCase();
+            return `cm-${cleanName}-${topicSlug}-${date}.md`;
+        }
         
         if (isFullContext) {
             return `cm-${cleanName}-full-context-${date}.md`;
