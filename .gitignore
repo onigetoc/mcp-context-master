@@ -24,10 +24,24 @@ imgs/
 *.log
 bun.lockb
 package-lock.json
-.gemini
+# Configuration directories avec clés API (SÉCURISÉ)
+.gemini/
+.kiro/settings/
+.roo/settings/
+.serena/settings/
+.specify/settings/
+
+# Fichiers de configuration avec secrets
+*settings.json
+*config.json
+*.env*
+!.env.example
 
 # files with certain keywords
 *copy*
+*secret*
+*token*
+*api-key*
 
 # Editor directories and files
 .vscode/*
@@ -40,5 +54,3 @@ package-lock.json
 *.sln
 *.sw?
 .aider*
-.env
-.kiro/settings*
