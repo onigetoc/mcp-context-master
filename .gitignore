@@ -24,6 +24,7 @@ imgs/
 *.log
 bun.lockb
 package-lock.json
+.gemini
 
 # files with certain keywords
 *copy*
