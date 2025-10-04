@@ -1,0 +1,4 @@
+- [x] Renommer `api/prompts/keys` en `api/prompts/categories`.
+- [x] Renommer `api/prompts/subkeys` en `api/prompts/outputs`.
+- [x] Mettre à jour `api/core/loadPrompt.js` pour utiliser les nouveaux chemins.
+- [x] Mettre à jour le fichier de tâches `.gemini/todos.md`.

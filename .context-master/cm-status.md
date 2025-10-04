@@ -1,31 +1,62 @@
-# Context Master - Status Check
+# Context Master Status
 
-## Project Status Overview
+## 📊 Current Project Context
 
-### Current Configuration
-- **Project Path**: [PROJECT_PATH]
-- **Context Master Directory**: [CONTEXT_MASTER_DIR]
-- **Last Updated**: [TIMESTAMP]
+**Project Path**: {PROJECT_PATH}
+**Context Directory**: {CONTEXT_DIR}
+**Last Updated**: {LAST_UPDATED}
 
-### Downloaded Contexts
-[CONTEXT_LIST]
+## 📚 Downloaded Documentation
 
-### Available MCP Tools
-1. **cm_init** - Initialize Context Master
-2. **setup_project_context** - Full project analysis
-3. **add_project_context** - Download specific library
-4. **list_available_contexts** - Show downloaded contexts
-5. **read_specific_context** - Read context file
+### ✅ Available Contexts
+{AVAILABLE_CONTEXTS}
 
-### System Status
-- **GitHub API**: [API_STATUS]
-- **Context7 Service**: [CONTEXT7_STATUS]
-- **Local Storage**: [STORAGE_STATUS]
+### 📈 Context Statistics
+- **Total Contexts**: {TOTAL_CONTEXTS}
+- **Total Size**: {TOTAL_SIZE}
+- **Average Context Size**: {AVG_SIZE}
 
-### Recommendations
-[RECOMMENDATIONS]
+## 🎯 Coverage Analysis
 
-### Quick Actions
-- Add missing high-priority contexts
-- Update outdated contexts
-- Clean up unused contexts
+### 📦 Dependencies with Context
+{COVERED_DEPS}
+
+### ❌ Dependencies without Context
+{UNCOVERED_DEPS}
+
+## 🔧 Recommendations
+
+### Missing High-Priority Contexts
+{MISSING_HIGH_PRIORITY}
+
+### Outdated Contexts (>30 days)
+{OUTDATED_CONTEXTS}
+
+## 🚀 Quick Actions
+
+### Add Missing High-Priority Context
+```
+add_project_context for: {NEXT_RECOMMENDED}
+```
+
+### Update Outdated Context
+```
+Re-download outdated contexts to get latest documentation
+```
+
+### Clean Unused Context
+```
+Remove contexts for dependencies no longer in your project
+```
+
+## 📊 Context Quality Score
+
+**Overall Score**: {QUALITY_SCORE}/100
+
+- **Coverage**: {COVERAGE_SCORE}% of important dependencies
+- **Freshness**: {FRESHNESS_SCORE}% contexts are recent
+- **Relevance**: {RELEVANCE_SCORE}% contexts match project needs
+
+---
+
+**Your context setup is {STATUS_MESSAGE}** 🎯

@@ -9,6 +9,7 @@ export interface SearchResult {
     originalPackageName: string;
     repoName: string;
     url: string;
+    homepage?: string; // Added to store official documentation/website URL
     context7Url: string;
     downloaded: boolean;
     topic?: string;  // Added to support topic-based file naming
@@ -28,6 +29,8 @@ export class SearchService {
             
             try {
                 let repoUrl: string | undefined;
+                let homepage: string | undefined;
+                
                 const npmLookup = await lookupPackageRepository(dep).catch(() => null);
                 if (npmLookup && npmLookup.repositoryUrl) {
                     repoUrl = npmLookup.repositoryUrl;
@@ -40,7 +43,11 @@ export class SearchService {
                     const searchResults = await searchGithubRepos(searchQuery, token, 1);
                     if (searchResults.length > 0) {
                         repoUrl = searchResults[0].html_url;
+                        homepage = searchResults[0].homepage || undefined;
                         debugLog(`✓ GitHub search matched for ${dep}: ${repoUrl}`);
+                        if (homepage) {
+                            debugLog(`📄 Homepage found for ${dep}: ${homepage}`);
+                        }
                     } else {
                         debugLog(`✗ No GitHub search results for: ${dep}`);
                     }
@@ -53,6 +60,7 @@ export class SearchService {
                         originalPackageName: dep,
                         repoName: path.basename(repoUrl),
                         url: repoUrl,
+                        homepage: homepage,
                         context7Url,
                         downloaded: false,
                         topic: topic,      // Store topic for file naming

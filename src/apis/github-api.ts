@@ -6,6 +6,7 @@ interface SearchResult {
   full_name: string;
   description: string | null;
   html_url: string;
+  homepage: string | null;
   language: string | null;
   stargazers_count: number;
   forks_count: number;
@@ -17,6 +18,7 @@ interface GithubRepo {
   full_name: string;
   description: string | null;
   html_url: string;
+  homepage: string | null;
   language: string | null;
   stargazers_count: number;
   forks_count: number;
@@ -27,7 +29,10 @@ function enhanceSearchQuery(query: string): string {
   // If query doesn't already contain search qualifiers, enhance it
   if (!query.includes(':')) {
     // Replace spaces with + to match GitHub web search behavior
-    return query.replace(/\s+/g, '+');
+    const enhanced = query.replace(/\s+/g, '+');
+    // Add in:name for more precise matching when looking for specific repos
+    // return `${enhanced};
+    return `${enhanced}+in:name`; // test in:name
   }
 
   // Return query as-is if it already has qualifiers
@@ -63,6 +68,7 @@ export async function searchGithubRepos(
       full_name: repo.full_name,
       description: repo.description,
       html_url: repo.html_url,
+      homepage: repo.homepage,
       language: repo.language,
       stargazers_count: repo.stargazers_count,
       forks_count: repo.forks_count

@@ -1,6 +1,6 @@
 {
-  "provider": "Google",
-  "model": "Gemini",
-  "ide": "VS Code",
-  "extension": "Gemini CLI"
+  "provider": "UNKNOWN",
+  "model": "UNKNOWN",
+  "ide": "UNKNOWN",
+  "extension": "UNKNOWN"
 }

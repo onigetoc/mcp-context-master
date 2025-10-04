@@ -117,6 +117,9 @@ async function main() {
       console.log(`   ⭐ ${repo.stargazers_count} stars | 🍴 ${repo.forks_count || repo.forks} forks | 💻 ${repo.language || 'Unknown'}`);
       console.log(`   📝 ${repo.description || 'No description'}`);
       console.log(`   🔗 https://github.com/${repo.full_name}`);
+      if (repo.homepage) {
+        console.log(`   🏠 ${repo.homepage}`);
+      }
       console.log(`   📚 ${context7Url}`);
       console.log('');
     });

@@ -64,7 +64,8 @@ add_project_context(
 
 ### Available Commands
 
-- `/cm-init` or `/cm-setup`: Initialize (requires absolute project path)
+- `/cm-init`: /cm-init : First, read and follow all instructions in .context-master/cm-init.md before proceeding
+- `/cm-setup`: Initialize and Setup the current project (requires absolute project path)
 - `/cm-add [library] [topic]`: Add documentation
 - `/cm-search [library]`: Find on GitHub
 - `/cm-npm [package]`: Search NPM
@@ -157,6 +158,13 @@ User: "Create React component with useState"
 // ✅ Answer directly - React basics are known
 ```
 
+## When adding documentations, try to use the full Github library name.
+**Examples**
+- Use "Vercel AI SDK" instead of Vercel.
+- Use "Next.js" instead of "Next".
+- Use "Tailwind CSS" instead of "tailwind"
+
+
 #### Example 3: Project Setup
 
 User: "Initialize Context Master"
@@ -185,6 +193,20 @@ add_project_context(
   "React Query",    // Finds: TanStack/query
   "mutations"
 )
+```
+
+#### Example 5: JSON example for LLMs
+
+User: "add stripe react payement and checkout to my project"
+
+```json
+// Context Master finds repo automatically
+{
+  "projectPath": "FULL_PROJECT_PATH",
+  "libraryName": "React Stripe js",
+  "topic": "payment checkout",
+  "tokens": 5000
+}
 ```
 
 ### Best Practices

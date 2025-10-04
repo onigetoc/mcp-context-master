@@ -10,6 +10,7 @@ When you encounter a message starting with `/cm-`, execute the corresponding tas
 |---------|-----------|-------------|
 | `/cm-help` | `.context-master/tasks/cm-help.md` | Show available commands |
 | `/cm-init` | `.context-master/templates/cm-init.md` | Initialize AI configuration setup |
+| `/cm-setup` | `setup_project_context` | Use this setup_project_context from MCP Context Master tool |
 | `/cm-analyze` | `.context-master/tasks/cm-analyze.md` | Analyze dependencies |
 | `/cm-download` | `.context-master/tasks/cm-download.md` | Download high-priority docs |
 | `/cm-status` | `.context-master/tasks/cm-status.md` | Show project status |

@@ -1,0 +1,29 @@
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-03T21:47:19.395Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ✅ YES
+   cwd === resolved?          : ✅ YES
+   hint === resolved?         : ✅ YES 
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "library": "expo",
+  "topic": "react native",
+  "tokens": 3000,
+  "toolName": "add_project_context"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

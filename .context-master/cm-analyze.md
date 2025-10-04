@@ -1,43 +1,61 @@
-# Context Master - Project Analysis
+# Project Analysis Results
 
-## Dependency Analysis Instructions
+## 📊 Dependency Analysis
 
-When analyzing a project for Context Master, follow these steps:
+**Total Dependencies**: {TOTAL_DEPS}
+**Production Dependencies**: {PROD_DEPS}
+**Development Dependencies**: {DEV_DEPS}
 
-### 1. Scan Dependencies
-- Check package.json for dependencies and devDependencies
-- Look for other package managers (requirements.txt, Cargo.toml, etc.)
-- Identify the project type and framework
+## 🎯 Priority Recommendations
 
-### 2. Apply Priority Scoring
+### 🔴 HIGH PRIORITY - Download Documentation
+{HIGH_PRIORITY_LIST}
 
-#### HIGH PRIORITY (Score 8-10) - Always Download
-- **Specialized libraries**: remotion, zustand, framer-motion
-- **Complex APIs**: prisma, trpc, @tanstack/react-query
-- **Lesser-known frameworks**: solid-js, qwik, svelte-kit
-- **Unique patterns**: jotai, valtio, xstate
+**Reasoning**: These libraries are specialized, have complex APIs, or are poorly documented elsewhere.
 
-#### MEDIUM PRIORITY (Score 5-7) - Context Dependent
-- **Popular but complex**: next.js (advanced features), tailwindcss (custom)
-- **Configuration-heavy**: webpack, vite, typescript (advanced)
-- **Framework-specific**: nuxt, gatsby, remix
+### 🟡 MEDIUM PRIORITY - Consider Based on Usage
+{MEDIUM_PRIORITY_LIST}
 
-#### LOW PRIORITY (Score 1-4) - Skip
-- **Extremely popular**: react, express, lodash, axios
-- **Well-documented**: moment, jest, node.js core
-- **Simple APIs**: date-fns, uuid, chalk
+**Reasoning**: Popular libraries that might benefit from context depending on your specific usage.
 
-### 3. Generate Recommendations
+### 🟢 LOW PRIORITY - Skip Documentation
+{LOW_PRIORITY_LIST}
 
-Provide a clear list of:
-- High-priority libraries to download
-- Medium-priority libraries (with reasoning)
-- Low-priority libraries to skip
-- Total estimated download size/time
+**Reasoning**: Very well documented everywhere with stable, simple APIs.
 
-### 4. Next Actions
+## 📈 Analysis Criteria
 
-Suggest specific commands:
-- `setup_project_context` for full analysis
-- `add_project_context` for individual libraries
-- `list_available_contexts` to check status
+### Factors Increasing Priority:
+- GitHub Stars < 10,000
+- Specialized or niche functionality
+- Complex or unique API patterns
+- Limited official documentation
+- Recent major version changes
+
+### Factors Decreasing Priority:
+- GitHub Stars > 50,000
+- Extensive Stack Overflow presence
+- Simple and stable API
+- Industry standard tools
+- Massive official documentation
+
+## 🚀 Recommended Next Steps
+
+1. **Download High-Priority Documentation**
+   ```
+   add_project_context for each high-priority library
+   ```
+
+2. **Selective Medium-Priority Downloads**
+   ```
+   Choose based on your specific project needs
+   ```
+
+3. **Verify Context Setup**
+   ```
+   list_available_contexts to confirm downloads
+   ```
+
+---
+
+**Smart context selection saves time and improves code quality!** ⚡

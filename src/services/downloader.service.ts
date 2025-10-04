@@ -14,6 +14,7 @@ export interface SearchResult {
     originalPackageName: string;
     repoName: string;
     url: string;
+    homepage?: string; // Added to store official documentation/website URL for fallback
     context7Url: string;
     downloaded: boolean;
     topic?: string;  // Added to support topic-based file naming
@@ -48,14 +49,38 @@ export class DownloaderService {
                 // Step 1: Quick validation (skip if obviously invalid)
                 const isValid = await validateContext7Url(result.context7Url);
                 if (!isValid) {
-                    debugLog(`⚠️  Context7 URL validation failed, trying next result if available...`);
-                    failedDownloads.push({
-                        package: result.originalPackageName,
-                        reason: 'Library not found on Context7 (404)'
-                    });
+                    debugLog(`⚠️  Context7 URL validation failed, trying fallbacks...`);
                     
-                    // Try next result if this was a GitHub search with multiple results
-                    continue;
+                    // Try URL variants and homepage fallback immediately
+                    const variantResponse = await this.tryUrlVariants(result);
+                    if (variantResponse) {
+                        // Step 3: Process successful response from variants
+                        const content = variantResponse.data;
+                        
+                        if (!isValidContext7Content(content)) {
+                            debugLog(`❌ Downloaded content is not valid documentation`);
+                            failedDownloads.push({
+                                package: result.originalPackageName,
+                                reason: 'Downloaded content is not valid documentation'
+                            });
+                            continue;
+                        }
+                        
+                        // Save to file
+                        await fs.writeFile(filePath, content, 'utf8');
+                        await this.cleanupService.cleanupOldContextFiles(docsPath, result.originalPackageName, 1);
+                        
+                        downloadedFiles.push(filePath);
+                        result.downloaded = true;
+                        debugLog(`✅ Downloaded via fallback: ${fileName}`);
+                        continue;
+                    } else {
+                        failedDownloads.push({
+                            package: result.originalPackageName,
+                            reason: 'Library not found on Context7 and no working fallback (404)'
+                        });
+                        continue;
+                    }
                 }
                 
                 // Step 2: Download with retry logic
@@ -163,6 +188,7 @@ export class DownloaderService {
 
     /**
      * Tries URL variants for repositories ending with .js (e.g., next.js -> next)
+     * and homepage fallback (homepage + /llms.txt)
      */
     private async tryUrlVariants(result: SearchResult): Promise<any> {
         const variants: string[] = [];
@@ -172,17 +198,28 @@ export class DownloaderService {
             const owner = m[1];
             const repo = m[2];
             
-            // Generate variants
+            // Generate Context7 variants
             if (repo.endsWith('.js')) {
                 variants.push(`https://context7.com/${owner}/${repo.replace(/\.js$/, '')}/llms.txt`);
             }
             variants.push(`https://context7.com/${owner}/${repo}/llms.txt`);
         }
 
+        // Add homepage fallback if available
+        if (result.homepage) {
+            const homepageUrl = result.homepage.endsWith('/') 
+                ? result.homepage.slice(0, -1) 
+                : result.homepage;
+            variants.push(`${homepageUrl}/llms.txt`);
+            debugLog(`🏠 Adding homepage fallback: ${homepageUrl}/llms.txt`);
+        }
+
         const origParams = result.context7Url.split('?')[1] || '';
         
         for (const variantUrl of variants) {
-            const fullUrl = origParams ? `${variantUrl}?${origParams}` : variantUrl;
+            const fullUrl = origParams && !variantUrl.includes(result.homepage || '') 
+                ? `${variantUrl}?${origParams}` 
+                : variantUrl;
             
             try {
                 debugLog(`🔄 Trying variant: ${fullUrl}`);
@@ -190,6 +227,11 @@ export class DownloaderService {
                 
                 if (response && response.data && isValidContext7Content(response.data)) {
                     debugLog(`✅ Variant succeeded: ${fullUrl}`);
+                    return response;
+                } else if (response && response.data && variantUrl.includes(result.homepage || '')) {
+                    // For homepage fallback, we're less strict about content validation
+                    // since it might not follow Context7 format but could still be useful
+                    debugLog(`✅ Homepage fallback succeeded (lenient validation): ${fullUrl}`);
                     return response;
                 }
             } catch (error) {

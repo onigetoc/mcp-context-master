@@ -25,14 +25,24 @@ imgs/
 bun.lockb
 package-lock.json
 # Configuration directories avec clés API (SÉCURISÉ)
-.gemini/
+# Option 1: Dans le projet (peut poser problème avec certains IDEs)
+.gemini/settings.json
+.gemini/*.env
 .kiro/settings/
 .roo/settings/
 .serena/settings/
 .specify/settings/
 
+# Permettre les templates publics dans .gemini
+!.gemini/settings.template.json
+!.gemini/README.md
+
+# Option 2: Configurations externes (recommandé pour éviter gitignore)
+mcp-configs/
+
 # Fichiers de configuration avec secrets
 *settings.json
+!*settings.template.json
 *config.json
 *.env*
 !.env.example

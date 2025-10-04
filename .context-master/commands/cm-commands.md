@@ -7,7 +7,8 @@ When you see `/cm-` followed by a command, execute the corresponding action:
 ### Core Commands
 
 - **`/cm-help`**: Show this numbered list of available commands for selection
-- **`/cm-init`**: Initialize project with AI assistant configuration (execute cm-init.md)
+- **`/cm-init`**: /cm-init : First, read and follow all instructions in .context-master/cm-init.md before proceeding
+- **`/cm-setup`**: /cm-setup Initialize and Setup the current project with the Context Master Tool `setup_project_context` (requires current project absolute project path)
 - **`/cm-analyze`**: Analyze project dependencies and suggest documentation downloads
 - **`/cm-download`**: Download documentation for high-priority dependencies
 - **`/cm-status`**: Show current project context status and configuration
