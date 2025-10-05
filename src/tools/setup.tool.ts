@@ -13,7 +13,7 @@ import axios from 'axios';
 
 export const setupProjectContextTool = {
   name: "setup_project_context",
-  description: "Initialize and setup Context Master for a project. Use when user says init context master, setup context master, or /cm-init or /cm-setup. Creates .context-master directory, downloads templates from GitHub, analyzes project dependencies, and downloads documentation for important libraries. Automatically detects the current project directory.",
+  description: "Initialize and setup Context Master for a project. Use when user says init context master, setup context master, or /cm-ai-infos or /cm-setup. Creates .context-master directory, downloads templates from GitHub, analyzes project dependencies, and downloads documentation for important libraries. Automatically detects the current project directory.",
   inputSchema: {
     type: 'object',
     properties: {
@@ -47,7 +47,7 @@ async function updateAgentsFileWithTemplate(projectPath: string): Promise<string
   }
 
   // Read the template from .context-master directory
-  const templatePath = path.join(contextMasterDir, 'context-master-agents-prompt.md');
+  const templatePath = path.join(contextMasterDir, 'cm-instructions.md');
   if (!await fs.pathExists(templatePath)) {
     logs.push(`Template file not found: ${templatePath}, skipping AGENTS.md update`);
     return logs;
@@ -121,10 +121,10 @@ async function initializeContextMaster(projectPath: string): Promise<{ logs: str
   // Download templates from GitHub
   const githubBaseUrl = 'https://raw.githubusercontent.com/Onigetoc/mcp-context-master/main/templates';
   const templateFiles = [
-    'cm-init.md',
+    'cm-ai-infos.md',
     'cm-analyze.md',
     'cm-status.md',
-    'context-master-agents-prompt.md'
+    'cm-instructions.md'
   ];
 
   const downloadedTemplates: string[] = [];
@@ -367,7 +367,7 @@ ${downloadedFiles.length > 0 ? downloadedFiles.map(file => `- ${file}`).join('\n
 ${searchResults.map(result => `- **${result.originalPackageName}**: ${result.repoName} - ${result.url}`).join('\n')}
 
 ## Created/Updated Files
-- **Templates**: cm-init.md, cm-analyze.md, cm-status.md, context-master-agents-prompt.md
+- **Templates**: cm-ai-infos.md, cm-analyze.md, cm-status.md, cm-instructions.md
 - **Commands**: cm-commands.md, command-dispatcher.md  
 - **Context**: context-manifest.yaml (updated with new files)
 - **Configuration**: ai-infos.json (placeholder - needs update)

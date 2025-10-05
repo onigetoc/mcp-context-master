@@ -1,6 +1,1 @@
-{
-  "provider": "UNKNOWN",
-  "model": "UNKNOWN",
-  "ide": "UNKNOWN",
-  "extension": "UNKNOWN"
-}
+{"provider": "GitHub", "model": "GitHub Copilot", "ide": "VS Code", "extension": "GitHub Copilot"}

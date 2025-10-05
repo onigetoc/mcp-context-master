@@ -42,7 +42,8 @@ Context Master helps you download up-to-date documentation for libraries and fra
 ## Command System
 Use `/cm-` commands for quick actions:
 - `/cm-help`: Show available commands
-- `/cm-init` or `/cm-setup`: Initialize project
+- `/cm-ai-infos`: Get AI assistant information
+- `/cm-setup`: Initialize and setup Context Master for a project
 - `/cm-analyze`: Analyze dependencies
 - `/cm-search [library]`: Search for library documentation
 

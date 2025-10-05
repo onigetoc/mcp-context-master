@@ -11,7 +11,7 @@ export const readTemplateTool = {
     properties: {
       templateName: {
         type: 'string',
-        description: 'Name of the template file to read (e.g., "cm-init.md", "cm-analyze.md")'
+        description: 'Name of the template file to read (e.g., "cm-ai-infos.md", "cm-analyze.md")'
       },
       projectPath: {
         type: 'string',
@@ -40,7 +40,7 @@ export async function handleReadTemplateTool(request: any): Promise<McpToolRespo
     if (!await fs.pathExists(templatePath)) {
       throw new McpError(
         ErrorCode.InvalidRequest, 
-        `Template not found: ${templateName}. Run cm_init first to download templates.`
+        `Template not found: ${templateName}. Run cm_ai_infos first to download templates.`
       );
     }
 

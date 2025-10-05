@@ -6,12 +6,12 @@ This MCP server provides intelligent GitHub repository search and Context7 integ
 
 ## Available Tools
 
-### 1. `cm_init` - Start Here!
-**When to use**: When user says `/cm-init`, "initialize context master", "setup context", or similar.
+### 1. `cm_ai_infos` - Start Here!
+**When to use**: When user says `/cm-ai-infos`, "initialize context master", "setup context", or similar.
 
 ```json
 {
-  "name": "cm_init",
+  "name": "cm_ai_infos",
   "arguments": {
     "projectPath": "." // optional, defaults to current directory
   }
@@ -25,7 +25,7 @@ This MCP server provides intelligent GitHub repository search and Context7 integ
 - Shows priority guidelines
 
 ### 2. `setup_project_context` - Full Analysis
-**When to use**: After `cm_init`, or when user wants complete project analysis.
+**When to use**: After `cm_ai_infos`, or when user wants complete project analysis.
 
 ```json
 {
@@ -102,7 +102,7 @@ This MCP server provides intelligent GitHub repository search and Context7 integ
 ## Typical Workflow
 
 ### For New Projects:
-1. User says `/cm-init` → Use `cm_init` tool
+1. User says `/cm-ai-infos` → Use `cm_ai_infos` tool
 2. Follow the provided instructions
 3. Use `setup_project_context` for full analysis
 4. Use `add_project_context` for specific high-priority libraries
@@ -120,7 +120,7 @@ This MCP server provides intelligent GitHub repository search and Context7 integ
 
 ## Best Practices
 
-1. **Always start with `cm_init`** for new users
+1. **Always start with `cm_ai_infos`** for new users
 2. **Explain the priority system** to users
 3. **Don't download everything** - be selective
 4. **Check existing contexts** before downloading
@@ -128,11 +128,11 @@ This MCP server provides intelligent GitHub repository search and Context7 integ
 
 ## Example Conversations
 
-### User: "/cm-init"
+### User: "/cm-ai-infos"
 ```
 AI: I'll initialize Context Master for your project.
 
-[calls cm_init tool]
+[calls cm_ai_infos tool]
 
 Based on the analysis, I found 15 dependencies in your React project. Here's what I recommend:
 

@@ -44,7 +44,7 @@ Show disk usage:
 
 ### Step 7: Quick Actions
 Suggest relevant next commands based on status:
-- If not initialized: `/cm-init`
+- If not initialized: `/cm-ai-infos`
 - If not analyzed: `/cm-analyze`
 - If analysis complete but no downloads: `/cm-download`
 - If everything complete: `/cm-clean` or `/cm-selective`

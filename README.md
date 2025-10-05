@@ -120,7 +120,7 @@ Initialize and setup Context Master for a project. Creates .context-master direc
 - `projectPath` (optional): Path to the project directory to analyze (default: ".")
 - `maxDependencies` (optional): Maximum number of dependencies to search for (default: 10)
 
-**Usage:** Use when user says 'init context master', 'setup context master', or '/cm-init'
+**Usage:** Use when user says 'init context master', 'setup context master', or '/cm-ai-infos'
 
 ### 2. `add_project_context`
 

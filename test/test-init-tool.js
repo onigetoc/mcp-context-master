@@ -20,7 +20,7 @@ async function runTest() {
   // Define paths for cleanup
   const agentsFilePath = path.join(projectRoot, 'AGENTS.md');
   const agentsDirPath = path.join(projectRoot, '.context-master');
-  const cmInitFilePath = path.join(agentsDirPath, 'cm-init.md');
+  const cmAiInfosFilePath = path.join(agentsDirPath, 'cm-ai-infos.md');
 
   try {
     console.log('--- Starting Init Tool Test ---');
@@ -53,11 +53,11 @@ async function runTest() {
       console.error('❌ FAILURE: .context-master directory was NOT created.');
     }
 
-    // Check if cm-init.md was created inside .context-master
-    if (await fs.pathExists(cmInitFilePath)) {
-      console.log('✅ SUCCESS: .context-master/cm-init.md was created.');
+    // Check if cm-ai-infos.md was created inside .context-master
+    if (await fs.pathExists(cmAiInfosFilePath)) {
+      console.log('✅ SUCCESS: .context-master/cm-ai-infos.md was created.');
     } else {
-      console.error('❌ FAILURE: .context-master/cm-init.md was NOT created.');
+      console.error('❌ FAILURE: .context-master/cm-ai-infos.md was NOT created.');
     }
     
     // Check console output for OS info

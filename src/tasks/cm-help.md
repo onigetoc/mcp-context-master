@@ -4,7 +4,7 @@
 
 Please select a command by typing the number or the full command:
 
-1. **`/cm-init`** - Initialize project with AI assistant configuration
+1. **`/cm-ai-infos`** - Initialize project with AI assistant configuration
 2. **`/cm-analyze`** - Analyze project dependencies and suggest documentation downloads  
 3. **`/cm-download`** - Download documentation for high-priority dependencies
 4. **`/cm-status`** - Show current project context status and configuration
@@ -21,12 +21,12 @@ Please select a command by typing the number or the full command:
 ## Quick Start
 
 For new projects, start with:
-1. `/cm-init` - Set up your AI configuration
+1. `/cm-ai-infos` - Set up your AI configuration
 2. `/cm-analyze` - See what documentation is recommended
 3. `/cm-download` - Get the essential documentation
 
 ## Need Help?
 
 - Type a number (1-13) to execute that command
-- Type the full command name (e.g., `/cm-init`)
+- Type the full command name (e.g., `/cm-ai-infos`)
 - Type `/cm-help` anytime to see this menu again

@@ -44,7 +44,7 @@ Show what was removed:
 ### Step 5: Post-Cleanup Status
 Display new status:
 - **Project state**: Clean/Reset
-- **Next recommended action**: `/cm-init` or `/cm-analyze`
+- **Next recommended action**: `/cm-ai-infos` or `/cm-analyze`
 - **Available commands**: Show relevant next steps
 
 ### Step 6: Verification

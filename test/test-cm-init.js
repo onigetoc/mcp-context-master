@@ -3,7 +3,7 @@
 import { handleSetupProjectContextTool } from '../build/tools/setup.tool.js';
 
 async function testCmInit() {
-  console.log('Testing cm_init tool...');
+  console.log('Testing cm_ai_infos tool...');
   
   try {
     const request = {

@@ -25,7 +25,7 @@ async function testAgentsUpdate() {
         const agentsFilePath = path.join(testDir, 'AGENTS.md');
         
         // Read the actual template file
-        const templatePath = path.join(__dirname, '..', 'templates', 'context-master-agents-prompt.md');
+        const templatePath = path.join(__dirname, '..', 'templates', 'cm-instructions.md');
         const mockInstructions = await fs.readFile(templatePath, 'utf8');
 
         // Create new AGENTS.md

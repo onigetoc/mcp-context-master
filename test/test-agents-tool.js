@@ -21,8 +21,8 @@ async function testUpdateAgentsTool() {
         const contextMasterDir = path.join(testProjectDir, '.context-master');
         await fs.ensureDir(contextMasterDir);
         
-        const localTemplatePath = path.join(__dirname, '..', 'templates', 'context-master-agents-prompt.md');
-        const templatePath = path.join(contextMasterDir, 'context-master-agents-prompt.md');
+        const localTemplatePath = path.join(__dirname, '..', 'templates', 'cm-instructions.md');
+        const templatePath = path.join(contextMasterDir, 'cm-instructions.md');
         
         if (await fs.pathExists(localTemplatePath)) {
             const templateContent = await fs.readFile(localTemplatePath, 'utf8');

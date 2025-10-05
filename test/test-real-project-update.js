@@ -34,7 +34,7 @@ async function testRealProject() {
         
         // Check if .context-master directory and template exist
         const contextMasterDir = path.join(realProjectPath, '.context-master');
-        const templatePath = path.join(contextMasterDir, 'context-master-agents-prompt.md');
+        const templatePath = path.join(contextMasterDir, 'cm-instructions.md');
         
         const contextDirExists = await fs.pathExists(contextMasterDir);
         const templateExists = await fs.pathExists(templatePath);

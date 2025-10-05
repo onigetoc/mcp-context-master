@@ -11,7 +11,7 @@ When you see a message starting with `/cm-`, this is a Context Master command th
 ### Available Commands
 
 - `/cm-help` - Show numbered list of available commands
-- `/cm-init` - Initialize AI assistant configuration  
+- `/cm-ai-infos` - Initialize AI assistant configuration  
 - `/cm-analyze` - Analyze project dependencies and suggest documentation
 - `/cm-download` - Download high-priority documentation
 - `/cm-status` - Show current project context status

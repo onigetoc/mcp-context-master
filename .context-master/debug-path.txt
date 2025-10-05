@@ -1,12 +1,12 @@
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔍 DEBUG Path Resolution - 2025-10-05T00:01:12.962Z
+🔍 DEBUG Path Resolution - 2025-10-05T22:11:30.604Z
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📂 process.cwd()              : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
-📂 projectPath (hint from LLM): ❌ NOT PROVIDED
+📂 projectPath (hint from LLM): .
 📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
-📂 Path source                : cwd
+📂 Path source                : hint
 
 🔄 Comparisons:
    cwd === hint?              : ❌ NO
@@ -20,10 +20,9 @@
 
 📦 Additional Info:
 {
-  "library": "tailwindcss",
-  "topic": "full context",
-  "tokens": 3000,
-  "toolName": "add_project_context"
+  "toolName": "setup_project_context",
+  "maxDependencies": 5,
+  "providedPath": "."
 }
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

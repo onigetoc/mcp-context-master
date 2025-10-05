@@ -9,8 +9,8 @@ When you encounter a message starting with `/cm-`, execute the corresponding tas
 | Command | Task File | Description |
 |---------|-----------|-------------|
 | `/cm-help` | `.context-master/tasks/cm-help.md` | Show available commands |
-| `/cm-init` | `.context-master/templates/cm-init.md` | Initialize AI configuration setup |
-| `/cm-setup` | `.context-master/templates/cm-init.md` | Initialize AI configuration setup |
+| `/cm-ai-infos` | `.context-master/templates/cm-ai-infos.md` | Initialize AI configuration setup |
+| `/cm-setup` | `.context-master/templates/cm-ai-infos.md` | Initialize AI configuration setup |
 | `/cm-analyze` | `.context-master/tasks/cm-analyze.md` | Analyze dependencies |
 | `/cm-download` | `.context-master/tasks/cm-download.md` | Download high-priority docs |
 | `/cm-status` | `.context-master/tasks/cm-status.md` | Show project status |
@@ -31,7 +31,7 @@ When you encounter a message starting with `/cm-`, execute the corresponding tas
 ### Numbered Selection Support
 
 When user types a number (1-13) after seeing `/cm-help`, map to:
-1. `/cm-init`
+1. `/cm-ai-infos`
 2. `/cm-analyze`  
 3. `/cm-download`
 4. `/cm-status`

@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-// Test the fixed setup tool to verify that context-master-agents-prompt.md goes to .context-master folder
+// Test the fixed setup tool to verify that cm-instructions.md goes to .context-master folder
 import fs from 'fs-extra';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -25,13 +25,13 @@ async function testSetupFixed() {
         console.log('✅ Created .context-master directory');
         
         // Read the template from the local templates folder and write it to .context-master
-        const localTemplatePath = path.join(__dirname, '..', 'templates', 'context-master-agents-prompt.md');
-        const targetTemplatePath = path.join(contextMasterDir, 'context-master-agents-prompt.md');
+        const localTemplatePath = path.join(__dirname, '..', 'templates', 'cm-instructions.md');
+        const targetTemplatePath = path.join(contextMasterDir, 'cm-instructions.md');
         
         if (await fs.pathExists(localTemplatePath)) {
             const templateContent = await fs.readFile(localTemplatePath, 'utf8');
             await fs.writeFile(targetTemplatePath, templateContent, 'utf8');
-            console.log('✅ Downloaded context-master-agents-prompt.md to .context-master/');
+            console.log('✅ Downloaded cm-instructions.md to .context-master/');
             
             // Verify the file exists in the correct location
             const templateExists = await fs.pathExists(targetTemplatePath);

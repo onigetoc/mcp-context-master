@@ -4,12 +4,12 @@
 
 When a user asks for Context Master help, follow this simple pattern:
 
-### 1. User Says `/cm-init` or "initialize context"
-→ **Use the `cm_init` tool immediately**
+### 1. User Says `/cm-ai-infos` or "initialize context"
+→ **Use the `cm_ai_infos` tool immediately**
 
 ```json
 {
-  "name": "cm_init",
+  "name": "cm_ai_infos",
   "arguments": {
     "projectPath": "."
   }
@@ -57,7 +57,7 @@ Is the library specialized/unique? (remotion, zustand, framer-motion)
 
 | User Says | You Do | Tool to Use |
 |-----------|---------|-------------|
-| "/cm-init" | Initialize project | `cm_init` |
+| "/cm-ai-infos" | Get AI assistant infos project | `cm_ai_infos` |
 | "analyze my project" | Full analysis | `setup_project_context` |
 | "add context for X" | Download X docs | `add_project_context` |
 | "what's downloaded?" | List contexts | `list_available_contexts` |
@@ -65,9 +65,9 @@ Is the library specialized/unique? (remotion, zustand, framer-motion)
 
 ## Success Pattern
 
-1. **Always start with `cm_init`** for new users
+1. **Always start with `cm_ai_infos`** for new users
 2. **Follow the instructions** it provides
 3. **Be selective** - don't download everything
 4. **Explain your reasoning** for priority decisions
 
-That's it! The `cm_init` tool will guide you through everything else.
+That's it! The `cm_ai_infos` tool will guide you through everything else.

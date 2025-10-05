@@ -26,7 +26,7 @@ Le projet Context Master utilise maintenant **automatiquement** `process.cwd()` 
 
 ### 2. Templates mis à jour
 
-#### `context-master-agents-prompt.md`
+#### `cm-instructions.md`
 - ✅ Section "Critical: Absolute Paths Required" → "Automatic Path Detection"
 - ✅ Exemples simplifiés sans `projectPath`
 - ✅ Instructions mises à jour pour ne plus demander le path au LLM

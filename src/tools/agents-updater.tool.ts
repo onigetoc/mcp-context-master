@@ -37,7 +37,7 @@ async function updateAgentsFileWithTemplate(projectPath: string): Promise<string
   }
 
   // Read the template from .context-master directory
-  const templatePath = path.join(contextMasterDir, 'context-master-agents-prompt.md');
+  const templatePath = path.join(contextMasterDir, 'cm-instructions.md');
   if (!await fs.pathExists(templatePath)) {
     throw new Error(`Template file not found: ${templatePath}. Run setup_project_context first.`);
   }
@@ -106,7 +106,7 @@ export async function handleUpdateAgentsTool(request: any): Promise<McpToolRespo
 
 ## Update Results
 - **Project Path**: ${resolvedPath}
-- **Template Source**: .context-master/context-master-agents-prompt.md
+- **Template Source**: .context-master/cm-instructions.md
 - **Target File**: AGENTS.md
 
 ## Update Logs

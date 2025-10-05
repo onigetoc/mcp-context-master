@@ -72,7 +72,7 @@ async function testSetupTool() {
             { path: contextDir, name: 'context directory' },
             { path: commandsDir, name: 'commands directory' },
             { path: path.join(contextMasterDir, 'ai-infos.json'), name: 'ai-infos.json' },
-            { path: path.join(contextMasterDir, 'cm-init.md'), name: 'cm-init.md template' },
+            { path: path.join(contextMasterDir, 'cm-ai-infos.md'), name: 'cm-ai-infos.md template' },
             { path: path.join(contextMasterDir, 'cm-analyze.md'), name: 'cm-analyze.md template' },
             { path: path.join(contextMasterDir, 'cm-status.md'), name: 'cm-status.md template' },
             { path: path.join(commandsDir, 'cm-commands.md'), name: 'cm-commands.md' },

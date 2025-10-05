@@ -56,7 +56,7 @@ async function testRealSetup() {
       { path: path.join(contextMasterDir, 'context'), name: 'context directory' },
       { path: path.join(contextMasterDir, 'commands'), name: 'commands directory' },
       { path: path.join(contextMasterDir, 'ai-infos.json'), name: 'ai-infos.json' },
-      { path: path.join(contextMasterDir, 'cm-init.md'), name: 'cm-init.md template' },
+      { path: path.join(contextMasterDir, 'cm-ai-infos.md'), name: 'cm-ai-infos.md template' },
       { path: path.join(contextMasterDir, 'context', 'context-manifest.yaml'), name: 'context-manifest.yaml' }
     ];
 

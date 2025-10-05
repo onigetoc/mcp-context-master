@@ -2,14 +2,14 @@
 
 > Copy this file to your project's `.kiro/steering/` directory to automatically guide AI assistants on using Context Master.
 
-## When User Says `/cm-init` or Similar
+## When User Says `/cm-ai-infos` or Similar
 
 The user wants to initialize Context Master for their project. Here's exactly what to do:
 
-### Step 1: Use the `cm_init` Tool
+### Step 1: Use the `cm_ai_infos` Tool
 ```json
 {
-  "name": "cm_init",
+  "name": "cm_ai_infos",
   "arguments": {
     "projectPath": "."
   }
@@ -22,7 +22,7 @@ This tool will:
 - Show you exactly what to do next
 
 ### Step 2: Follow the Instructions
-The `cm_init` tool will give you a detailed guide with:
+The `cm_ai_infos` tool will give you a detailed guide with:
 - Project analysis results
 - Priority recommendations
 - Next steps to take
@@ -36,7 +36,7 @@ Based on the analysis, typically you'll:
 
 ## Available MCP Tools
 
-- **`cm_init`** - Start here! Provides complete guidance
+- **`cm_ai_infos`** - Start here! Provides complete guidance
 - **`setup_project_context`** - Analyze all dependencies  
 - **`add_project_context`** - Download specific library docs
 - **`list_available_contexts`** - See what's downloaded
@@ -53,12 +53,12 @@ Based on the analysis, typically you'll:
 - Very popular: react, express, lodash, axios
 - Well-documented: moment, jest, node.js core
 
-## Example Response to `/cm-init`
+## Example Response to `/cm-ai-infos`
 
 ```
 I'll initialize Context Master for your project.
 
-[calls cm_init tool]
+[calls cm_ai_infos tool]
 
 Perfect! I've analyzed your project and found 12 dependencies. Based on the analysis:
 
@@ -74,7 +74,7 @@ Would you like me to proceed with downloading the high-priority documentation?
 
 ## Remember
 
-- **Always start with `cm_init`** - it provides complete guidance
+- **Always start with `cm_ai_infos`** - it provides complete guidance
 - **Be selective** - don't download everything
 - **Explain your reasoning** for priority decisions
 - **Follow the instructions** provided by the tools
