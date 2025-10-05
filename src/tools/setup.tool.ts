@@ -191,16 +191,22 @@ files:
   await fs.writeFile(manifestPath, initialManifest, 'utf8');
   logs.push(`Created initial context-manifest.yaml`);
 
-  // Create initial ai-infos.json placeholder
+  // Create initial ai-infos.json placeholder (only if it doesn't exist)
   const aiInfosPath = path.join(contextMasterDir, 'ai-infos.json');
-  const initialAiInfos = {
-    provider: "UNKNOWN",
-    model: "UNKNOWN",
-    ide: "UNKNOWN",
-    extension: "UNKNOWN"
-  };
-  await fs.writeFile(aiInfosPath, JSON.stringify(initialAiInfos, null, 2), 'utf8');
-  logs.push(`Created initial ai-infos.json placeholder`);
+  const aiInfosExists = await fs.pathExists(aiInfosPath);
+  
+  if (!aiInfosExists) {
+    const initialAiInfos = {
+      provider: "UNKNOWN",
+      model: "UNKNOWN",
+      ide: "UNKNOWN",
+      extension: "UNKNOWN"
+    };
+    await fs.writeFile(aiInfosPath, JSON.stringify(initialAiInfos, null, 2), 'utf8');
+    logs.push(`Created initial ai-infos.json placeholder`);
+  } else {
+    logs.push(`ai-infos.json already exists, preserving existing configuration`);
+  }
 
   // Update AGENTS.md with Context Master instructions
   try {
