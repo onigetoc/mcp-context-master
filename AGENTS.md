@@ -445,7 +445,7 @@ setup_project_context(
 
 **What it does:**
 1. Scans package.json, requirements.txt at `project_path`
-2. Verifies packages via NPM
+2. Verifies packages via NPM for the `setup_project_context` tool only
 3. Creates `.context-master/` structure at `project_path`
 4. Returns dependency list with stats
 

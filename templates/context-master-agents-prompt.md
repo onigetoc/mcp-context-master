@@ -56,7 +56,6 @@ add_project_context(
 - No need to manually specify paths in most cases
 
 ### Available Commands
-
 - `/cm-init`: Initialize Context Master for the current project
 - `/cm-setup`: Setup and analyze project dependencies automatically
 - `/cm-add [library] [topic]`: Add documentation for a specific library

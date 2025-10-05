@@ -63,13 +63,13 @@ add_project_context(
 - Never assume or use relative paths
 
 ### Available Commands
-
-- `/cm-init` or `/cm-setup`: Initialize (requires absolute project path)
-- `/cm-add [library] [topic]`: Add documentation
-- `/cm-search [library]`: Find on GitHub
-- `/cm-npm [package]`: Search NPM
-- `/cm-list`: List contexts
-- `/cm-read [file]`: Read context
+- `/cm-init`: Initialize Context Master for the current project
+- `/cm-setup`: Setup and analyze project dependencies automatically
+- `/cm-add [library] [topic]`: Add documentation for a specific library
+- `/cm-search [library]`: Find library on GitHub
+- `/cm-npm [package]`: Search NPM registry
+- `/cm-list`: List available contexts
+- `/cm-read [file]`: Read context file
 
 ### Available MCP Tools
 
