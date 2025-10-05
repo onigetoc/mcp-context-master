@@ -10,7 +10,7 @@ import * as path from 'path';
 
 export const addProjectContextTool = {
   name: "add_project_context",
-  description: "Adds context for a library using EXACT package names from package.json or confirmed library names. IMPORTANT: This tool requires exact, confirmed library names. If you're unsure about the exact name, use the search workflow first: 1) Search GitHub for the library, 2) Confirm the correct repository, 3) Use this tool with the exact name. For example: Use 'remotion' (not '@remotion/captions'), 'react' (not 'react-dom'), '@tanstack/react-query' (not 'react-query'). If the user mentions a feature or topic (like 'captions', 'routing'), that should be used as a topic parameter in Context7, not as part of the library name.",
+  description: "Adds context for a library using EXACT package names from package.json or confirmed library names. If you're unsure about the exact library name, use the search workflow first: 1) Search GitHub for the library, 2) Confirm the correct repository, 3) Use this tool with the exact name. For example: Use 'remotion' (not '@remotion/captions'), 'react' (not 'react-dom'), '@tanstack/react-query' (not 'react-query'). If the user mentions a feature or topic (like 'captions', 'routing'), that should be used as a topic parameter, not as part of the library name.",
   inputSchema: {
     type: 'object',
     properties: {
@@ -20,7 +20,7 @@ export const addProjectContextTool = {
       },
       projectPath: {
         type: 'string',
-        description: 'Optional absolute path to the project directory. If not provided, will use process.cwd() as fallback.'
+        description: 'Optional project directory path, if not provided, automatically detects the current working directory.'
       },
       topic: {
         type: 'string',

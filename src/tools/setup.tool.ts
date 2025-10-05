@@ -3,6 +3,7 @@ import { McpToolResponse } from '../types/mcp-types.js';
 import { ProjectAnalyzer } from '../services/analyzer.service.js';
 import { SearchService } from '../services/search.service.js';
 import { DownloaderService } from '../services/downloader.service.js';
+import { PathResolverService } from '../services/path-resolver.service.js';
 import { updateContextManifest } from '../services/registry.service.js';
 import { debugLog } from '../utils/logger.js';
 import fs from 'fs-extra';
@@ -12,14 +13,13 @@ import axios from 'axios';
 
 export const setupProjectContextTool = {
   name: "setup_project_context",
-  description: "Initialize and setup Context Master for a project. Use when user says init context master, setup context master, or /cm-init or /cm-setup. Creates .context-master directory, downloads templates from GitHub, analyzes project dependencies, and downloads documentation for important libraries.",
+  description: "Initialize and setup Context Master for a project. Use when user says init context master, setup context master, or /cm-init or /cm-setup. Creates .context-master directory, downloads templates from GitHub, analyzes project dependencies, and downloads documentation for important libraries. Automatically detects the current project directory.",
   inputSchema: {
     type: 'object',
     properties: {
       projectPath: {
         type: 'string',
-        description: 'IMPORTANT: Full absolute path to the project directory. MCP servers run in isolation and cannot access VS Code working directory. Examples: Windows: C:\\Users\\Name\\Projects\\MyProject, macOS/Linux: /Users/name/projects/myproject or /home/user/projects/myproject. Do NOT use relative paths like . or ./project as they refer to the MCP server directory, not your project.',
-        default: '.'
+        description: 'Optional project directory path. If not provided, automatically detects the current working directory.'
       },
       maxDependencies: {
         type: 'number',
@@ -29,54 +29,11 @@ export const setupProjectContextTool = {
         maximum: 50
       },
     },
-    required: ['projectPath']
+    required: []
   }
 } as const;
 
-function validateAbsolutePath(projectPath: string): { isValid: boolean; errorMessage?: string } {
-  // Check for obviously invalid relative paths
-  const invalidPaths = ['.', './', '../', './project', '../project', '~/'];
-  if (invalidPaths.includes(projectPath) || projectPath.startsWith('./') || projectPath.startsWith('../')) {
-    return {
-      isValid: false,
-      errorMessage: `Invalid relative path detected: "${projectPath}". You must provide a full absolute user current project path.`
-    };
-  }
 
-  // Check if path is absolute based on OS
-  const isWindows = os.platform() === 'win32';
-  const isMacOS = os.platform() === 'darwin';
-  const isLinux = os.platform() === 'linux';
-
-  if (isWindows) {
-    // Windows: Must start with drive letter (C:\, D:\, etc.)
-    const windowsAbsoluteRegex = /^[A-Za-z]:\\/;
-    if (!windowsAbsoluteRegex.test(projectPath)) {
-      return {
-        isValid: false,
-        errorMessage: `Invalid Windows path: "${projectPath}". Must be absolute path starting with drive letter (e.g., C:\\Users\\Name\\Projects\\MyProject)`
-      };
-    }
-  } else if (isMacOS || isLinux) {
-    // macOS/Linux: Must start with /
-    if (!projectPath.startsWith('/')) {
-      return {
-        isValid: false,
-        errorMessage: `Invalid ${isMacOS ? 'macOS' : 'Linux'} path: "${projectPath}". Must be absolute path starting with / (e.g., /Users/name/projects/myproject or /home/user/projects/myproject)`
-      };
-    }
-  }
-
-  // Additional check: path should not be too short (likely invalid)
-  if (projectPath.length < 3) {
-    return {
-      isValid: false,
-      errorMessage: `Path too short: "${projectPath}". Please provide a complete absolute path to your project directory.`
-    };
-  }
-
-  return { isValid: true };
-}
 
 async function updateAgentsFileWithTemplate(projectPath: string): Promise<string[]> {
   const logs: string[] = [];
@@ -282,56 +239,46 @@ files:
 
 
 export async function handleSetupProjectContextTool(request: any): Promise<McpToolResponse> {
-  const { projectPath = '.', maxDependencies = 10 } = request.params.arguments || {};
+  const { projectPath, maxDependencies = 10 } = request.params.arguments || {};
 
-  // CRITICAL: Validate absolute path before proceeding
-  const pathValidation = validateAbsolutePath(projectPath);
-  if (!pathValidation.isValid) {
-    const platform = os.platform();
-    const examplePaths = {
-      win32: 'C:\\Users\\YourName\\Projects\\MyProject',
-      darwin: '/Users/yourname/projects/myproject',
-      linux: '/home/username/projects/myproject'
-    };
-
-    const errorGuide = `# ❌ Invalid Project Path
+  // Use PathResolverService to intelligently resolve the project path
+  const pathResolver = new PathResolverService();
+  let fullPath: string;
+  
+  try {
+    // PathResolverService will use process.cwd() if projectPath is undefined or invalid
+    fullPath = await pathResolver.resolveProjectPath(projectPath, true, {
+      toolName: 'setup_project_context',
+      maxDependencies,
+      providedPath: projectPath || 'none (auto-detect)'
+    });
+  } catch (error) {
+    return {
+      content: [{
+        type: "text",
+        text: `# ❌ Project Path Resolution Failed
 
 ## Error
-${pathValidation.errorMessage}
+Could not resolve project directory: ${error instanceof Error ? error.message : String(error)}
 
-## Required Format
-You MUST provide the **full absolute path** to your project directory.
+## Details
+- **Provided Path**: ${projectPath || 'none (auto-detecting)'}
+- **Current Working Directory**: ${process.cwd()}
+- **Platform**: ${os.platform()}
 
-### Examples by Operating System:
-- **Windows**: \`${examplePaths.win32}\`
-- **macOS**: \`${examplePaths.darwin}\`
-- **Linux**: \`${examplePaths.linux}\`
+## Troubleshooting
+1. Ensure you're running this command from your project directory
+2. If you provided a path, verify it exists and is accessible
+3. Check that the directory contains a valid project (package.json, etc.)
 
-### ❌ These will NOT work:
-- \`.\` (current directory)
-- \`./project\` (relative path)
-- \`../project\` (relative path)
-- \`~/project\` (tilde expansion)
-
-### ✅ How to get your project path:
-1. **VS Code**: Right-click on your project folder → "Copy Path"
-2. **Terminal**: Run \`pwd\` (macOS/Linux) or \`cd\` (Windows) in your project directory
-3. **File Explorer**: Copy the full path from the address bar
-
-## Current System
-- **Platform**: ${platform}
-- **Received Path**: "${projectPath}"
-
-Please retry with the correct absolute path format for your operating system.`;
-
-    return {
-      content: [{ type: "text", text: errorGuide }]
+The tool will automatically use your current working directory if no path is provided.`
+      }]
     };
   }
 
   try {
     // 1. Initialize Context Master (create directory, download templates, update AGENTS.md)
-    const { logs: initLogs, dependencies, projectType } = await initializeContextMaster(projectPath);
+    const { logs: initLogs, dependencies, projectType } = await initializeContextMaster(fullPath);
     debugLog('Context Master initialization complete.', initLogs);
 
     // 2. If no dependencies found, return initialization result only
@@ -374,7 +321,7 @@ Use these slash commands to interact with Context Master:
     const searcher = new SearchService();
     const downloader = new DownloaderService();
 
-    const projectInfo = await analyzer.analyze(projectPath);
+    const projectInfo = await analyzer.analyze(fullPath);
     if (!projectInfo) {
       throw new Error('Could not determine project type or dependencies');
     }
@@ -382,7 +329,7 @@ Use these slash commands to interact with Context Master:
     let dependenciesToSearch = projectInfo.dependencies.slice(0, maxDependencies);
     const searchResults = await searcher.searchDependencies(dependenciesToSearch, projectInfo.type === 'node', undefined, undefined);
 
-    const docsPath = path.join(projectPath, '.context-master', 'context');
+    const docsPath = path.join(fullPath, '.context-master', 'context');
     await downloader.ensureDocsFolder(docsPath);
     const downloadedFiles = await downloader.downloadDocumentation(searchResults, docsPath, true);
 

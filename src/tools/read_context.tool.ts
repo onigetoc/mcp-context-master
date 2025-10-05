@@ -58,7 +58,7 @@ export const readSpecificContextTool = {
     properties: {
       fileName: {
         type: 'string',
-        description: 'The exact name of the context file to read (e.g., \'cm-react-context-2023-10-27.md\').'
+        description: 'The exact name of the context file to read (e.g., \'cm-react-context-2023-10-27.md\'). inside .context-master/context directory.'
       }
     },
     required: ['fileName']

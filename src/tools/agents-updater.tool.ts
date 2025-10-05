@@ -6,52 +6,20 @@ import os from 'os';
 
 export const updateAgentsTool = {
   name: "update_agents_file",
-  description: "Update project's AGENTS.md file with Context Master instructions. Reads the template from .context-master directory and updates the project's AGENTS.md file.",
+  description: "Update project's AGENTS.md file with Context Master instructions. Reads the template from .context-master directory and updates the project's AGENTS.md file. Automatically detects the current project directory.",
   inputSchema: {
     type: 'object',
     properties: {
       projectPath: {
         type: 'string',
-        description: 'Full absolute path to the project directory where AGENTS.md should be updated',
-        default: '.'
+        description: 'Optional project directory path, if not provided, automatically detects the current working directory.'
       },
     },
-    required: ['projectPath']
+    required: []
   }
 } as const;
 
-function validateAbsolutePath(projectPath: string): { isValid: boolean; errorMessage?: string } {
-  // Check for obviously invalid relative paths
-  const invalidPaths = ['.', './', '../', './project', '../project', '~/'];
-  if (invalidPaths.includes(projectPath) || projectPath.startsWith('./') || projectPath.startsWith('../')) {
-    return {
-      isValid: false,
-      errorMessage: `Invalid relative path detected: "${projectPath}". You must provide the full absolute project path.`
-    };
-  }
 
-  // Check if path is absolute based on OS
-  const isWindows = os.platform() === 'win32';
-  
-  if (isWindows) {
-    const windowsAbsoluteRegex = /^[A-Za-z]:\\/;
-    if (!windowsAbsoluteRegex.test(projectPath)) {
-      return {
-        isValid: false,
-        errorMessage: `Invalid Windows path: "${projectPath}". Must be absolute path starting with drive letter`
-      };
-    }
-  } else {
-    if (!projectPath.startsWith('/')) {
-      return {
-        isValid: false,
-        errorMessage: `Invalid path: "${projectPath}". Must be absolute path starting with /`
-      };
-    }
-  }
-
-  return { isValid: true };
-}
 
 async function updateAgentsFileWithTemplate(projectPath: string): Promise<string[]> {
   const logs: string[] = [];
@@ -126,46 +94,18 @@ async function updateAgentsFileWithTemplate(projectPath: string): Promise<string
 }
 
 export async function handleUpdateAgentsTool(request: any): Promise<McpToolResponse> {
-  const { projectPath = '.' } = request.params.arguments || {};
+  const { projectPath } = request.params.arguments || {};
 
-  // Validate absolute path
-  const pathValidation = validateAbsolutePath(projectPath);
-  if (!pathValidation.isValid) {
-    const platform = os.platform();
-    const examplePath = platform === 'win32' 
-      ? 'C:\\Users\\YourName\\Projects\\MyProject'
-      : '/Users/yourname/projects/myproject';
-
-    const errorGuide = `# ❌ Invalid Project Path
-
-## Error
-${pathValidation.errorMessage}
-
-## Required Format
-You MUST provide the **full absolute path** to your project directory.
-
-### Example for ${platform}:
-\`${examplePath}\`
-
-### How to get your project path:
-1. **VS Code**: Right-click on your project folder → "Copy Path"
-2. **Terminal**: Run \`pwd\` (macOS/Linux) or \`cd\` (Windows) in your project directory
-3. **File Explorer**: Copy the full path from the address bar
-
-Please retry with the correct absolute path.`;
-
-    return {
-      content: [{ type: "text", text: errorGuide }]
-    };
-  }
+  // Use process.cwd() if no path provided, otherwise use provided path
+  const resolvedPath = projectPath ? path.resolve(projectPath) : process.cwd();
 
   try {
-    const logs = await updateAgentsFileWithTemplate(projectPath);
+    const logs = await updateAgentsFileWithTemplate(resolvedPath);
 
     const successGuide = `# AGENTS.md Updated Successfully ✅
 
 ## Update Results
-- **Project Path**: ${path.resolve(projectPath)}
+- **Project Path**: ${resolvedPath}
 - **Template Source**: .context-master/context-master-agents-prompt.md
 - **Target File**: AGENTS.md
 

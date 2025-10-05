@@ -187,8 +187,8 @@ export class DownloaderService {
     }
 
     /**
-     * Tries URL variants for repositories ending with .js (e.g., next.js -> next)
-     * and homepage fallback (homepage + /llms.txt)
+     * Tries URL variants for repositories ending with .js (e.g., next.js -> next),
+     * "websites" fallback for some libraries, and homepage fallback (homepage + /llms.txt)
      */
     private async tryUrlVariants(result: SearchResult): Promise<any> {
         const variants: string[] = [];
@@ -203,6 +203,13 @@ export class DownloaderService {
                 variants.push(`https://context7.com/${owner}/${repo.replace(/\.js$/, '')}/llms.txt`);
             }
             variants.push(`https://context7.com/${owner}/${repo}/llms.txt`);
+            
+            // Add "websites" fallback variant - some libraries are stored under /websites/ on Context7
+            // This works for libraries like TailwindCSS, Bootstrap, etc.
+            variants.push(`https://context7.com/websites/${repo}/llms.txt`);
+            if (repo.endsWith('.js')) {
+                variants.push(`https://context7.com/websites/${repo.replace(/\.js$/, '')}/llms.txt`);
+            }
         }
 
         // Add homepage fallback if available

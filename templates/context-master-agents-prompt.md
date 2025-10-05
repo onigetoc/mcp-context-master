@@ -31,85 +31,74 @@ Exists? → YES: Read once
 add_project_context(absolute_path, library, specific_topic)
 ```
 
-### Critical: Absolute Paths Required
+### Automatic Path Detection
 
-**⚠️ ALWAYS use absolute paths, never relative paths:**
+**✅ The tools now automatically detect your current project directory:**
 
 ```typescript
-// ✅ CORRECT
+// ✅ SIMPLE - No path needed
 add_project_context(
-  "C:\\Users\\username\\projects\\my-app",  // Windows
-  "remotion",
-  "srt captions"
+  "remotion",     // Library name
+  "srt captions"  // Topic (optional)
 )
 
+// ✅ WITH OPTIONS
 add_project_context(
-  "/Users/username/projects/my-app",  // macOS/Linux
   "remotion",
-  "srt captions"
-)
-
-// ❌ WRONG - Will fail
-add_project_context(
-  "./my-app",           // Relative path
-  "remotion",
-  "srt captions"
+  "srt captions",
+  5000            // Tokens (optional)
 )
 ```
 
-**How to get absolute path:**
-- Ask user for project path if not obvious
-- Use workspace root from IDE context
-- Never assume or use relative paths
+**Path Resolution:**
+- Automatically uses `process.cwd()` (current working directory)
+- Works from any directory where your project is located
+- No need to manually specify paths in most cases
 
 ### Available Commands
 
-- `/cm-init`: /cm-init : First, read and follow all instructions in .context-master/cm-init.md before proceeding
-- `/cm-setup`: Initialize and Setup the current project (requires absolute project path)
-- `/cm-add [library] [topic]`: Add documentation
-- `/cm-search [library]`: Find on GitHub
-- `/cm-npm [package]`: Search NPM
-- `/cm-list`: List contexts
-- `/cm-read [file]`: Read context
+- `/cm-init`: Initialize Context Master for the current project
+- `/cm-setup`: Setup and analyze project dependencies automatically
+- `/cm-add [library] [topic]`: Add documentation for a specific library
+- `/cm-search [library]`: Find library on GitHub
+- `/cm-npm [package]`: Search NPM registry
+- `/cm-list`: List available contexts
+- `/cm-read [file]`: Read context file
 
 ### Available MCP Tools
 
 #### `add_project_context` - Main tool
 ```typescript
 add_project_context(
-  project_path: string,    // MUST be absolute path
   library: string,         // GitHub name (e.g., "remotion")
-  topic: string           // Specific feature (e.g., "srt captions")
+  topic?: string,          // Optional specific feature (e.g., "srt captions")
+  tokens?: number          // Optional token count (default: 3000)
 )
 ```
 
 **Returns:** Path to created file: `cm-[library]-[topic]-[YYYY-MM-DD].md`
 
 **What it does automatically:**
-1. Searches GitHub for library
-2. Gets repo URL
-3. Downloads Context7 docs (~3000 tokens)
-4. Saves to `.context-master/context/`
+1. Detects current project directory
+2. Searches GitHub for library
+3. Gets repo URL
+4. Downloads Context7 docs (~3000 tokens)
+5. Saves to `.context-master/context/`
 
 #### `setup_project_context` - Project initialization
 ```typescript
 setup_project_context(
-  project_path: string     // MUST be absolute path
+  maxDependencies?: number // Optional max deps to analyze (default: 20)
 )
 ```
 
-**Critical:** If path is wrong, entire setup fails.
-
 **What it does:**
-1. Scans package.json, requirements.txt at `project_path`
-2. Verifies packages via NPM
-3. Creates `.context-master/` structure at `project_path`
-4. Returns dependency list with stats
-
-**Before calling:**
-- Verify `project_path` exists
-- Ensure it's the project root (contains package.json)
-- Use absolute path only
+1. Detects current project directory automatically
+2. Scans package.json, requirements.txt
+3. Verifies packages via NPM
+4. Creates `.context-master/` structure
+5. Downloads documentation for important dependencies
+6. Returns dependency analysis and setup results
 
 #### `search_npm_packages` - Compare packages
 ```typescript
@@ -139,14 +128,11 @@ User: "Help me add SRT captions to Remotion"
 
 ```typescript
 // 1. Check .context-master/context/ - not found
-// 2. Get absolute path (critical!)
-const projectPath = "C:\\Users\\dev\\remotion-project"
+// 2. Download focused docs (auto-detects project path)
+add_project_context("remotion", "srt captions")
 
-// 3. Download focused docs
-add_project_context(projectPath, "remotion", "srt captions")
-
-// 4. Read once: cm-remotion-srt-captions-2025-01-15.md
-// 5. Provide guidance
+// 3. Read once: cm-remotion-srt-captions-2025-01-15.md
+// 4. Provide guidance
 ```
 
 #### Example 2: Well-Known Library (Skip)
@@ -170,16 +156,11 @@ User: "Create React component with useState"
 User: "Initialize Context Master"
 
 ```typescript
-// 1. CRITICAL: Get absolute project path
-// Ask: "What's your project's absolute path?"
-// User provides: "C:\\Users\\dev\\my-app"
+// 1. Auto-detect project directory and initialize
+setup_project_context()
 
-// 2. Verify path exists and has package.json
-// 3. Initialize
-setup_project_context("C:\\Users\\dev\\my-app")
-
-// 4. System scans dependencies
-// 5. Suggest contexts for specialized libraries only
+// 2. System scans dependencies automatically
+// 3. Suggest contexts for specialized libraries only
 ```
 
 #### Example 4: Library Name Variations
@@ -189,7 +170,6 @@ User: "Help with React Query mutations"
 ```typescript
 // Context Master finds repo automatically
 add_project_context(
-  absoluteProjectPath,
   "React Query",    // Finds: TanStack/query
   "mutations"
 )
@@ -197,12 +177,11 @@ add_project_context(
 
 #### Example 5: JSON example for LLMs
 
-User: "add stripe react payement and checkout to my project"
+User: "add stripe react payment and checkout to my project"
 
 ```json
-// Context Master finds repo automatically
+// Context Master finds repo and project path automatically
 {
-  "projectPath": "FULL_PROJECT_PATH",
   "libraryName": "React Stripe js",
   "topic": "payment checkout",
   "tokens": 5000
@@ -211,25 +190,21 @@ User: "add stripe react payement and checkout to my project"
 
 ### Best Practices
 
-#### 1. Always Use Absolute Paths
+#### 1. Automatic Path Detection
 ```typescript
-// ✅ Correct
-"C:\\Users\\name\\project"
-"/home/user/project"
-"/Users/name/project"
+// ✅ Simple and automatic
+add_project_context("library-name", "topic")
+setup_project_context()
 
-// ❌ Wrong
-"./project"
-"../project"
-"project"
+// ✅ Works from any project directory
+// The tools detect your current working directory automatically
 ```
 
-#### 2. Verify Before Setup
+#### 2. Run from Project Root
 ```typescript
-// Before setup_project_context:
-// 1. Confirm path exists
-// 2. Check for package.json or requirements.txt
-// 3. Use absolute path
+// Best results when running from project root directory
+// (where package.json or requirements.txt are located)
+// Tools work from any directory but project root is optimal
 ```
 
 #### 3. Use Specific Topics
@@ -294,14 +269,11 @@ add_project_context("C:\\Users\\dev\\my-app", ...)
 
 ```typescript
 // 1. User: "Initialize Context Master"
-// 2. You: "What's your project's absolute path?"
-// 3. User: "C:\\Users\\dev\\my-app"
-// 4. Verify path exists
-// 5. Call setup
-setup_project_context("C:\\Users\\dev\\my-app")
+// 2. Auto-setup (detects current directory)
+setup_project_context()
 
-// 6. Review dependencies
-// 7. Suggest contexts for specialized libs only
+// 3. Review dependencies automatically
+// 4. Suggest contexts for specialized libs only
 // Example: "I see you use Remotion (specialized) and React (mainstream).
 //           Should I download Remotion context? React doesn't need it."
 ```
@@ -313,7 +285,7 @@ setup_project_context("C:\\Users\\dev\\my-app")
 // 1. Assess: Is Y well-known? → Skip if yes
 // 2. Check existing contexts
 // 3. If needed:
-add_project_context(absoluteProjectPath, "library-y", "feature x")
+add_project_context("library-y", "feature x")
 ```
 
 ### Advanced Usage
@@ -321,9 +293,9 @@ add_project_context(absoluteProjectPath, "library-y", "feature x")
 #### Multiple Libraries
 ```typescript
 // For complex features spanning libraries:
-add_project_context(path, "next-auth", "credentials provider")
-add_project_context(path, "prisma", "user authentication")
-add_project_context(path, "trpc", "protected procedures")
+add_project_context("next-auth", "credentials provider")
+add_project_context("prisma", "user authentication")
+add_project_context("trpc", "protected procedures")
 
 // Then synthesize from all three contexts
 ```
@@ -333,7 +305,7 @@ add_project_context(path, "trpc", "protected procedures")
 // Docs age - to refresh:
 // 1. Note old file date
 // 2. Re-run with same params
-add_project_context(path, "remotion", "srt captions")
+add_project_context("remotion", "srt captions")
 // Creates: cm-remotion-srt-captions-2025-01-20.md (new date)
 
 // 3. Old file can be removed
@@ -342,30 +314,25 @@ add_project_context(path, "remotion", "srt captions")
 #### Custom Topics
 ```typescript
 // Combine keywords for specialized docs:
-add_project_context(path, "next", "server actions authentication")
-add_project_context(path, "react", "hooks typescript patterns")
+add_project_context("next", "server actions authentication")
+add_project_context("react", "hooks typescript patterns")
 ```
 
 ### Summary
 
 **Key Rules:**
-1. **Absolute paths only** - Never relative
-2. **Verify path before setup** - Check package.json exists
-3. **Use for specialized libs** - Skip well-known ones
-4. **One read per conversation** - Don't re-read
-5. **Specific topics** - Better results
+1. **Automatic path detection** - No need to ask for paths
+2. **Use for specialized libs** - Skip well-known ones
+3. **One read per conversation** - Don't re-read
+4. **Specific topics** - Better results
+5. **Run from project root** - For best results
 
 **Critical for LLM:**
-- Always ask for absolute project path
-- Verify path before calling setup
-- Trust your knowledge on mainstream libs
+- Tools automatically detect current project directory
+- Trust your knowledge on mainstream libs (React, Express, etc.)
 - Check existing contexts before downloading
 - Read each context file only once per conversation
-
-**Path Examples:**
-- Windows: `C:\\Users\\name\\project`
-- macOS: `/Users/name/project`
-- Linux: `/home/user/project`
+- Focus on specialized libraries that need documentation
 
 ### Context Handling Rules for MCP-Context-Master
 
