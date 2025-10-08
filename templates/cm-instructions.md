@@ -56,9 +56,9 @@ add_project_context(
 - No need to manually specify paths in most cases
 
 ### Available Commands
-- `/cm-ai-infos`: Initialize Context Master for the current project
-- `/cm-setup`: Setup and analyze project dependencies automatically
-- `/cm-add [library] [topic]`: Add documentation for a specific library
+- `/cm-ai-infos`: Get AI assistant information
+- `/cm-setup`: Setup and analyze project dependencies automatically and add libraries/API knowledge file to the project
+- `/cm-add [library] [topic]`: Add documentation for a specific library/API
 - `/cm-search [library]`: Find library on GitHub
 - `/cm-npm [package]`: Search NPM registry
 - `/cm-list`: List available contexts

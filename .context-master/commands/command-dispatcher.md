@@ -9,16 +9,16 @@ When you encounter a message starting with `/cm-`, execute the corresponding tas
 | Command | Task File | Description |
 |---------|-----------|-------------|
 | `/cm-help` | `.context-master/tasks/cm-help.md` | Show available commands |
-| `/cm-ai-infos` | `.context-master/templates/cm-ai-infos.md` | Initialize AI configuration setup |
-| `/cm-setup` | `.context-master/templates/cm-ai-infos.md` | Initialize AI configuration setup |
-| `/cm-analyze` | `.context-master/tasks/cm-analyze.md` | Analyze dependencies |
-| `/cm-download` | `.context-master/tasks/cm-download.md` | Download high-priority docs |
-| `/cm-status` | `.context-master/tasks/cm-status.md` | Show project status |
-| `/cm-clean` | `.context-master/tasks/cm-clean.md` | Clean up documentation |
-| `/cm-config` | `.context-master/tasks/cm-config.md` | Manage configuration |
-| `/cm-priority` | `src/tasks/cm-priority.md` | Show priority analysis |
-| `/cm-search` | `.context-master/tasks/cm-search.md` | Search for library docs |
-| `/cm-bulk` | `.context-master/tasks/cm-bulk.md` | Bulk download all docs |
+| `/cm-ai-infos` | `.context-master/cm-ai-infos.md` | Get AI assistant information |
+| `/cm-setup` | `.context-master/commands/cm-setup_project_context.md` | Tool calling `setup_project_context` to Initialize project
+| `/cm-analyze` | `.context-master/commands/cm-analyze.md` | Analyze dependencies |
+| `/cm-download` | `.context-master/commands/cm-download.md` | Download high-priority docs |
+| `/cm-status` | `.context-master/commands/cm-status.md` | Show project status |
+| `/cm-clean` | `.context-master/commands/cm-clean.md` | Clean up documentation |
+| `/cm-config` | `.context-master/commands/cm-config.md` | Manage configuration |
+| `/cm-priority` | `.context-master/tasks/cm-priority.md` | Show priority analysis |
+| `/cm-search` | `.context-master/commands/cm-search.md` | Search for library docs |
+| `/cm-bulk` | `.context-master/commands/cm-bulk.md` | Bulk download all docs |
 
 ### Execution Pattern
 
@@ -31,14 +31,15 @@ When you encounter a message starting with `/cm-`, execute the corresponding tas
 ### Numbered Selection Support
 
 When user types a number (1-13) after seeing `/cm-help`, map to:
-1. `/cm-ai-infos`
-2. `/cm-analyze`  
-3. `/cm-download`
-4. `/cm-status`
-5. `/cm-clean`
-6. `/cm-config`
-7. `/cm-priority`
-8. `/cm-search`
+1. `/cm-ai-infos` # Get AI assistant informations
+2. `/cm-setup` # /Setup project with knowledge base and get assistant info (execute setup `setup_project_context` tool and cm-ai-infos.md)
+3. `/cm-analyze` # Analyze project dependencies and suggest documentation downloads
+4. `/cm-download` # Download documentation for high-priority dependencies
+5. `/cm-status` # Show current project context status and configuration
+6. `/cm-clean` # Clean up downloaded documentation and reset context
+7. `/cm-config` # Show or update Context Master configuration
+8. `/cm-priority` # Show dependency priority analysis with scoring
+9. `/cm-search` # Search for specific library documentation 
 
 ### Error Handling
 
