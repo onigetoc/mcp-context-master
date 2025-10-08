@@ -1,0 +1,32 @@
+# Test API Brave Search
+# Documentation: https://api.brave.com/
+
+### Requête de base - Recherche simple
+GET https://api.brave.com/search/v1/search?q=brave%20browser&limit=5
+X-Subscription-Token: YOUR_API_KEY_HERE
+Accept: application/json
+Content-Type: application/json
+
+### Variables pour tester différentes requêtes
+@baseUrl = https://api.brave.com/search/v1/search
+@apiKey = YOUR_API_KEY_HERE
+
+### Recherche avec paramètres étendus
+GET {{baseUrl}}?q=javascript%20tutorial&count=10&country=US&search_lang=en
+X-Subscription-Token: {{apiKey}}
+Accept: application/json
+
+### Recherche d'actualités
+GET {{baseUrl}}?q=AI%20news&result_filter=news&count=5
+X-Subscription-Token: {{apiKey}}
+Accept: application/json
+
+### Recherche d'images
+GET {{baseUrl}}?q=nature%20photography&result_filter=images&count=5
+X-Subscription-Token: {{apiKey}}
+Accept: application/json
+
+### Test avec géolocalisation
+GET {{baseUrl}}?q=restaurants&count=5&country=FR&search_lang=fr
+X-Subscription-Token: {{apiKey}}
+Accept: application/json
