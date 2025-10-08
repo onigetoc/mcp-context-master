@@ -57,7 +57,7 @@ async function testRealSetup() {
       { path: path.join(contextMasterDir, 'commands'), name: 'commands directory' },
       { path: path.join(contextMasterDir, 'ai-infos.json'), name: 'ai-infos.json' },
       { path: path.join(contextMasterDir, 'cm-ai-infos.md'), name: 'cm-ai-infos.md template' },
-      { path: path.join(contextMasterDir, 'context', 'context-manifest.yaml'), name: 'context-manifest.yaml' }
+      { path: path.join(contextMasterDir, 'context', 'knowledge-manifest.yaml'), name: 'knowledge-manifest.yaml' }
     ];
 
     let allPassed = true;

@@ -12,7 +12,7 @@ console.log('🚀 Setting up MCP Context Master...\n');
 
 async function setup() {
   try {
-    // 1. Ensure .context-master/context directory exists
+    // 1. Ensure .context-master/knowledge directory exists
     const contextDir = path.join(__dirname, '.context-master', 'context');
     await fs.ensureDir(contextDir);
     console.log('✅ Created .context-master/context/ directory');

@@ -4,7 +4,7 @@ import { ProjectAnalyzer } from '../services/analyzer.service.js';
 import { SearchService } from '../services/search.service.js';
 import { DownloaderService } from '../services/downloader.service.js';
 import { PathResolverService } from '../services/path-resolver.service.js';
-import { updateContextManifest } from '../services/registry.service.js';
+import { updateKnowledgeManifest } from '../services/registry.service.js';
 import { debugLog } from '../utils/logger.js';
 import fs from 'fs-extra';
 import path from 'path';
@@ -178,18 +178,18 @@ async function initializeContextMaster(projectPath: string): Promise<{ logs: str
     }
   }
 
-  // Create context directory and initial manifest
-  const contextDir = path.join(contextMasterDir, 'context');
-  await fs.ensureDir(contextDir);
-  logs.push(`Created context directory: ${contextDir}`);
+  // Create knowledge directory and initial manifest
+  const knowledgeDir = path.join(contextMasterDir, 'knowledge');
+  await fs.ensureDir(knowledgeDir);
+  logs.push(`Created knowledge directory: ${knowledgeDir}`);
 
-  // Create initial context-manifest.yaml
-  const manifestPath = path.join(contextDir, 'context-manifest.yaml');
+  // Create initial knowledge-manifest.yaml
+  const manifestPath = path.join(knowledgeDir, 'knowledge-manifest.yaml');
   const initialManifest = `lastUpdated: '${new Date().toISOString()}'
 files:
 `;
   await fs.writeFile(manifestPath, initialManifest, 'utf8');
-  logs.push(`Created initial context-manifest.yaml`);
+  logs.push(`Created initial knowledge-manifest.yaml`);
 
   // Create initial ai-infos.json placeholder (only if it doesn't exist)
   const aiInfosPath = path.join(contextMasterDir, 'ai-infos.json');
@@ -297,8 +297,8 @@ The tool will automatically use your current working directory if no path is pro
 - **Dependencies Found**: 0
 - **Templates Downloaded**: Check .context-master directory
 - **Commands Downloaded**: Check .context-master/commands directory
-- **Context Directory**: .context-master/context created
-- **Initial Files**: context-manifest.yaml and ai-infos.json created
+- **Knowledge Directory**: .context-master/knowledge created
+- **Initial Files**: knowledge-manifest.yaml and ai-infos.json created
 
 ## Initialization Logs
 ${initLogs.map(log => `- ${log}`).join('\n')}
@@ -335,18 +335,18 @@ Use these slash commands to interact with Context Master:
     let dependenciesToSearch = projectInfo.dependencies.slice(0, maxDependencies);
     const searchResults = await searcher.searchDependencies(dependenciesToSearch, projectInfo.type === 'node', undefined, undefined);
 
-    const docsPath = path.join(fullPath, '.context-master', 'context');
+    const docsPath = path.join(fullPath, '.context-master', 'knowledge');
     await downloader.ensureDocsFolder(docsPath);
     const downloadedFiles = await downloader.downloadDocumentation(searchResults, docsPath, true);
 
     if (downloadedFiles.length > 0) {
-      await updateContextManifest();
+      await updateKnowledgeManifest();
       
       // Nettoyage final pour s'assurer qu'il n'y a pas de doublons
       try {
         const { CleanupService } = await import('../services/cleanup.service.js');
         const cleanupService = new CleanupService();
-        const globalCleanedFiles = await cleanupService.cleanupAllOldContextFiles(docsPath, 1);
+        const globalCleanedFiles = await cleanupService.cleanupAllOldKnowledgeFiles(docsPath, 1);
         if (globalCleanedFiles.length > 0) {
           debugLog(`Setup cleanup: Removed ${globalCleanedFiles.length} additional old files`);
         }
@@ -375,7 +375,7 @@ ${searchResults.map(result => `- **${result.originalPackageName}**: ${result.rep
 ## Created/Updated Files
 - **Templates**: cm-ai-infos.md, cm-analyze.md, cm-status.md, cm-instructions.md
 - **Commands**: cm-commands.md, command-dispatcher.md  
-- **Context**: context-manifest.yaml (updated with new files)
+- **Knowledge**: knowledge-manifest.yaml (updated with new files)
 - **Configuration**: ai-infos.json (placeholder - needs update)
 - **AGENTS.md**: Created or updated with Context Master instructions
 

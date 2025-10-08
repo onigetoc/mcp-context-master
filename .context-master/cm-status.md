@@ -41,7 +41,7 @@ add_project_context for: {NEXT_RECOMMENDED}
 
 ### Get existing Context
 ```
-Check all existing file to know witch context we already have downloaded in .context-master/context/
+Check all existing file to know witch context we already have downloaded in .context-master/knowledge/
 ```
 
 ### Update Outdated Context

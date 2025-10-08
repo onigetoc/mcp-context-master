@@ -2,35 +2,35 @@ import { readdir } from 'fs/promises';
 import * as path from 'path';
 import { debugLog } from '../utils/logger.js';
 
-export class ContextParser {
-  private contextDir: string;
+export class KnowledgeParser {
+  private knowledgeDir: string;
 
-  constructor(contextDir?: string) {
-    this.contextDir = contextDir || path.join(process.cwd(), '.context-master', 'context');
+  constructor(knowledgeDir?: string) {
+    this.knowledgeDir = knowledgeDir || path.join(process.cwd(), '.context-master', 'knowledge');
   }
 
   /**
-   * Get all context files from the directory
+   * Get all knowledge files from the directory
    */
-  async getContextFiles(): Promise<string[]> {
-    debugLog('===== GETTING CONTEXT FILES =====');
-    debugLog(`Context directory: ${this.contextDir}`);
+  async getKnowledgeFiles(): Promise<string[]> {
+    debugLog('===== GETTING KNOWLEDGE FILES =====');
+    debugLog(`Knowledge directory: ${this.knowledgeDir}`);
     
     try {
-      const entries = await readdir(this.contextDir);
+      const entries = await readdir(this.knowledgeDir);
       return entries
-        .filter(file => file.endsWith('.md') && file !== 'context-manifest.yaml')
+        .filter(file => file.endsWith('.md') && file !== 'knowledge-manifest.yaml')
         .sort();
     } catch (error) {
-      debugLog(`Failed to read context directory: ${error instanceof Error ? error.message : String(error)}`);
+      debugLog(`Failed to read knowledge directory: ${error instanceof Error ? error.message : String(error)}`);
       return [];
     }
   }
 
   /**
-   * Check if a file is a valid context file
+   * Check if a file is a valid knowledge file
    */
-  isValidContextFile(filename: string): boolean {
-    return filename.endsWith('.md') && filename !== 'context-manifest.yaml';
+  isValidKnowledgeFile(filename: string): boolean {
+    return filename.endsWith('.md') && filename !== 'knowledge-manifest.yaml';
   }
 }

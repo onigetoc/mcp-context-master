@@ -11,11 +11,11 @@ async function debugManifest() {
     const entries = await fs.readdir(contextDir);
     console.log(`\nAll files found in directory:`, entries);
     
-    const mdFiles = entries.filter(f => f.endsWith('.md') && f !== 'context-manifest.yaml');
+    const mdFiles = entries.filter(f => f.endsWith('.md') && f !== 'knowledge-manifest.yaml');
     console.log(`\nMarkdown files (should ALL be included):`, mdFiles);
     
     // Vérifier le contenu du manifest actuel
-    const manifestPath = path.join(contextDir, 'context-manifest.yaml');
+    const manifestPath = path.join(contextDir, 'knowledge-manifest.yaml');
     try {
       const manifestContent = await fs.readFile(manifestPath, 'utf8');
       console.log(`\nCurrent manifest content:\n${manifestContent}`);

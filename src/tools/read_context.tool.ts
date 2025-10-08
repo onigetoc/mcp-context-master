@@ -7,8 +7,8 @@ import yaml from 'js-yaml';
 // --- Tool 1: List Available Contexts ---
 
 export const listAvailableContextsTool = {
-  name: "list_available_contexts",
-  description: "Lists all available context files from the context manifest.",
+  name: "list_available_contexts", 
+  description: "Lists all available knowledge files from the knowledge manifest.",
   inputSchema: {
     type: 'object',
     properties: {},
@@ -16,11 +16,11 @@ export const listAvailableContextsTool = {
 } as const;
 
 export async function handleListAvailableContextsTool(request: any): Promise<McpToolResponse> {
-  const manifestPath = path.join(process.cwd(), '.context-master', 'context', 'context-manifest.yaml');
+  const manifestPath = path.join(process.cwd(), '.context-master', 'knowledge', 'knowledge-manifest.yaml');
 
   try {
     if (!await fs.pathExists(manifestPath)) {
-      return { content: [{ type: 'text', text: 'Context manifest not found. Run setup_project_context to generate it.' }] };
+      return { content: [{ type: 'text', text: 'Knowledge manifest not found. Run setup_project_context to generate it.' }] };
     }
 
     const manifestContent = await fs.readFile(manifestPath, 'utf8');
@@ -52,13 +52,13 @@ export async function handleListAvailableContextsTool(request: any): Promise<Mcp
 
 export const readSpecificContextTool = {
   name: "read_specific_context",
-  description: "Reads the content of a specific context file.",
+  description: "Reads the content of a specific knowledge file.",
   inputSchema: {
     type: 'object',
     properties: {
       fileName: {
         type: 'string',
-        description: 'The exact name of the context file to read (e.g., \'cm-react-context-2023-10-27.md\'). inside .context-master/context directory.'
+        description: 'The exact name of the knowledge file to read (e.g., \'cm-react-context-2023-10-27.md\'). inside .context-master/knowledge directory.'
       }
     },
     required: ['fileName']
@@ -72,11 +72,11 @@ export async function handleReadSpecificContextTool(request: any): Promise<McpTo
     throw new McpError(ErrorCode.InvalidParams, 'fileName is required');
   }
 
-  const filePath = path.join(process.cwd(), '.context-master', 'context', fileName);
+  const filePath = path.join(process.cwd(), '.context-master', 'knowledge', fileName);
 
   try {
     if (!await fs.pathExists(filePath)) {
-      return { content: [{ type: 'text', text: `Context file not found: ${fileName}` }] };
+      return { content: [{ type: 'text', text: `Knowledge file not found: ${fileName}` }] };
     }
 
     const fileContent = await fs.readFile(filePath, 'utf8');

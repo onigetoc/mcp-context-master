@@ -1,15 +1,15 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import yaml from 'js-yaml';
-import { ContextParser } from '../parsers/context-parser.js';
+import { KnowledgeParser } from '../parsers/context-parser.js';
 
-export class ContextService {
-  private parser: ContextParser;
-  private contextDir: string;
+export class KnowledgeService {
+  private parser: KnowledgeParser;
+  private knowledgeDir: string;
 
   constructor() {
-    this.contextDir = path.join(process.cwd(), '.context-master', 'context');
-    this.parser = new ContextParser(this.contextDir);
+    this.knowledgeDir = path.join(process.cwd(), '.context-master', 'knowledge');
+    this.parser = new KnowledgeParser(this.knowledgeDir);
   }
 
   async refreshManifest(): Promise<void> {
@@ -21,7 +21,7 @@ export class ContextService {
       files: [] // allFiles
     };
 
-    const manifestPath = path.join(this.contextDir, 'context-manifest.yaml');
+    const manifestPath = path.join(this.knowledgeDir, 'knowledge-manifest.yaml');
     await fs.writeFile(manifestPath, yaml.dump(manifest), 'utf8');
   }
 

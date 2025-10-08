@@ -68,7 +68,7 @@ export class DownloaderService {
                         
                         // Save to file
                         await fs.writeFile(filePath, content, 'utf8');
-                        await this.cleanupService.cleanupOldContextFiles(docsPath, result.originalPackageName, 1);
+                        await this.cleanupService.cleanupOldKnowledgeFiles(docsPath, result.originalPackageName, 1);
                         
                         downloadedFiles.push(filePath);
                         result.downloaded = true;
@@ -148,7 +148,7 @@ export class DownloaderService {
 
                 // Step 5: Cleanup old files
                 try {
-                    const deletedFiles = await this.cleanupService.cleanupOldContextFiles(
+                    const deletedFiles = await this.cleanupService.cleanupOldKnowledgeFiles(
                         docsPath, 
                         result.originalPackageName, 
                         1

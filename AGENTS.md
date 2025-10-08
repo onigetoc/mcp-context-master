@@ -368,7 +368,7 @@ Already know this well? → YES: Answer directly
     ↓ NO
 Already read in conversation? → YES: Use existing knowledge
     ↓ NO
-Check .context-master/context/ for existing files
+Check .context-master/knowledge/ for existing files
     ↓
 Exists? → YES: Read once
     ↓ NO
@@ -426,7 +426,7 @@ add_project_context(
 2. Searches GitHub for library
 3. Gets repo URL
 4. Downloads Context7 docs (~3000 tokens)
-5. Saves to `.context-master/context/`
+5. Saves to `.context-master/knowledge/`
 
 #### `setup_project_context` - Project initialization
 ```typescript
@@ -458,7 +458,7 @@ search_repositories(query: string, limit?: number)
 **Use for:** Finding unclear library names
 
 #### `list_available_contexts` - List files
-View downloaded contexts (or browse `.context-master/context/` directly)
+View downloaded contexts (or browse `.context-master/knowledge/` directly)
 
 #### `read_specific_context` - Read file
 Read context content (or open file directly)
@@ -470,7 +470,7 @@ Read context content (or open file directly)
 User: "Help me add SRT captions to Remotion"
 
 ```typescript
-// 1. Check .context-master/context/ - not found
+// 1. Check .context-master/knowledge/ - not found
 // 2. Download focused docs (auto-detects project path)
 add_project_context("remotion", "srt captions")
 
@@ -564,7 +564,7 @@ Don't re-read files already loaded
 
 ### File Organization
 
-**Location:** `.context-master/context/` (at project root)
+**Location:** `.context-master/knowledge/` (at project root)
 **Pattern:** `cm-[library]-[topic]-[YYYY-MM-DD].md`
 **Size:** Typically 3000-5000 tokens
 

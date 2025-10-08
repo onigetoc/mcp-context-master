@@ -60,7 +60,7 @@ Use `/cm-` commands for quick actions:
 
 ## Integration Notes
 - Works with all AI coding assistants (Cursor, Claude, Copilot, etc.)
-- Documentation is saved in `.context-master/context/` directory
+- Documentation is saved in `.context-master/knowledge/` directory
 - Files are automatically included in your AI context when relevant
 
 <!-- END: CONTEXT-MASTER -->

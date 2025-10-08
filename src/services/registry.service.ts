@@ -11,18 +11,18 @@ async function pathExists(path: string): Promise<boolean> {
   }
 }
 
-export async function updateContextManifest(): Promise<void> {
-  const contextDir = path.join(process.cwd(), '.context-master', 'context');
-  const manifestPath = path.join(contextDir, 'context-manifest.yaml');
+export async function updateKnowledgeManifest(): Promise<void> {
+  const knowledgeDir = path.join(process.cwd(), '.context-master', 'knowledge');
+  const manifestPath = path.join(knowledgeDir, 'knowledge-manifest.yaml');
 
-  if (!await pathExists(contextDir)) {
+  if (!await pathExists(knowledgeDir)) {
     return; // No directory, no manifest
   }
 
   // TOUJOURS scanner le dossier physique
-  const files = await fs.readdir(contextDir);
+  const files = await fs.readdir(knowledgeDir);
   const mdFiles = files
-    .filter((file: string) => file.endsWith('.md') && file !== 'context-manifest.yaml')
+    .filter((file: string) => file.endsWith('.md') && file !== 'knowledge-manifest.yaml')
     .sort((a: string, b: string) => a.localeCompare(b));
 
   console.log(`[project-master] Physical scan found ${mdFiles.length} .md files:`, mdFiles);

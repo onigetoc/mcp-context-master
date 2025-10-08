@@ -6,11 +6,11 @@ export class CleanupService {
     
     /**
      * Supprime les anciens fichiers de contexte avec des dates antérieures pour une bibliothèque donnée
-     * @param docsPath - Chemin vers le dossier .context-master/context
+     * @param docsPath - Chemin vers le dossier .context-master/knowledge
      * @param libraryName - Nom de la bibliothèque (après nettoyage des caractères spéciaux)
      * @param keepLatest - Nombre de fichiers récents à conserver (par défaut 1)
      */
-    public async cleanupOldContextFiles(
+    public async cleanupOldKnowledgeFiles(
         docsPath: string, 
         libraryName: string, 
         keepLatest: number = 1
@@ -90,12 +90,12 @@ export class CleanupService {
     }
 
     /**
-     * Extrait l'identifiant unique (library + topic) d'un nom de fichier de contexte
+     * Extrait l'identifiant unique (library + topic) d'un nom de fichier de knowledge
      * pour grouper les fichiers identiques avec des dates différentes
      * @param filename - Nom du fichier (ex: cm-remotion-srt-captions-2025-10-01.md)
      * @returns Identifiant unique pour grouper les fichiers similaires
      */
-    private extractContextIdentifier(filename: string): string {
+    private extractKnowledgeIdentifier(filename: string): string {
         // Enlever l'extension .md
         let nameWithoutExt = filename.replace(/\.md$/, '');
         
@@ -112,11 +112,11 @@ export class CleanupService {
     }
 
     /**
-     * Nettoie tous les anciens fichiers de contexte dans un dossier (toutes bibliothèques confondues)
-     * @param docsPath - Chemin vers le dossier .context-master/context
+     * Nettoie tous les anciens fichiers de knowledge dans un dossier (toutes bibliothèques confondues)
+     * @param docsPath - Chemin vers le dossier .context-master/knowledge
      * @param keepLatest - Nombre de fichiers récents à conserver par bibliothèque (par défaut 1)
      */
-    public async cleanupAllOldContextFiles(docsPath: string, keepLatest: number = 1): Promise<string[]> {
+    public async cleanupAllOldKnowledgeFiles(docsPath: string, keepLatest: number = 1): Promise<string[]> {
         const allDeletedFiles: string[] = [];
 
         try {
@@ -127,30 +127,30 @@ export class CleanupService {
             }
 
             const files = await fs.readdir(docsPath);
-            const contextFiles = files.filter(file => file.startsWith('cm-') && file.endsWith('.md'));
+            const knowledgeFiles = files.filter(file => file.startsWith('cm-') && file.endsWith('.md'));
 
             // Grouper les fichiers par identifiant unique (library + topic)
-            const contextGroupsMap = new Map<string, string[]>();
+            const knowledgeGroupsMap = new Map<string, string[]>();
             
-            for (const file of contextFiles) {
+            for (const file of knowledgeFiles) {
                 // Extraire l'identifiant unique (library + topic) sans la date
-                const contextId = this.extractContextIdentifier(file);
-                if (!contextGroupsMap.has(contextId)) {
-                    contextGroupsMap.set(contextId, []);
+                const knowledgeId = this.extractKnowledgeIdentifier(file);
+                if (!knowledgeGroupsMap.has(knowledgeId)) {
+                    knowledgeGroupsMap.set(knowledgeId, []);
                 }
-                contextGroupsMap.get(contextId)!.push(file);
+                knowledgeGroupsMap.get(knowledgeId)!.push(file);
             }
 
-            debugLog(`Cleanup: Found ${contextGroupsMap.size} different context groups to clean`);
+            debugLog(`Cleanup: Found ${knowledgeGroupsMap.size} different knowledge groups to clean`);
 
-            // Nettoyer chaque groupe de contexte (même library + même topic)
-            for (const [contextId, contextFiles] of contextGroupsMap) {
-                if (contextFiles.length <= keepLatest) {
+            // Nettoyer chaque groupe de knowledge (même library + même topic)
+            for (const [knowledgeId, knowledgeFiles] of knowledgeGroupsMap) {
+                if (knowledgeFiles.length <= keepLatest) {
                     continue;
                 }
 
                 // Trier par date et supprimer les anciens
-                const filesWithDates = contextFiles.map((file: string) => {
+                const filesWithDates = knowledgeFiles.map((file: string) => {
                     const dateMatch = file.match(/(\d{4}-\d{2}-\d{2})\.md$/);
                     const dateStr = dateMatch ? dateMatch[1] : '1970-01-01';
                     return {
@@ -167,7 +167,7 @@ export class CleanupService {
                         const fullPath = path.join(docsPath, fileInfo.filename);
                         await fs.unlink(fullPath);
                         allDeletedFiles.push(fileInfo.filename);
-                        debugLog(`✓ Cleanup: Deleted old file: ${fileInfo.filename} (context: ${contextId})`);
+                        debugLog(`✓ Cleanup: Deleted old file: ${fileInfo.filename} (knowledge: ${knowledgeId})`);
                     } catch (error) {
                         debugLog(`✗ Cleanup: Failed to delete ${fileInfo.filename}: ${error instanceof Error ? error.message : String(error)}`);
                     }

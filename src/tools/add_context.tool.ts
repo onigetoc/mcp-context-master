@@ -3,14 +3,14 @@ import { McpToolResponse } from '../types/mcp-types.js';
 import { SearchService } from '../services/search.service.js';
 import { DownloaderService } from '../services/downloader.service.js';
 import { PathResolverService } from '../services/path-resolver.service.js';
-import { updateContextManifest } from '../services/registry.service.js';
+import { updateKnowledgeManifest } from '../services/registry.service.js';
 import { debugLog } from '../utils/logger.js';
 import { analyzeNetworkError } from '../utils/network-utils.js';
 import * as path from 'path';
 
 export const addProjectContextTool = {
   name: "add_project_context",
-  description: "Adds context for a library using EXACT package names from package.json or confirmed library names. If you're unsure about the exact library name, use the search workflow first: 1) Search GitHub for the library, 2) Confirm the correct repository, 3) Use this tool with the exact name. For example: Use 'remotion' (not '@remotion/captions'), 'react' (not 'react-dom'), '@tanstack/react-query' (not 'react-query'). If the user mentions a feature or topic (like 'captions', 'routing'), that should be used as a topic parameter, not as part of the library name.",
+  description: "Adds knowledge context for a library using EXACT package names from package.json or confirmed library names. If you're unsure about the exact library name, use the search workflow first: 1) Search GitHub for the library, 2) Confirm the correct repository, 3) Use this tool with the exact name. For example: Use 'remotion' (not '@remotion/captions'), 'react' (not 'react-dom'), '@tanstack/react-query' (not 'react-query'). If the user mentions a feature or topic (like 'captions', 'routing'), that should be used as a topic parameter, not as part of the library name.",
   inputSchema: {
     type: 'object',
     properties: {
@@ -94,8 +94,8 @@ export async function handleAddProjectContextTool(request: any): Promise<McpTool
       };
     }
 
-    // Download the context with topic and tokens
-    const docsPath = path.join(fullPath, '.context-master', 'context');
+    // Download the knowledge with topic and tokens
+    const docsPath = path.join(fullPath, '.context-master', 'knowledge');
     debugLog(`Generated docsPath: ${docsPath}`);
     await downloader.ensureDocsFolder(docsPath);
     
@@ -127,7 +127,7 @@ export async function handleAddProjectContextTool(request: any): Promise<McpTool
     }
 
     // Update the manifest
-    await updateContextManifest();
+    await updateKnowledgeManifest();
 
     const result = {
         success: true,

@@ -43,7 +43,7 @@ async function pathExists(filePath) {
 
 async function updateContextManifest() {
   const contextDir = path.join(process.cwd(), '.context-master', 'context');
-  const manifestPath = path.join(contextDir, 'context-manifest.yaml');
+  const manifestPath = path.join(contextDir, 'knowledge-manifest.yaml');
 
   if (!await pathExists(contextDir)) {
     return;
@@ -51,7 +51,7 @@ async function updateContextManifest() {
 
   const files = await fs.readdir(contextDir);
   // SCAN: Inclut TOUS les fichiers .md (peu importe le préfixe)
-  const mdFiles = files.filter(file => file.endsWith('.md') && file !== 'context-manifest.yaml');
+  const mdFiles = files.filter(file => file.endsWith('.md') && file !== 'knowledge-manifest.yaml');
 
   const manifest = {
     lastUpdated: new Date().toISOString(),

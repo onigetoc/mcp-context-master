@@ -32,7 +32,7 @@ This directory contains context documentation downloaded from Context7 and other
 
 ## Usage
 
-When you use the `download_context` tool, files will be automatically saved in .context-master/context folder with metadata headers including:
+When you use the `download_context` tool, files will be automatically saved in .context-master/knowledge folder with metadata headers including:
 - Source Context7 URL
 - Original GitHub repository
 - Download timestamp

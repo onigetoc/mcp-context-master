@@ -77,7 +77,7 @@ async function testSetupTool() {
             { path: path.join(contextMasterDir, 'cm-status.md'), name: 'cm-status.md template' },
             { path: path.join(commandsDir, 'cm-commands.md'), name: 'cm-commands.md' },
             { path: path.join(commandsDir, 'command-dispatcher.md'), name: 'command-dispatcher.md' },
-            { path: path.join(contextDir, 'context-manifest.yaml'), name: 'context-manifest.yaml' }
+            { path: path.join(contextDir, 'knowledge-manifest.yaml'), name: 'knowledge-manifest.yaml' }
         ];
 
         let allPassed = true;
@@ -103,13 +103,13 @@ async function testSetupTool() {
             allPassed = false;
         }
 
-        // Check context-manifest.yaml
+        // Check knowledge-manifest.yaml
         try {
-            const manifestContent = await fs.readFile(path.join(contextDir, 'context-manifest.yaml'), 'utf8');
-            console.log('✅ context-manifest.yaml content:');
+            const manifestContent = await fs.readFile(path.join(contextDir, 'knowledge-manifest.yaml'), 'utf8');
+            console.log('✅ knowledge-manifest.yaml content:');
             console.log(manifestContent);
         } catch (error) {
-            console.log('❌ Failed to read context-manifest.yaml:', error.message);
+            console.log('❌ Failed to read knowledge-manifest.yaml:', error.message);
             allPassed = false;
         }
 
