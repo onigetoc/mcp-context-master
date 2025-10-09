@@ -51,17 +51,17 @@ Each file contains structured information to help you understand and start worki
 
 ## AI Assistant Information
 
-The `.context-master/ai-infos.json` file stores information about the AI assistant currently in use. This allows the MCP server to be aware of the provider, model, IDE, and extension being used.
+The `.context-master/cm-ai-infos.yaml` file stores information about the AI assistant currently in use. This allows the MCP server to be aware of the provider, model, IDE, and extension being used.
 
-Example content of `.context-master/ai-infos.json`:
-```json
-{
-  "provider": "Google",
-  "model": "Gemini",
-  "ide": "VS Code",
-  "extension": "Gemini CLI"
-}
+Example content of `.context-master/cm-ai-infos.yaml`:
+```yaml
+provider: Google
+model: Gemini
+ide: VS Code
+extension: Gemini CLI
 ```
+
+**Note:** The system also supports the legacy `ai-infos.json` format for backward compatibility.
 
 ## mcp-context-master Installation
 
@@ -185,9 +185,11 @@ Download Context7 content as .md file.
 
 ### 9. `coding_assistant`
 
-Reads the `.context-master/ai-infos.json` file to determine the user's current coding assistant and the appropriate context file to use.
+Reads the `.context-master/cm-ai-infos.yaml` (or legacy `ai-infos.json`) file to determine the user's current coding assistant and the appropriate context file to use.
 
 **Parameters:** None
+
+**Note:** The tool supports both YAML and JSON formats, with YAML taking priority.
 
 ## Usage Examples
 

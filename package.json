@@ -10,8 +10,10 @@
     "build": "tsc",
     "test": "npm run build && node test/test-context-tools.js",
     "test-tools": "npm run build && node test/test-tools.js",
+    "test-formats": "npm run build && node test/test-yaml-formats.js",
     "setup": "node test/test-setup-tool.js",
-    "search": "node test/test/search-test.js"
+    "search": "node test/test/search-test.js",
+    "migrate": "node scripts/migrate-to-yaml.js"
   },
   "keywords": [
     "mcp",

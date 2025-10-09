@@ -6,19 +6,22 @@ CREATE .context-master
 
 ### task 2: Identify Your Configuration
 Extract these values from your system configuration or prompt system:
-- **provider**: Your AI provider (e.g., Anthropic, OpenAI)
-- **model**: Your specific model name (e.g., claude-sonnet-4-20250514)
-- **ide**: Your IDE/editor environment (e.g., VS Code, Cursor. Zed)
-- **extension**: Your extension name (e.g., Claude Code, Roo Code)
+- **provider**: Your AI provider (e.g., Anthropic, OpenAI, Google)
+- **model**: Your specific model name (e.g., claude-sonnet-4-20250514, gpt-4, gemini-2.0-flash)
+- **ide**: Your IDE/editor environment (e.g., VS Code, Cursor, Zed, Kiro)
+- **extension**: Your extension name (e.g., Claude Code, Roo Code, Cline, GitHub Copilot)
 
 ### task 3: Create Configuration File or Rewrite if the file already exist
-UPDATE or CREATE a .json file if it do not already exists nammed: `.context-master/ai-infos.json` with this following exact JSON object:
+UPDATE or CREATE a YAML file if it does not already exist named: `.context-master/cm-ai-infos.yaml` with this following exact YAML structure:
 
-```json
-{"provider": "YOUR_PROVIDER", "model": "YOUR_MODEL", "ide": "YOUR_IDE", "extension": "YOUR_EXTENSION"}
+```yaml
+provider: YOUR_PROVIDER
+model: YOUR_MODEL
+ide: YOUR_IDE
+extension: YOUR_EXTENSION
 ```
 
-Do not read this file, only write it with the json structure asked.
+Do not read this file, only write it with the YAML structure asked.
 
-### task 3: Verification
+### task 4: Verification
 After creation, read and display the file contents to confirm the configuration was saved correctly. 

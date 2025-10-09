@@ -191,21 +191,24 @@ files:
   await fs.writeFile(manifestPath, initialManifest, 'utf8');
   logs.push(`Created initial knowledge-manifest.yaml`);
 
-  // Create initial ai-infos.json placeholder (only if it doesn't exist)
-  const aiInfosPath = path.join(contextMasterDir, 'ai-infos.json');
-  const aiInfosExists = await fs.pathExists(aiInfosPath);
+  // Create initial cm-ai-infos.yaml placeholder (only if neither YAML nor JSON exists)
+  const yamlInfosPath = path.join(contextMasterDir, 'cm-ai-infos.yaml');
+  const jsonInfosPath = path.join(contextMasterDir, 'ai-infos.json');
+  const yamlExists = await fs.pathExists(yamlInfosPath);
+  const jsonExists = await fs.pathExists(jsonInfosPath);
   
-  if (!aiInfosExists) {
-    const initialAiInfos = {
-      provider: "UNKNOWN",
-      model: "UNKNOWN",
-      ide: "UNKNOWN",
-      extension: "UNKNOWN"
-    };
-    await fs.writeFile(aiInfosPath, JSON.stringify(initialAiInfos, null, 2), 'utf8');
-    logs.push(`Created initial ai-infos.json placeholder`);
+  if (!yamlExists && !jsonExists) {
+    const initialAiInfos = `provider: UNKNOWN
+model: UNKNOWN
+ide: UNKNOWN
+extension: UNKNOWN
+`;
+    await fs.writeFile(yamlInfosPath, initialAiInfos, 'utf8');
+    logs.push(`Created initial cm-ai-infos.yaml placeholder`);
+  } else if (yamlExists) {
+    logs.push(`cm-ai-infos.yaml already exists, preserving existing configuration`);
   } else {
-    logs.push(`ai-infos.json already exists, preserving existing configuration`);
+    logs.push(`ai-infos.json already exists, preserving existing configuration (consider migrating to cm-ai-infos.yaml)`);
   }
 
   // Update AGENTS.md with Context Master instructions
@@ -298,7 +301,7 @@ The tool will automatically use your current working directory if no path is pro
 - **Templates Downloaded**: Check .context-master directory
 - **Commands Downloaded**: Check .context-master/commands directory
 - **Knowledge Directory**: .context-master/knowledge created
-- **Initial Files**: knowledge-manifest.yaml and ai-infos.json created
+- **Initial Files**: knowledge-manifest.yaml and cm-ai-infos.yaml created
 
 ## Initialization Logs
 ${initLogs.map(log => `- ${log}`).join('\n')}
@@ -310,7 +313,7 @@ Use these slash commands to interact with Context Master:
 - \\\`/cm-status\\\` - Show current context status
 
 ## Next Steps
-1. Update \\\`.context-master/ai-infos.json\\\` with your AI assistant information
+1. Update \\\`.context-master/cm-ai-infos.yaml\\\` with your AI assistant information
 2. Add context for specific libraries using: \\\`add_project_context\\\` with libraryName: "[library-name]"
 3. Check your updated AGENTS.md file for Context Master integration
 
@@ -376,7 +379,7 @@ ${searchResults.map(result => `- **${result.originalPackageName}**: ${result.rep
 - **Templates**: cm-ai-infos.md, cm-analyze.md, cm-status.md, cm-instructions.md
 - **Commands**: cm-commands.md, command-dispatcher.md  
 - **Knowledge**: knowledge-manifest.yaml (updated with new files)
-- **Configuration**: ai-infos.json (placeholder - needs update)
+- **Configuration**: cm-ai-infos.yaml (placeholder - needs update)
 - **AGENTS.md**: Created or updated with Context Master instructions
 
 ## Available Commands
@@ -394,7 +397,7 @@ Use these slash commands to interact with Context Master:
 
 ## Next Steps
 1. Review the updated AGENTS.md file for Context Master integration
-2. Update ai-infos.json with your AI assistant details
+2. Update cm-ai-infos.yaml with your AI assistant details
 
 ---
 **Context Master is fully configured and ready to use!**`;

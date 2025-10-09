@@ -71,7 +71,7 @@ async function testSetupTool() {
             { path: contextMasterDir, name: '.context-master directory' },
             { path: contextDir, name: 'context directory' },
             { path: commandsDir, name: 'commands directory' },
-            { path: path.join(contextMasterDir, 'ai-infos.json'), name: 'ai-infos.json' },
+            { path: path.join(contextMasterDir, 'cm-ai-infos.yaml'), name: 'cm-ai-infos.yaml' },
             { path: path.join(contextMasterDir, 'cm-ai-infos.md'), name: 'cm-ai-infos.md template' },
             { path: path.join(contextMasterDir, 'cm-analyze.md'), name: 'cm-analyze.md template' },
             { path: path.join(contextMasterDir, 'cm-status.md'), name: 'cm-status.md template' },
@@ -94,12 +94,12 @@ async function testSetupTool() {
         // 5. Check file contents
         console.log('\n📄 Checking file contents...');
 
-        // Check ai-infos.json
+        // Check cm-ai-infos.yaml
         try {
-            const aiInfos = await fs.readJson(path.join(contextMasterDir, 'ai-infos.json'));
-            console.log('✅ ai-infos.json structure:', aiInfos);
+            const yamlContent = await fs.readFile(path.join(contextMasterDir, 'cm-ai-infos.yaml'), 'utf8');
+            console.log('✅ cm-ai-infos.yaml content:\n', yamlContent);
         } catch (error) {
-            console.log('❌ Failed to read ai-infos.json:', error.message);
+            console.log('❌ Failed to read cm-ai-infos.yaml:', error.message);
             allPassed = false;
         }
 

@@ -1,0 +1,5 @@
+provider: GitHub
+model: GitHub Copilot
+ide: VS Code
+extension: GitHub Copilot
+
