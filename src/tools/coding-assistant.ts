@@ -25,7 +25,7 @@ const contextMappings = [
     { keys: ["roo code", "roo-code", "roo"], ruleFile: "ROO.md", contextDir: ".roo/", type: "extension", agentsMD: true },
     { keys: ["cline"], ruleFile: ".clinerules", contextDir: ".cline/", type: "extension", agentsMD: true },
     { keys: ["kilo code", "kilo-code", "kilocode"], ruleFile: "KILOCODE.md", contextDir: ".kilocode/", type: "extension", agentsMD: true },
-    { keys: ["github copilot", "copilot"], ruleFile: "copilot-instructions.md", contextDir: ".github/", type: "extension", agentsMD: true },
+    { keys: ["github copilot", "copilot"], ruleFile: ".github/copilot-instructions.md", contextDir: ".github/", type: "extension", agentsMD: true },
     { keys: ["claude code"], ruleFile: "CLAUDE.md", contextDir: ".claude/", type: "extension", agentsMD: true },
     { keys: ["gemini cli"], ruleFile: "GEMINI.md", contextDir: ".gemini/", type: "extension", agentsMD: true },
     { keys: ["warp"], ruleFile: "WARP.md", contextDir: ".warp/", type: "extension", agentsMD: false },
@@ -37,7 +37,7 @@ const contextMappings = [
     // IDEs (priorité 2)
     { keys: ["cursor"], ruleFile: ".cursorrules", contextDir: ".cursor/", type: "ide", agentsMD: true },
     { keys: ["vs code", "vscode", "visual studio code"], ruleFile: "VSCODE.md", contextDir: ".vscode/", type: "ide", agentsMD: true },
-    { keys: ["kiro"], ruleFile: "kiro/steering/context-master-instructions.md", contextDir: ".kiro/", type: "ide", agentsMD: false },
+    { keys: ["kiro"], ruleFile: ".kiro/steering/context-master-instructions.md", contextDir: ".kiro/", type: "ide", agentsMD: false },
     { keys: ["zed"], ruleFile: "ZED.md", contextDir: ".zed/", type: "ide", agentsMD: true },
 
     // Models (priorité 3)
@@ -80,28 +80,34 @@ function getContextFile(info: z.infer<typeof InfoSchema>) {
         );
     };
 
+    // Helper pour construire le chemin complet
+    const buildPath = (match: typeof contextMappings[0]) => {
+        if (!match.contextDir) return match.ruleFile;
+        return path.join(match.contextDir, match.ruleFile).replace(/\\/g, '/');
+    };
+
     // Priorité 1: Extension
     if (isValid(info.extension)) {
         const match = findMatch(info.extension!, "extension");
-        if (match) return match.ruleFile;
+        if (match) return buildPath(match);
     }
 
     // Priorité 2: IDE
     if (isValid(info.ide)) {
         const match = findMatch(info.ide!, "ide");
-        if (match) return match.ruleFile;
+        if (match) return buildPath(match);
     }
 
     // Priorité 3: Model
     if (isValid(info.model)) {
         const match = findMatch(info.model, "model");
-        if (match) return match.ruleFile;
+        if (match) return buildPath(match);
     }
 
     // Priorité 4: Provider
     if (isValid(info.provider)) {
         const match = findMatch(info.provider, "provider");
-        if (match) return match.ruleFile;
+        if (match) return buildPath(match);
     }
 
     // fallback final
