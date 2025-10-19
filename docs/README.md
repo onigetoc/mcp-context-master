@@ -1,97 +1,149 @@
-# Documentation Context Master
+# Context Master Documentation
 
-## 📚 Index de la documentation
+## Overview
 
-### 🚀 Guides de démarrage
+This directory contains comprehensive documentation for the Context Master MCP server.
 
-1. **[README principal](../README.md)** - Vue d'ensemble et installation
-2. **[AGENTS.md](../AGENTS.md)** - Instructions pour les assistants IA
-3. **[ROADMAP.md](../ROADMAP.md)** - Feuille de route du projet
+## Documentation Index
 
-### 🔄 Migration YAML
+### Getting Started
 
-1. **[Guide de migration YAML](YAML-MIGRATION-GUIDE.md)** - Guide complet de migration JSON → YAML
-2. **[Changelog migration](../CHANGELOG-YAML-MIGRATION.md)** - Historique des changements
-3. **[Résumé migration](../MIGRATION-SUMMARY.md)** - Résumé des tâches accomplies
-4. **[README migration](.context-master/README-YAML-MIGRATION.md)** - Documentation technique
+1. **[INITIALIZATION-WORKFLOW.md](INITIALIZATION-WORKFLOW.md)**
+   - Complete guide to the two-step initialization process
+   - Step-by-step workflow examples
+   - Error handling and troubleshooting
+   - Benefits and rationale
 
-### 📖 Références techniques
+2. **[MIGRATION-TO-INITIALIZE-TOOL.md](MIGRATION-TO-INITIALIZE-TOOL.md)**
+   - Migration guide for existing users
+   - Backward compatibility information
+   - Common questions and troubleshooting
+   - Step-by-step migration instructions
 
-1. **[Référence des mappings](CONTEXT-MAPPING-REFERENCE.md)** - Système de mapping des contextes
-2. **[Configuration AI](cm-ai-infos.md)** - Configuration de l'assistant IA (legacy)
-3. **[Analyse de projet](cm-ai-infos-V7.md)** - Analyse et configuration avancée
+### Technical Documentation
 
-### 🛠️ Outils et scripts
+3. **[INITIALIZE-TOOL-IMPLEMENTATION.md](INITIALIZE-TOOL-IMPLEMENTATION.md)**
+   - Technical implementation details
+   - Design decisions and rationale
+   - Integration points
+   - Future enhancements
 
-1. **[Script de migration](../scripts/migrate-to-yaml.js)** - Migration automatique JSON → YAML
-2. **[Tests](../test/)** - Suite de tests
-3. **[Templates](../templates/)** - Templates de configuration
+4. **[CODING-ASSISTANT-SERVICE-USAGE.md](CODING-ASSISTANT-SERVICE-USAGE.md)**
+   - Service API documentation
+   - Usage examples
+   - Integration patterns
+   - Future enhancements
 
-## 📋 Documentation par sujet
+### Reference
 
-### Configuration
+5. **[CONTEXT-MAPPING-REFERENCE.md](CONTEXT-MAPPING-REFERENCE.md)**
+   - Complete mapping of AI assistants to context files
+   - Priority system explanation
+   - Supported assistants and IDEs
 
-- **Format YAML** : [Guide de migration](YAML-MIGRATION-GUIDE.md)
-- **Format JSON (legacy)** : [cm-ai-infos.md](cm-ai-infos.md)
-- **Mappings** : [Référence des mappings](CONTEXT-MAPPING-REFERENCE.md)
+## Quick Links
 
-### Utilisation
+### For Users
 
-- **Setup initial** : [README principal](../README.md#installation)
-- **Commandes** : [README principal](../README.md#available-tools)
-- **Tests** : [README tests](../test/README-TESTS.md)
+- **First Time Setup**: See [INITIALIZATION-WORKFLOW.md](INITIALIZATION-WORKFLOW.md)
+- **Migrating Existing Projects**: See [MIGRATION-TO-INITIALIZE-TOOL.md](MIGRATION-TO-INITIALIZE-TOOL.md)
+- **Troubleshooting**: See error handling sections in workflow docs
 
-### Développement
+### For Developers
 
-- **Architecture** : [README principal](../README.md#architecture)
-- **Contribution** : [ROADMAP.md](../ROADMAP.md)
-- **Changelog** : [CHANGELOG-YAML-MIGRATION.md](../CHANGELOG-YAML-MIGRATION.md)
+- **Implementation Details**: See [INITIALIZE-TOOL-IMPLEMENTATION.md](INITIALIZE-TOOL-IMPLEMENTATION.md)
+- **Service Usage**: See [CODING-ASSISTANT-SERVICE-USAGE.md](CODING-ASSISTANT-SERVICE-USAGE.md)
+- **Context Mapping**: See [CONTEXT-MAPPING-REFERENCE.md](CONTEXT-MAPPING-REFERENCE.md)
 
-## 🎯 Guides par cas d'usage
+## Documentation Structure
 
-### Je débute avec Context Master
+```
+docs/
+├── README.md (this file)
+├── INITIALIZATION-WORKFLOW.md
+├── MIGRATION-TO-INITIALIZE-TOOL.md
+├── INITIALIZE-TOOL-IMPLEMENTATION.md
+├── CODING-ASSISTANT-SERVICE-USAGE.md
+└── CONTEXT-MAPPING-REFERENCE.md
+```
 
-1. Lisez le [README principal](../README.md)
-2. Suivez les instructions d'installation
-3. Configurez votre assistant avec [cm-ai-infos.yaml](YAML-MIGRATION-GUIDE.md#exemples)
+## Key Concepts
 
-### J'ai un projet existant avec JSON
+### Two-Step Initialization
 
-1. Lisez le [Guide de migration](YAML-MIGRATION-GUIDE.md)
-2. Exécutez `npm run migrate`
-3. Vérifiez avec `node test/test-coding-assistant.js`
+Context Master uses a two-step initialization process:
 
-### Je veux ajouter un nouveau mapping
+1. **Initialize**: Downloads template and creates directory
+2. **Setup**: Analyzes dependencies and downloads documentation
 
-1. Consultez la [Référence des mappings](CONTEXT-MAPPING-REFERENCE.md#ajout-dun-nouveau-mapping)
-2. Modifiez `src/tools/coding-assistant.ts`
-3. Testez avec `npm run build && node test/test-coding-assistant.js`
+This ensures proper configuration before downloading documentation.
 
-### Je veux comprendre le système de mapping
+### AI Assistant Detection
 
-1. Lisez la [Référence des mappings](CONTEXT-MAPPING-REFERENCE.md)
-2. Consultez les exemples de configuration
-3. Testez avec différentes configurations
+The system detects which AI assistant is being used based on configuration:
 
-## 📝 Formats de fichiers
+- **Provider**: Anthropic, OpenAI, Google, etc.
+- **Model**: claude-sonnet-4, gpt-4, gemini-2.0-flash, etc.
+- **IDE**: VS Code, Cursor, Kiro, Zed, etc.
+- **Extension**: Claude Code, Roo Code, Cline, GitHub Copilot, etc.
 
-### YAML (Recommandé)
+### Context File Mapping
+
+Based on the detected assistant, the system recommends the appropriate context file:
+
+- Cursor → `.cursorrules`
+- Claude Code → `CLAUDE.md`
+- Roo Code → `ROO.md`
+- Kiro → `.kiro/steering/context-master-instructions.md`
+- etc.
+
+## Common Workflows
+
+### First-Time Setup
+
+```typescript
+// Step 1: Initialize
+initialize_context_master(projectPath)
+
+// Step 2: LLM creates cm-ai-infos.yaml
+
+// Step 3: Complete setup
+setup_project_context(projectPath)
+```
+
+### Adding Documentation
+
+```typescript
+// Add documentation for a specific library
+add_project_context(libraryName, projectPath, topic, tokens)
+```
+
+### Reading Context
+
+```typescript
+// List available contexts
+list_available_contexts()
+
+// Read specific context
+read_specific_context(fileName)
+```
+
+## Configuration Files
+
+### YAML Format (Preferred)
+
+**File**: `.context-master/cm-ai-infos.yaml`
 
 ```yaml
-# .context-master/cm-ai-infos.yaml
 provider: Anthropic
 model: claude-sonnet-4-20250514
 ide: Kiro
 extension: Kiro
 ```
 
-**Avantages:**
-- Plus lisible
-- Support des commentaires
-- Standard industriel
-- Moins d'erreurs de syntaxe
+### JSON Format (Legacy)
 
-### JSON (Legacy)
+**File**: `.context-master/ai-infos.json`
 
 ```json
 {
@@ -102,93 +154,124 @@ extension: Kiro
 }
 ```
 
-**Note:** Toujours supporté pour rétrocompatibilité.
+## Tools Overview
 
-## 🔧 Commandes utiles
+### Primary Tools
+
+1. **`initialize_context_master`**
+   - First-time setup
+   - Downloads template only
+   - Guides configuration
+
+2. **`setup_project_context`**
+   - Complete project setup
+   - Analyzes dependencies
+   - Downloads documentation
+
+3. **`add_project_context`**
+   - Add documentation for specific library
+   - Supports topic filtering
+   - Configurable token count
+
+### Supporting Tools
+
+4. **`list_available_contexts`**
+   - List downloaded documentation
+
+5. **`read_specific_context`**
+   - Read specific documentation file
+
+6. **`search_library_advisor`**
+   - Search for libraries on GitHub
+   - Get workflow recommendations
+
+7. **`read_template`**
+   - Read template files
+
+8. **`update_agents_file`**
+   - Update AGENTS.md with instructions
+
+## Services
+
+### CodingAssistantService
+
+Internal service for detecting AI assistant:
+
+```typescript
+class CodingAssistantService {
+  async detectAssistant(projectPath: string): Promise<DetectionResult>
+  async getContextFilePath(projectPath: string): Promise<string>
+}
+```
+
+## Error Handling
+
+### Common Errors
+
+1. **Missing Project Path**
+   - Error: "projectPath parameter is REQUIRED"
+   - Solution: Provide absolute path to project
+
+2. **Invalid Project Path**
+   - Error: "Project path does not exist"
+   - Solution: Verify path exists and is accessible
+
+3. **Configuration Not Found**
+   - Error: "No configuration file found"
+   - Solution: Run `initialize_context_master` first
+
+4. **Invalid Configuration**
+   - Error: "Could not parse configuration file"
+   - Solution: Check YAML/JSON syntax
+
+## Testing
+
+### Test Files
+
+- `test/test-initialize-tool.js` - Test initialize tool
+- `test/test-setup-tool.js` - Test setup tool
+- `test/test-coding-assistant.js` - Test assistant detection
+
+### Running Tests
 
 ```bash
-# Compiler le projet
-npm run build
+# Test initialize tool
+node test/test-initialize-tool.js
 
-# Tester le coding assistant
-node test/test-coding-assistant.js
-
-# Tester le setup
+# Test setup tool
 node test/test-setup-tool.js
 
-# Migrer vers YAML
-npm run migrate
-
-# Lancer tous les tests
-npm test
+# Test coding assistant detection
+node test/test-coding-assistant.js
 ```
 
-## 📊 Structure de la documentation
+## Contributing
 
-```
-docs/
-├── README.md                          # Ce fichier
-├── YAML-MIGRATION-GUIDE.md           # Guide de migration
-├── CONTEXT-MAPPING-REFERENCE.md      # Référence des mappings
-├── cm-ai-infos.md                    # Config AI (legacy)
-├── cm-ai-infos-V6.md                 # Config AI v6
-├── cm-ai-infos-V7.md                 # Config AI v7
-└── 01-GET-MODEL-PROVIDER-PROMPT.md   # Prompt de configuration
+When adding new documentation:
 
-.context-master/
-└── README-YAML-MIGRATION.md          # Documentation technique
+1. Follow the existing structure
+2. Include code examples
+3. Add error handling sections
+4. Update this README index
+5. Cross-reference related docs
 
-Root/
-├── README.md                          # README principal
-├── AGENTS.md                          # Instructions pour IA
-├── ROADMAP.md                         # Feuille de route
-├── CHANGELOG-YAML-MIGRATION.md       # Changelog migration
-└── MIGRATION-SUMMARY.md              # Résumé migration
-```
+## Version History
 
-## 🆘 Support
+### v1.0.0 (Current)
+- Two-step initialization process
+- `initialize_context_master` tool
+- `CodingAssistantService` service
+- Comprehensive documentation
 
-### Problèmes courants
+## Support
 
-1. **Fichier de configuration non trouvé**
-   - Solution : [Guide de migration - Dépannage](YAML-MIGRATION-GUIDE.md#dépannage)
+For issues or questions:
 
-2. **Mauvais fichier de règles utilisé**
-   - Solution : [Référence des mappings - Dépannage](CONTEXT-MAPPING-REFERENCE.md#dépannage)
+1. Check the relevant documentation file
+2. Review error handling sections
+3. Check troubleshooting guides
+4. Review test files for examples
 
-3. **Erreur de parsing YAML**
-   - Solution : [Guide de migration - Dépannage](YAML-MIGRATION-GUIDE.md#dépannage)
+## License
 
-### Ressources externes
-
-- [Spécification YAML](https://yaml.org/spec/)
-- [js-yaml Documentation](https://github.com/nodeca/js-yaml)
-- [Model Context Protocol](https://modelcontextprotocol.io/)
-
-## 🔄 Mises à jour
-
-### Dernières modifications
-
-- **2025-01-08** : Migration vers YAML
-- **2025-01-08** : Ajout de la référence des mappings
-- **2025-01-08** : Création de cet index
-
-### Prochaines étapes
-
-- Validation du schéma YAML
-- Templates pré-configurés
-- Configuration interactive
-- Documentation vidéo
-
-## 📞 Contact
-
-Pour toute question ou suggestion :
-1. Ouvrez une issue sur GitHub
-2. Consultez la documentation
-3. Testez avec les scripts fournis
-
----
-
-**Dernière mise à jour:** 2025-01-08  
-**Version:** 1.1.0  
-**Mainteneur:** Context Master Team
+See main project LICENSE file.

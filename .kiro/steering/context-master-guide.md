@@ -58,8 +58,9 @@ add_project_context(
 - Without the correct path, files will be created in the wrong location
 
 ### Available Commands
-- `/cm-ai-infos`: Get AI assistant information
-- `/cm-setup`: Setup and analyze project dependencies automatically and add libraries/API knowledge file to the project
+- `/cm-init`: Initialize Context Master (first-time setup - downloads template only)
+- `/cm-ai-infos`: Configure AI assistant information (creates cm-ai-infos.yaml)
+- `/cm-setup`: Complete setup - analyze dependencies and download documentation
 - `/cm-add [library] [topic]`: Add documentation for a specific library/API
 - `/cm-search [library]`: Find library on GitHub
 - `/cm-npm [package]`: Search NPM registry
@@ -67,6 +68,29 @@ add_project_context(
 - `/cm-read [file]`: Read context file
 
 ### Available MCP Tools
+
+#### `initialize_context_master` - First-time setup
+```typescript
+initialize_context_master(
+  projectPath: string      // REQUIRED: Absolute path to user's project
+)
+```
+
+**Returns:** Instructions for LLM to create cm-ai-infos.yaml
+
+**CRITICAL: Always provide projectPath**
+- This is the FIRST tool to call when setting up Context Master
+- Downloads only cm-ai-infos.md template from GitHub
+- Creates .context-master directory
+- Guides LLM to configure AI assistant identity
+- After completion, LLM must create cm-ai-infos.yaml and call setup_project_context
+
+**What it does:**
+1. Creates .context-master directory
+2. Downloads cm-ai-infos.md template from GitHub
+3. Returns template content and instructions for LLM
+4. LLM should then create cm-ai-infos.yaml with proper values
+5. LLM should then call setup_project_context to complete setup
 
 #### `add_project_context` - Main tool
 ```typescript
@@ -168,16 +192,25 @@ User: "Create React component with useState"
 - Use "Tailwind CSS" instead of "tailwind"
 
 
-#### Example 3: Project Setup
+#### Example 3: Project Setup (First Time)
 
 User: "Initialize Context Master"
 
 ```typescript
-// 1. Initialize with explicit project path
+// Step 1: Initialize (downloads template only)
+initialize_context_master("C:\\Users\\Name\\projects\\my-app")
+
+// Step 2: LLM reads template and creates cm-ai-infos.yaml with:
+// provider: anthropic
+// model: claude-sonnet-4
+// ide: kiro
+// extension: kiro
+
+// Step 3: Complete setup (scans dependencies, downloads docs)
 setup_project_context("C:\\Users\\Name\\projects\\my-app")
 
-// 2. System scans dependencies automatically
-// 3. Suggest contexts for specialized libraries only
+// System scans dependencies automatically
+// Suggests contexts for specialized libraries only
 ```
 
 #### Example 4: Library Name Variations
@@ -294,15 +327,27 @@ add_project_context("C:\\Users\\dev\\my-app", ...)
 
 ### Integration Flow
 
-#### Starting New Project
+#### Starting New Project (First Time)
 
 ```typescript
 // 1. User: "Initialize Context Master"
-// 2. Setup with explicit project path
-setup_project_context("C:\\Users\\Name\\projects\\my-app")
+const projectPath = "C:\\Users\\Name\\projects\\my-app";  // REQUIRED
 
-// 3. Review dependencies automatically
-// 4. Suggest contexts for specialized libs only
+// Step 1: Initialize (downloads template only)
+initialize_context_master(projectPath)
+
+// Step 2: LLM creates cm-ai-infos.yaml based on template instructions
+// Example content:
+// provider: anthropic
+// model: claude-sonnet-4
+// ide: kiro
+// extension: kiro
+
+// Step 3: Complete setup (scans dependencies, downloads docs)
+setup_project_context(projectPath)
+
+// 4. Review dependencies automatically
+// 5. Suggest contexts for specialized libs only
 // Example: "I see you use Remotion (specialized) and React (mainstream).
 //           Should I download Remotion context? React doesn't need it."
 ```

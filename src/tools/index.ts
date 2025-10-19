@@ -1,3 +1,4 @@
+import { initializeContextMasterTool, handleInitializeContextMasterTool } from './initialize.tool.js';
 import { setupProjectContextTool, handleSetupProjectContextTool } from './setup.tool.js';
 import { addProjectContextTool, handleAddProjectContextTool } from './add_context.tool.js';
 import { listAvailableContextsTool, handleListAvailableContextsTool, readSpecificContextTool, handleReadSpecificContextTool } from './read_context.tool.js';
@@ -8,6 +9,7 @@ import { ToolHandler } from '../types/mcp-types.js';
 
 // Tool registry for easy access
 export const tools = [
+  initializeContextMasterTool,
   setupProjectContextTool,
   addProjectContextTool,
   searchAdvisorTool,
@@ -19,6 +21,7 @@ export const tools = [
 
 // Handler registry
 export const toolHandlers: Record<string, ToolHandler> = {
+  'initialize_context_master': handleInitializeContextMasterTool,
   'setup_project_context': handleSetupProjectContextTool,
   'add_project_context': handleAddProjectContextTool,
   'search_library_advisor': handleSearchAdvisorTool,

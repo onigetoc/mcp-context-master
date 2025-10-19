@@ -341,6 +341,9 @@ Get your GitHub token from: https://github.com/settings/tokens
 Test the MCP server functionality:
 
 ```bash
+# Test first-time initialization (downloads template only)
+node test/test-initialize-tool.js
+
 # Complete project analysis and setup
 node test/test-project-master.js
 

@@ -66,17 +66,28 @@ add_project_context(library, specific_topic)
 
 ### Primary Tools
 
-1. **`add_project_context(library, projectPath, topic?, tokens?)`**
-   - Downloads focused documentation for a specific library
+1. **`initialize_context_master(projectPath)`**
+   - **FIRST STEP** - Downloads configuration template only
    - **REQUIRES absolute project path** (MCP server can't auto-detect)
-   - Saves to `.context-master/knowledge/`
-   - Example: `add_project_context("remotion", "C:\\Users\\Name\\projects\\my-app", "srt captions", 5000)`
+   - Creates `.context-master` directory
+   - Downloads `cm-ai-infos.md` template from GitHub
+   - Returns instructions for LLM to create configuration
+   - Example: `initialize_context_master("C:\\Users\\Name\\projects\\my-app")`
+   - **After this**: LLM must create `cm-ai-infos.yaml` and call `setup_project_context`
 
 2. **`setup_project_context(projectPath, maxDependencies?)`**
+   - **SECOND STEP** - Completes full project setup
    - Analyzes entire project dependencies
    - **REQUIRES absolute project path** (MCP server can't auto-detect)
    - Downloads docs for high-priority libraries only
    - Example: `setup_project_context("C:\\Users\\Name\\projects\\my-app", 20)`
+   - **Prerequisite**: `cm-ai-infos.yaml` must exist
+
+3. **`add_project_context(library, projectPath, topic?, tokens?)`**
+   - Downloads focused documentation for a specific library
+   - **REQUIRES absolute project path** (MCP server can't auto-detect)
+   - Saves to `.context-master/knowledge/`
+   - Example: `add_project_context("remotion", "C:\\Users\\Name\\projects\\my-app", "srt captions", 5000)`
 
 3. **`list_available_contexts()`**
    - Lists all downloaded documentation files
@@ -142,14 +153,26 @@ Check file dates - newer files have more current documentation.
 
 ## 🔄 Typical Workflows
 
-### Starting New Project
+### Starting New Project (First Time)
 ```typescript
 // 1. User: "Initialize Context Master"
 const projectPath = "C:\\Users\\Name\\projects\\my-app";  // REQUIRED
+
+// Step 1: Initialize (downloads template only)
+initialize_context_master(projectPath)
+
+// Step 2: LLM reads template and creates cm-ai-infos.yaml
+// Example content:
+// provider: Anthropic
+// model: claude-sonnet-4-20250514
+// ide: Kiro
+// extension: Kiro
+
+// Step 3: Complete setup (analyzes dependencies, downloads docs)
 setup_project_context(projectPath)
 
-// 2. Review dependencies automatically
-// 3. Suggest contexts for specialized libs only
+// 4. Review dependencies automatically
+// 5. Suggest contexts for specialized libs only
 // Example: "I see you use Remotion (specialized) and React (mainstream).
 //           Should I download Remotion context? React doesn't need it."
 ```
