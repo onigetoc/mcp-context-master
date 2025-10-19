@@ -25,3 +25,10 @@ Do not read this file, only write it with the YAML structure asked.
 
 ### task 4: Verification
 After creation, read and display the file contents to confirm the configuration was saved correctly. 
+
+### task 5: calling the context master setup tool
+Call the `setup_project_context` tool to initialize and configure Context Master for your project.
+
+```typescript 
+setup_project_context( 
+    
