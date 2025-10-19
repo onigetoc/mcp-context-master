@@ -60,7 +60,7 @@ async function updateAgentsFileWithTemplate(projectPath: string): Promise<string
     const existingContent = await fs.readFile(agentsFilePath, 'utf8');
     
     // Check if Context Master instructions already exist
-    const startMarker = '## Context Master (mcp-context-master) Instructions';
+    const startMarker = '<!-- START: CONTEXT-MASTER -->';
     const endMarker = '<!-- END: CONTEXT-MASTER -->';
     
     const startIndex = existingContent.indexOf(startMarker);

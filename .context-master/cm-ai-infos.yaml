@@ -1,5 +1,4 @@
-provider: GitHub
-model: GitHub Copilot
-ide: VS Code
-extension: GitHub Copilot
-
+provider: anthropic
+model: claude-sonnet-4
+ide: kiro
+extension: kiro

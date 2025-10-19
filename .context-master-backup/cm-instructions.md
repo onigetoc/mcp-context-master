@@ -1,5 +1,3 @@
-
-<!-- START: CONTEXT-MASTER -->
 ## Context Master (mcp-context-master) Instructions
 
 ### Overview

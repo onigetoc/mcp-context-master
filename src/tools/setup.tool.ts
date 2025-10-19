@@ -6,10 +6,13 @@ import { DownloaderService } from '../services/downloader.service.js';
 import { PathResolverService } from '../services/path-resolver.service.js';
 import { updateKnowledgeManifest } from '../services/registry.service.js';
 import { debugLog } from '../utils/logger.js';
+// We'll implement the coding assistant detection inline since we need the logic, not the MCP tool
 import fs from 'fs-extra';
 import path from 'path';
 import os from 'os';
 import axios from 'axios';
+import yaml from 'js-yaml';
+import { z } from 'zod';
 
 export const setupProjectContextTool = {
   name: "setup_project_context",
@@ -34,6 +37,176 @@ export const setupProjectContextTool = {
 } as const;
 
 
+
+// Schema for AI info validation
+const InfoSchema = z.object({
+  provider: z.string(),
+  model: z.string(),
+  ide: z.string().optional(),
+  extension: z.string().optional(),
+});
+
+// Context mappings from coding-assistant.ts
+const contextMappings = [
+  // Extensions (priorité 1)
+  { keys: ["roo code", "roo-code", "roo"], ruleFile: "ROO.md", contextDir: ".roo/", type: "extension", agentsMD: true },
+  { keys: ["cline"], ruleFile: ".clinerules", contextDir: ".cline/", type: "extension", agentsMD: true },
+  { keys: ["kilo code", "kilo-code", "kilocode"], ruleFile: "KILOCODE.md", contextDir: ".kilocode/", type: "extension", agentsMD: true },
+  { keys: ["github copilot", "copilot"], ruleFile: ".github/copilot-instructions.md", contextDir: ".github/", type: "extension", agentsMD: true },
+  { keys: ["claude code"], ruleFile: "CLAUDE.md", contextDir: ".claude/", type: "extension", agentsMD: true },
+  { keys: ["gemini cli"], ruleFile: "GEMINI.md", contextDir: ".gemini/", type: "extension", agentsMD: true },
+  { keys: ["warp"], ruleFile: "WARP.md", contextDir: ".warp/", type: "extension", agentsMD: false },
+  { keys: ["windsurf"], ruleFile: "WINDSURF.md", contextDir: ".windsurf/", type: "extension", agentsMD: true },
+  { keys: ["auggie"], ruleFile: "AUGMENT.md", contextDir: ".augment/", type: "extension", agentsMD: true },
+  { keys: ["opencode"], ruleFile: "OPENCODE.md", contextDir: ".opencode/", type: "extension", agentsMD: true },
+  { keys: ["codex"], ruleFile: "CODEX.md", contextDir: ".codex/", type: "extension", agentsMD: true },
+
+  // IDEs (priorité 2)
+  { keys: ["cursor"], ruleFile: ".cursorrules", contextDir: ".cursor/", type: "ide", agentsMD: true },
+  { keys: ["vs code", "vscode", "visual studio code"], ruleFile: "VSCODE.md", contextDir: ".vscode/", type: "ide", agentsMD: true },
+  { keys: ["kiro"], ruleFile: "context-master-instructions.md", contextDir: ".kiro/steering/", type: "ide", agentsMD: false },
+  { keys: ["zed"], ruleFile: "ZED.md", contextDir: ".zed/", type: "ide", agentsMD: true },
+
+  // Models (priorité 3)
+  { keys: ["gemini"], ruleFile: "GEMINI.md", contextDir: ".gemini/", type: "model", agentsMD: true },
+  { keys: ["claude"], ruleFile: "CLAUDE.md", contextDir: ".claude/", type: "model", agentsMD: true },
+  { keys: ["gpt"], ruleFile: "OPENAI.md", contextDir: ".openai/", type: "model", agentsMD: true },
+  { keys: ["copilot"], ruleFile: "copilot-instructions.md", contextDir: ".github/", type: "model", agentsMD: true },
+  { keys: ["qwen"], ruleFile: "QWEN.md", contextDir: ".qwen/", type: "model", agentsMD: true },
+
+  // Providers (priorité 4)
+  { keys: ["google"], ruleFile: "GEMINI.md", contextDir: ".gemini/", type: "provider", agentsMD: true },
+  { keys: ["anthropic"], ruleFile: "CLAUDE.md", contextDir: ".claude/", type: "provider", agentsMD: true },
+  { keys: ["openai"], ruleFile: "OPENAI.md", contextDir: ".openai/", type: "provider", agentsMD: true },
+];
+
+async function detectCodingAssistantAndGetContextFile(projectPath: string): Promise<{ contextFile: string | null, shouldUpdateAgentsMD: boolean, logs: string[] }> {
+  const logs: string[] = [];
+  const yamlPath = path.join(projectPath, '.context-master', 'cm-ai-infos.yaml');
+  
+  try {
+    if (!await fs.pathExists(yamlPath)) {
+      logs.push(`No cm-ai-infos.yaml found, will only update AGENTS.md`);
+      return { contextFile: null, shouldUpdateAgentsMD: true, logs };
+    }
+
+    const fileContent = await fs.readFile(yamlPath, 'utf-8');
+    const data = yaml.load(fileContent);
+    const result = InfoSchema.safeParse(data);
+    
+    if (!result.success) {
+      logs.push(`Invalid cm-ai-infos.yaml format, will only update AGENTS.md`);
+      return { contextFile: null, shouldUpdateAgentsMD: true, logs };
+    }
+
+    const info = result.data;
+    logs.push(`Detected coding assistant: provider=${info.provider}, model=${info.model}, ide=${info.ide}, extension=${info.extension}`);
+
+    // Helper functions
+    const isValid = (val?: string) => val && val.trim() !== "" && val.trim().toLowerCase() !== "unknown";
+    const findMatch = (value: string, type: string) => {
+      const lowerValue = value.toLowerCase();
+      return contextMappings.find(mapping => 
+        mapping.type === type && 
+        mapping.keys.some(key => lowerValue.includes(key))
+      );
+    };
+
+    // Priority matching: Extension > IDE > Model > Provider
+    let match = null;
+    
+    if (isValid(info.extension)) {
+      match = findMatch(info.extension!, "extension");
+      if (match) logs.push(`Found extension match: ${info.extension} -> ${match.contextDir}${match.ruleFile}`);
+    }
+    
+    if (!match && isValid(info.ide)) {
+      match = findMatch(info.ide!, "ide");
+      if (match) logs.push(`Found IDE match: ${info.ide} -> ${match.contextDir}${match.ruleFile}`);
+    }
+    
+    if (!match && isValid(info.model)) {
+      match = findMatch(info.model, "model");
+      if (match) logs.push(`Found model match: ${info.model} -> ${match.contextDir}${match.ruleFile}`);
+    }
+    
+    if (!match && isValid(info.provider)) {
+      match = findMatch(info.provider, "provider");
+      if (match) logs.push(`Found provider match: ${info.provider} -> ${match.contextDir}${match.ruleFile}`);
+    }
+
+    if (match) {
+      const contextFile = match.contextDir ? path.join(match.contextDir, match.ruleFile).replace(/\\/g, '/') : match.ruleFile;
+      return { 
+        contextFile, 
+        shouldUpdateAgentsMD: match.agentsMD, 
+        logs 
+      };
+    } else {
+      logs.push(`No specific context mapping found, will only update AGENTS.md`);
+      return { contextFile: null, shouldUpdateAgentsMD: true, logs };
+    }
+
+  } catch (error) {
+    logs.push(`Error reading cm-ai-infos.yaml: ${error instanceof Error ? error.message : String(error)}, will only update AGENTS.md`);
+    return { contextFile: null, shouldUpdateAgentsMD: true, logs };
+  }
+}
+
+async function updateContextFile(projectPath: string, contextFile: string, contextMasterInstructions: string): Promise<string[]> {
+  const logs: string[] = [];
+  const fullPath = path.resolve(projectPath);
+  const contextFilePath = path.join(fullPath, contextFile);
+  
+  // Ensure the directory exists
+  const contextDir = path.dirname(contextFilePath);
+  await fs.ensureDir(contextDir);
+  logs.push(`Ensured directory exists: ${contextDir}`);
+  
+  // Check if context file exists
+  const contextFileExists = await fs.pathExists(contextFilePath);
+  
+  if (!contextFileExists) {
+    // Create new context file with Context Master instructions
+    await fs.writeFile(contextFilePath, contextMasterInstructions, 'utf8');
+    logs.push(`Created new context file: ${contextFile}`);
+  } else {
+    // Read existing context file content
+    const existingContent = await fs.readFile(contextFilePath, 'utf8');
+    
+    // Check if Context Master instructions already exist
+    const startMarker = '<!-- START: CONTEXT-MASTER -->';
+    const endMarker = '<!-- END: CONTEXT-MASTER -->';
+    
+    const startIndex = existingContent.indexOf(startMarker);
+    const endIndex = existingContent.indexOf(endMarker);
+    
+    let updatedContent: string;
+    
+    if (startIndex !== -1 && endIndex !== -1) {
+      // Replace existing Context Master section
+      const beforeSection = existingContent.substring(0, startIndex);
+      const afterSection = existingContent.substring(endIndex + endMarker.length);
+      updatedContent = beforeSection + contextMasterInstructions + afterSection;
+      logs.push(`Replaced existing Context Master section in ${contextFile}`);
+    } else if (startIndex !== -1) {
+      // Found start marker but no end marker - replace from start marker to end of file
+      const beforeSection = existingContent.substring(0, startIndex);
+      updatedContent = beforeSection + contextMasterInstructions;
+      logs.push(`Updated Context Master section from start marker to end of file in ${contextFile}`);
+    } else {
+      // No existing Context Master section - append to end
+      updatedContent = existingContent + '\n\n' + contextMasterInstructions;
+      logs.push(`Appended Context Master instructions to existing ${contextFile}`);
+    }
+    
+    // Write updated content back to file
+    await fs.writeFile(contextFilePath, updatedContent, 'utf8');
+  }
+
+  logs.push(`Context file updated successfully: ${contextFilePath}`);
+  return logs;
+}
 
 async function updateAgentsFileWithTemplate(projectPath: string): Promise<string[]> {
   const logs: string[] = [];
@@ -71,7 +244,7 @@ async function updateAgentsFileWithTemplate(projectPath: string): Promise<string
     const existingContent = await fs.readFile(agentsFilePath, 'utf8');
     
     // Check if Context Master instructions already exist
-    const startMarker = '## Context Master (mcp-context-master) Instructions';
+    const startMarker = '<!-- START: CONTEXT-MASTER -->';
     const endMarker = '<!-- END: CONTEXT-MASTER -->';
     
     const startIndex = existingContent.indexOf(startMarker);
@@ -211,12 +384,47 @@ extension: UNKNOWN
     logs.push(`ai-infos.json already exists, preserving existing configuration (consider migrating to cm-ai-infos.yaml)`);
   }
 
-  // Update AGENTS.md with Context Master instructions
+  // Detect coding assistant and update appropriate context files
   try {
-    const agentsLogs = await updateAgentsFileWithTemplate(fullPath);
-    logs.push(...agentsLogs);
+    // Read the template content
+    const templatePath = path.join(contextMasterDir, 'cm-instructions.md');
+    let contextMasterInstructions = '';
+    
+    if (await fs.pathExists(templatePath)) {
+      contextMasterInstructions = await fs.readFile(templatePath, 'utf8');
+      logs.push(`Read template from: ${templatePath}`);
+    } else {
+      logs.push(`Template file not found: ${templatePath}, skipping context file updates`);
+    }
+
+    if (contextMasterInstructions) {
+      // Detect which coding assistant/IDE the user is using
+      const { contextFile, shouldUpdateAgentsMD, logs: detectionLogs } = await detectCodingAssistantAndGetContextFile(fullPath);
+      logs.push(...detectionLogs);
+
+      // Update IDE-specific context file if detected
+      if (contextFile) {
+        const contextLogs = await updateContextFile(fullPath, contextFile, contextMasterInstructions);
+        logs.push(...contextLogs);
+      }
+
+      // Update AGENTS.md if required by the detected assistant or as fallback
+      if (shouldUpdateAgentsMD || !contextFile) {
+        const agentsLogs = await updateAgentsFileWithTemplate(fullPath);
+        logs.push(...agentsLogs);
+      } else {
+        logs.push(`Skipping AGENTS.md update as ${contextFile} was updated instead`);
+      }
+    }
   } catch (error) {
-    logs.push(`Failed to update AGENTS.md: ${error instanceof Error ? error.message : String(error)}`);
+    logs.push(`Failed to update context files: ${error instanceof Error ? error.message : String(error)}`);
+    // Fallback to AGENTS.md update
+    try {
+      const agentsLogs = await updateAgentsFileWithTemplate(fullPath);
+      logs.push(...agentsLogs);
+    } catch (fallbackError) {
+      logs.push(`Fallback AGENTS.md update also failed: ${fallbackError instanceof Error ? fallbackError.message : String(fallbackError)}`);
+    }
   }
 
   // Analyze project type and dependencies
@@ -420,8 +628,8 @@ ${searchResults.map(result => `- **${result.originalPackageName}**: ${result.rep
 - **Templates**: cm-ai-infos.md, cm-analyze.md, cm-status.md, cm-instructions.md
 - **Commands**: cm-commands.md, command-dispatcher.md  
 - **Knowledge**: knowledge-manifest.yaml (updated with new files)
-- **Configuration**: cm-ai-infos.yaml (placeholder - needs update)
-- **AGENTS.md**: Created or updated with Context Master instructions
+- **Configuration**: cm-ai-infos.yaml (configured for your coding assistant)
+- **Context Files**: Updated IDE-specific files and/or AGENTS.md with Context Master instructions
 
 ## Available Commands
 Use these slash commands to interact with Context Master:

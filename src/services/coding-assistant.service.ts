@@ -37,7 +37,7 @@ const contextMappings = [
 
     // Models (priority 3)
     { keys: ["gemini"], ruleFile: "GEMINI.md", contextDir: ".gemini/", type: "model", agentsMD: true },
-    { keys: ["claude"], ruleFile: "CLAUDE.md", contextDir: ".claude/", type: "model", agentsMD: true },
+    { keys: ["claude"], ruleFile: "CLAUDE.md", contextDir: ".claude/", type: "model", agentsMD: false },
     { keys: ["gpt"], ruleFile: "OPENAI.md", contextDir: ".openai/", type: "model", agentsMD: true },
     { keys: ["copilot"], ruleFile: "copilot-instructions.md", contextDir: ".github/", type: "model", agentsMD: true },
     { keys: ["qwen"], ruleFile: "QWEN.md", contextDir: ".qwen/", type: "model", agentsMD: true },
@@ -64,11 +64,11 @@ function parseInfo(json: any) {
 // --- Find the appropriate context file ---
 function getContextFile(info: z.infer<typeof InfoSchema>) {
     const isValid = (val?: string) => val && val.trim() !== "" && val.trim().toLowerCase() !== "unknown";
-    
+
     const findMatch = (value: string, type: string) => {
         const lowerValue = value.toLowerCase();
-        return contextMappings.find(mapping => 
-            mapping.type === type && 
+        return contextMappings.find(mapping =>
+            mapping.type === type &&
             mapping.keys.some(key => lowerValue.includes(key))
         );
     };

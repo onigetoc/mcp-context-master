@@ -1,0 +1,56 @@
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-05T22:11:30.604Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 projectPath (hint from LLM): .
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ✅ YES
+   hint === resolved?         : ❌ NO
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "toolName": "setup_project_context",
+  "maxDependencies": 5,
+  "providedPath": "."
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-19T20:54:52.907Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : c:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "toolName": "setup_project_context",
+  "maxDependencies": 20,
+  "providedPath": "C:\\Users\\LENOVO\\APPS\\0-MCP\\mcp-context-master"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
