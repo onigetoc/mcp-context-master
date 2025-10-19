@@ -5,6 +5,10 @@
   "description": "MCP server for GitHub search and Context7 integration to help start programming projects with comprehensive context",
   "main": "./build/index.js",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onigetoc/mcp-context-master.git"
+  },
   "scripts": {
     "start": "node build/index.js",
     "build": "tsc",
