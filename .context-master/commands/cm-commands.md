@@ -7,8 +7,8 @@ When you see `/cm-` followed by a command, execute the corresponding action:
 ### Core Commands
 
 - **`/cm-help`**: Show this numbered list of available commands for selection
+- **`/cm-setup`**: Setup project with knowledge base and get assistant info (execute setup `setup_project_context` tool call and cm-ai-infos.md instructions)
 - **`/cm-ai-infos`**: Get AI assistant informations
-- **`/cm-setup`**: Initialize project with AI assistant configuration (execute cm-ai-infos.md)
 - **`/cm-analyze`**: Analyze project dependencies and suggest documentation downloads
 - **`/cm-download`**: Download documentation for high-priority dependencies
 - **`/cm-status`**: Show current project context status and configuration

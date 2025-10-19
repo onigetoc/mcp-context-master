@@ -13,13 +13,13 @@ import axios from 'axios';
 
 export const setupProjectContextTool = {
   name: "setup_project_context",
-  description: "Initialize and setup Context Master for a project. Use when user says init context master, setup context master, or /cm-ai-infos or /cm-setup. Creates .context-master directory, downloads templates from GitHub, analyzes project dependencies, and downloads documentation for important libraries. Automatically detects the current project directory.",
+  description: "Initialize and setup Context Master for a project. Use when user says init context master, setup context master, or /cm-ai-infos or /cm-setup. Creates .context-master directory, downloads templates from GitHub, analyzes project dependencies, and downloads documentation for important libraries. IMPORTANT: Always provide the absolute path to the user's project directory as projectPath parameter.",
   inputSchema: {
     type: 'object',
     properties: {
       projectPath: {
         type: 'string',
-        description: 'Optional project directory path. If not provided, automatically detects the current working directory.'
+        description: 'REQUIRED: Absolute path to the user\'s project directory (e.g., C:\\Users\\Name\\projects\\my-app or /home/user/projects/my-app). The MCP server cannot automatically detect the user\'s project location - you must provide it explicitly.'
       },
       maxDependencies: {
         type: 'number',
@@ -250,16 +250,56 @@ extension: UNKNOWN
 export async function handleSetupProjectContextTool(request: any): Promise<McpToolResponse> {
   const { projectPath, maxDependencies = 10 } = request.params.arguments || {};
 
+  if (!projectPath) {
+    return {
+      content: [{
+        type: "text",
+        text: `# ❌ Missing Required Parameter: projectPath
+
+## Error
+The projectPath parameter is REQUIRED. MCP servers run in their own directory and cannot automatically detect the user's project location.
+
+## Required Usage
+\`\`\`typescript
+setup_project_context(
+  "C:\\\\Users\\\\Name\\\\projects\\\\my-app",  // Windows
+  20  // maxDependencies (optional)
+)
+
+// Or on Linux/Mac:
+setup_project_context(
+  "/home/user/projects/my-app",
+  20
+)
+\`\`\`
+
+## Platform Examples
+- **Windows**: \`C:\\\\Users\\\\Name\\\\projects\\\\my-app\`
+- **Linux**: \`/home/user/projects/my-app\`
+- **Mac**: \`/Users/name/projects/my-app\`
+
+## Note
+The AI assistant knows the user's current project directory. You must pass it explicitly as the projectPath parameter.
+
+## Current MCP Server Location
+- **MCP Server CWD**: ${process.cwd()}
+- **Platform**: ${os.platform()}
+
+This is NOT the user's project directory - you must provide the correct path.`
+      }]
+    };
+  }
+
   // Use PathResolverService to intelligently resolve the project path
   const pathResolver = new PathResolverService();
   let fullPath: string;
   
   try {
-    // PathResolverService will use process.cwd() if projectPath is undefined or invalid
+    // PathResolverService will validate the provided path
     fullPath = await pathResolver.resolveProjectPath(projectPath, true, {
       toolName: 'setup_project_context',
       maxDependencies,
-      providedPath: projectPath || 'none (auto-detect)'
+      providedPath: projectPath
     });
   } catch (error) {
     return {
@@ -271,16 +311,17 @@ export async function handleSetupProjectContextTool(request: any): Promise<McpTo
 Could not resolve project directory: ${error instanceof Error ? error.message : String(error)}
 
 ## Details
-- **Provided Path**: ${projectPath || 'none (auto-detecting)'}
-- **Current Working Directory**: ${process.cwd()}
+- **Provided Path**: ${projectPath}
+- **MCP Server CWD**: ${process.cwd()}
 - **Platform**: ${os.platform()}
 
 ## Troubleshooting
-1. Ensure you're running this command from your project directory
-2. If you provided a path, verify it exists and is accessible
+1. Verify the provided path exists and is accessible
+2. Ensure you're using an absolute path (not relative)
 3. Check that the directory contains a valid project (package.json, etc.)
-
-The tool will automatically use your current working directory if no path is provided.`
+4. Verify path format matches your OS:
+   - Windows: C:\\\\Users\\\\Name\\\\projects\\\\my-app
+   - Linux/Mac: /home/user/projects/my-app`
       }]
     };
   }

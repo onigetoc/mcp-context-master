@@ -10,7 +10,7 @@ import * as path from 'path';
 
 export const addProjectContextTool = {
   name: "add_project_context",
-  description: "Adds knowledge context for a library using EXACT package names from package.json or confirmed library names. If you're unsure about the exact library name, use the search workflow first: 1) Search GitHub for the library, 2) Confirm the correct repository, 3) Use this tool with the exact name. For example: Use 'remotion' (not '@remotion/captions'), 'react' (not 'react-dom'), '@tanstack/react-query' (not 'react-query'). If the user mentions a feature or topic (like 'captions', 'routing'), that should be used as a topic parameter, not as part of the library name.",
+  description: "Adds knowledge context for a library using EXACT package names from package.json or confirmed library names. If you're unsure about the exact library name, use the search workflow first: 1) Search GitHub for the library, 2) Confirm the correct repository, 3) Use this tool with the exact name. For example: Use 'remotion' (not '@remotion/captions'), 'react' (not 'react-dom'), '@tanstack/react-query' (not 'react-query'). If the user mentions a feature or topic (like 'captions', 'routing'), that should be used as a topic parameter, not as part of the library name. IMPORTANT: Always provide the absolute path to the user's project directory as projectPath parameter.",
   inputSchema: {
     type: 'object',
     properties: {
@@ -20,7 +20,7 @@ export const addProjectContextTool = {
       },
       projectPath: {
         type: 'string',
-        description: 'Optional project directory path, if not provided, automatically detects the current working directory.'
+        description: 'REQUIRED: Absolute path to the user\'s project directory (e.g., C:\\Users\\Name\\projects\\my-app or /home/user/projects/my-app). The MCP server cannot automatically detect the user\'s project location - you must provide it explicitly.'
       },
       topic: {
         type: 'string',
@@ -44,6 +44,32 @@ export async function handleAddProjectContextTool(request: any): Promise<McpTool
 
   if (!libraryName) {
     throw new McpError(ErrorCode.InvalidParams, 'libraryName is required');
+  }
+
+  if (!projectPath) {
+    return {
+      content: [{
+        type: 'text',
+        text: JSON.stringify({
+          success: false,
+          error: 'Missing required parameter: projectPath',
+          message: 'The projectPath parameter is REQUIRED. MCP servers run in their own directory and cannot automatically detect the user\'s project location.',
+          libraryName,
+          instructions: {
+            windows: 'Example: "C:\\\\Users\\\\Name\\\\projects\\\\my-app"',
+            linux: 'Example: "/home/user/projects/my-app"',
+            mac: 'Example: "/Users/name/projects/my-app"'
+          },
+          correctUsage: {
+            libraryName: libraryName,
+            projectPath: 'C:\\Users\\Name\\projects\\my-app',
+            topic: topic || 'optional',
+            tokens: tokens
+          },
+          note: 'The AI assistant knows the user\'s current project directory. You must pass it explicitly as the projectPath parameter.'
+        }, null, 2)
+      }]
+    };
   }
 
   // Validate tokens range

@@ -9,7 +9,7 @@ When you encounter a message starting with `/cm-`, execute the corresponding tas
 | Command | Task File | Description |
 |---------|-----------|-------------|
 | `/cm-help` | `.context-master/tasks/cm-help.md` | Show available commands |
-| `/cm-ai-infos` | `.context-master/cm-ai-infos.md` | Get AI assistant information |
+| `/cm-ai-infos` | `.context-master/cm-ai-infos.md` | Get AI assistant informations |
 | `/cm-setup` | `.context-master/commands/cm-setup_project_context.md` | Tool calling `setup_project_context` to Initialize project
 | `/cm-analyze` | `.context-master/commands/cm-analyze.md` | Analyze dependencies |
 | `/cm-download` | `.context-master/commands/cm-download.md` | Download high-priority docs |
@@ -32,7 +32,7 @@ When you encounter a message starting with `/cm-`, execute the corresponding tas
 
 When user types a number (1-13) after seeing `/cm-help`, map to:
 1. `/cm-ai-infos` # Get AI assistant informations
-2. `/cm-setup` # /Setup project with knowledge base and get assistant info (execute setup `setup_project_context` tool and cm-ai-infos.md)
+2. `/cm-setup` # Setup project with knowledge base and get assistant info (execute setup `setup_project_context` tool and cm-ai-infos.md)
 3. `/cm-analyze` # Analyze project dependencies and suggest documentation downloads
 4. `/cm-download` # Download documentation for high-priority dependencies
 5. `/cm-status` # Show current project context status and configuration

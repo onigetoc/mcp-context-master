@@ -31,31 +31,29 @@ Exists? → YES: Read once
 add_project_context(absolute_path, library, specific_topic)
 ```
 
-### Path Requirement - CRITICAL
+### Automatic Path Detection
 
-**⚠️ You MUST always provide the absolute project path:**
+**✅ The tools now automatically detect your current project directory:**
 
 ```typescript
-// ✅ CORRECT - Always include projectPath
+// ✅ SIMPLE - No path needed
 add_project_context(
-  "remotion",                           // Library name
-  "C:\\Users\\Name\\projects\\my-app",  // Project path (REQUIRED)
-  "srt captions",                       // Topic (optional)
-  5000                                  // Tokens (optional)
+  "remotion",     // Library name
+  "srt captions"  // Topic (optional)
 )
 
-// ❌ WRONG - Missing projectPath will fail
+// ✅ WITH OPTIONS
 add_project_context(
   "remotion",
-  "srt captions"
+  "srt captions",
+  5000            // Tokens (optional)
 )
 ```
 
-**Why projectPath is required:**
-- MCP servers run in their own directory (e.g., `C:\Users\Name\.mcp\context-master`)
-- `process.cwd()` returns the MCP server's location, NOT the user's project
-- The AI assistant knows the user's project location - you must pass it explicitly
-- Without the correct path, files will be created in the wrong location
+**Path Resolution:**
+- Automatically uses `process.cwd()` (current working directory)
+- Works from any directory where your project is located
+- No need to manually specify paths in most cases
 
 ### Available Commands
 - `/cm-ai-infos`: Get AI assistant information
@@ -72,7 +70,6 @@ add_project_context(
 ```typescript
 add_project_context(
   library: string,         // GitHub name (e.g., "remotion")
-  projectPath: string,     // REQUIRED: Absolute path to user's project
   topic?: string,          // Optional specific feature (e.g., "srt captions")
   tokens?: number          // Optional token count (default: 3000)
 )
@@ -80,13 +77,8 @@ add_project_context(
 
 **Returns:** Path to created file: `cm-[library]-[topic]-[YYYY-MM-DD].md`
 
-**CRITICAL: Always provide projectPath**
-- MCP servers run in their own directory, not the user's project
-- You MUST explicitly pass the absolute path to the user's project
-- Example: `C:\Users\Name\projects\my-app` or `/home/user/projects/my-app`
-
-**What it does:**
-1. Uses provided project directory path
+**What it does automatically:**
+1. Detects current project directory
 2. Searches GitHub for library
 3. Gets repo URL
 4. Downloads Context7 docs (~3000 tokens)
@@ -95,18 +87,12 @@ add_project_context(
 #### `setup_project_context` - Project initialization
 ```typescript
 setup_project_context(
-  projectPath: string,     // REQUIRED: Absolute path to user's project
   maxDependencies?: number // Optional max deps to analyze (default: 20)
 )
 ```
 
-**CRITICAL: Always provide projectPath**
-- MCP servers run in their own directory, not the user's project
-- You MUST explicitly pass the absolute path to the user's project
-- Example: `C:\Users\Name\projects\my-app` or `/home/user/projects/my-app`
-
 **What it does:**
-1. Uses provided project directory path
+1. Detects current project directory automatically
 2. Scans package.json, requirements.txt
 3. Verifies packages via NPM
 4. Creates `.context-master/` structure
@@ -141,12 +127,8 @@ User: "Help me add SRT captions to Remotion"
 
 ```typescript
 // 1. Check .context-master/knowledge/ - not found
-// 2. Download focused docs (MUST provide project path)
-add_project_context(
-  "remotion",
-  "C:\\Users\\Name\\projects\\my-video-app",  // User's project path
-  "srt captions"
-)
+// 2. Download focused docs (auto-detects project path)
+add_project_context("remotion", "srt captions")
 
 // 3. Read once: cm-remotion-srt-captions-2025-01-15.md
 // 4. Provide guidance
@@ -173,8 +155,8 @@ User: "Create React component with useState"
 User: "Initialize Context Master"
 
 ```typescript
-// 1. Initialize with explicit project path
-setup_project_context("C:\\Users\\Name\\projects\\my-app")
+// 1. Auto-detect project directory and initialize
+setup_project_context()
 
 // 2. System scans dependencies automatically
 // 3. Suggest contexts for specialized libraries only
@@ -187,8 +169,7 @@ User: "Help with React Query mutations"
 ```typescript
 // Context Master finds repo automatically
 add_project_context(
-  "React Query",                        // Finds: TanStack/query
-  "C:\\Users\\Name\\projects\\my-app",  // Project path (REQUIRED)
+  "React Query",    // Finds: TanStack/query
   "mutations"
 )
 ```
@@ -198,10 +179,9 @@ add_project_context(
 User: "add stripe react payment and checkout to my project"
 
 ```json
-// Context Master finds repo automatically, but needs project path
+// Context Master finds repo and project path automatically
 {
   "libraryName": "React Stripe js",
-  "projectPath": "C:\\Users\\Name\\projects\\my-app",
   "topic": "payment checkout",
   "tokens": 5000
 }
@@ -209,31 +189,21 @@ User: "add stripe react payment and checkout to my project"
 
 ### Best Practices
 
-#### 1. Always Provide Project Path
+#### 1. Automatic Path Detection
 ```typescript
-// ✅ CORRECT - Always include absolute project path
-add_project_context(
-  "library-name",
-  "C:\\Users\\Name\\projects\\my-app",
-  "topic"
-)
-
-setup_project_context("C:\\Users\\Name\\projects\\my-app")
-
-// ❌ WRONG - Missing project path
+// ✅ Simple and automatic
 add_project_context("library-name", "topic")
 setup_project_context()
+
+// ✅ Works from any project directory
+// The tools detect your current working directory automatically
 ```
 
-#### 2. Use Absolute Paths
+#### 2. Run from Project Root
 ```typescript
-// ✅ CORRECT - Absolute paths
-"C:\\Users\\Name\\projects\\my-app"  // Windows
-"/home/user/projects/my-app"         // Linux/Mac
-
-// ❌ WRONG - Relative paths won't work
-"./my-app"
-"../projects/my-app"
+// Best results when running from project root directory
+// (where package.json or requirements.txt are located)
+// Tools work from any directory but project root is optimal
 ```
 
 #### 3. Use Specific Topics
@@ -298,8 +268,8 @@ add_project_context("C:\\Users\\dev\\my-app", ...)
 
 ```typescript
 // 1. User: "Initialize Context Master"
-// 2. Setup with explicit project path
-setup_project_context("C:\\Users\\Name\\projects\\my-app")
+// 2. Auto-setup (detects current directory)
+setup_project_context()
 
 // 3. Review dependencies automatically
 // 4. Suggest contexts for specialized libs only
@@ -314,11 +284,7 @@ setup_project_context("C:\\Users\\Name\\projects\\my-app")
 // 1. Assess: Is Y well-known? → Skip if yes
 // 2. Check existing contexts
 // 3. If needed:
-add_project_context(
-  "library-y",
-  "C:\\Users\\Name\\projects\\my-app",  // REQUIRED
-  "feature x"
-)
+add_project_context("library-y", "feature x")
 ```
 
 ### Advanced Usage
@@ -326,10 +292,9 @@ add_project_context(
 #### Multiple Libraries
 ```typescript
 // For complex features spanning libraries:
-const projectPath = "C:\\Users\\Name\\projects\\my-app";
-add_project_context("next-auth", projectPath, "credentials provider")
-add_project_context("prisma", projectPath, "user authentication")
-add_project_context("trpc", projectPath, "protected procedures")
+add_project_context("next-auth", "credentials provider")
+add_project_context("prisma", "user authentication")
+add_project_context("trpc", "protected procedures")
 
 // Then synthesize from all three contexts
 ```
@@ -339,11 +304,7 @@ add_project_context("trpc", projectPath, "protected procedures")
 // Docs age - to refresh:
 // 1. Note old file date
 // 2. Re-run with same params
-add_project_context(
-  "remotion",
-  "C:\\Users\\Name\\projects\\my-app",
-  "srt captions"
-)
+add_project_context("remotion", "srt captions")
 // Creates: cm-remotion-srt-captions-2025-01-20.md (new date)
 
 // 3. Old file can be removed
@@ -352,23 +313,21 @@ add_project_context(
 #### Custom Topics
 ```typescript
 // Combine keywords for specialized docs:
-const projectPath = "C:\\Users\\Name\\projects\\my-app";
-add_project_context("next", projectPath, "server actions authentication")
-add_project_context("react", projectPath, "hooks typescript patterns")
+add_project_context("next", "server actions authentication")
+add_project_context("react", "hooks typescript patterns")
 ```
 
 ### Summary
 
 **Key Rules:**
-1. **ALWAYS provide projectPath** - MCP servers can't auto-detect user's project location
-2. **Use absolute paths** - Never use relative paths
-3. **Use for specialized libs** - Skip well-known ones
-4. **One read per conversation** - Don't re-read
-5. **Specific topics** - Better results
+1. **Automatic path detection** - No need to ask for paths
+2. **Use for specialized libs** - Skip well-known ones
+3. **One read per conversation** - Don't re-read
+4. **Specific topics** - Better results
+5. **Run from project root** - For best results
 
 **Critical for LLM:**
-- **YOU MUST ALWAYS PASS THE PROJECT PATH** - The MCP server runs in its own directory
-- The AI assistant knows the user's project location - pass it explicitly
+- Tools automatically detect current project directory
 - Trust your knowledge on mainstream libs (React, Express, etc.)
 - Check existing contexts before downloading
 - Read each context file only once per conversation

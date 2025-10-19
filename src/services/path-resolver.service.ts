@@ -7,7 +7,7 @@ import { debugLog } from '../utils/logger.js';
  * Handles path normalization for Windows, Linux, and macOS.
  */
 export class PathResolverService {
-  
+
   /**
    * Resolves and validates a project path with intelligent fallback to process.cwd()
    * 
@@ -22,7 +22,7 @@ export class PathResolverService {
     writeDebugLog: boolean = false,
     additionalInfo?: Record<string, any>
   ): Promise<string> {
-    
+
     const cwd = process.cwd();
     let resolvedPath: string;
     let pathSource: 'hint' | 'cwd' | 'fallback';
@@ -31,7 +31,7 @@ export class PathResolverService {
     if (projectPathHint) {
       const normalizedHint = path.normalize(projectPathHint);
       const resolvedHint = path.resolve(normalizedHint);
-      
+
       if (await fs.pathExists(resolvedHint)) {
         resolvedPath = resolvedHint;
         pathSource = 'hint';

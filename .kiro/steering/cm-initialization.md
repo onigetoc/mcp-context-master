@@ -15,11 +15,19 @@ Context Master is an MCP server that provides intelligent, up-to-date documentat
 
 ## 🚀 Core Workflow
 
-### 1. Automatic Path Detection
-All Context Master tools automatically detect the current project directory. No need to ask users for paths.
+### 1. Project Path Requirement - CRITICAL
+All Context Master tools REQUIRE the absolute path to the user's project directory. MCP servers run in their own directory and cannot auto-detect the user's project location.
 
 ```typescript
-// ✅ Simple - works automatically
+// ✅ CORRECT - Always provide project path
+add_project_context(
+  "remotion",
+  "C:\\Users\\Name\\projects\\my-app",  // REQUIRED
+  "srt captions"
+)
+setup_project_context("C:\\Users\\Name\\projects\\my-app")
+
+// ❌ WRONG - Missing project path will fail
 add_project_context("remotion", "srt captions")
 setup_project_context()
 ```
@@ -58,17 +66,17 @@ add_project_context(library, specific_topic)
 
 ### Primary Tools
 
-1. **`add_project_context(library, topic?, tokens?)`**
+1. **`add_project_context(library, projectPath, topic?, tokens?)`**
    - Downloads focused documentation for a specific library
-   - Auto-detects project path
+   - **REQUIRES absolute project path** (MCP server can't auto-detect)
    - Saves to `.context-master/knowledge/`
-   - Example: `add_project_context("remotion", "srt captions", 5000)`
+   - Example: `add_project_context("remotion", "C:\\Users\\Name\\projects\\my-app", "srt captions", 5000)`
 
-2. **`setup_project_context(maxDependencies?)`**
+2. **`setup_project_context(projectPath, maxDependencies?)`**
    - Analyzes entire project dependencies
-   - Auto-detects project path
+   - **REQUIRES absolute project path** (MCP server can't auto-detect)
    - Downloads docs for high-priority libraries only
-   - Example: `setup_project_context(20)`
+   - Example: `setup_project_context("C:\\Users\\Name\\projects\\my-app", 20)`
 
 3. **`list_available_contexts()`**
    - Lists all downloaded documentation files
@@ -137,7 +145,8 @@ Check file dates - newer files have more current documentation.
 ### Starting New Project
 ```typescript
 // 1. User: "Initialize Context Master"
-setup_project_context()
+const projectPath = "C:\\Users\\Name\\projects\\my-app";  // REQUIRED
+setup_project_context(projectPath)
 
 // 2. Review dependencies automatically
 // 3. Suggest contexts for specialized libs only
@@ -151,23 +160,25 @@ setup_project_context()
 // 1. Assess: Is Y well-known? → Skip if yes
 // 2. Check existing contexts
 // 3. If needed:
-add_project_context("library-y", "feature x")
+const projectPath = "C:\\Users\\Name\\projects\\my-app";  // REQUIRED
+add_project_context("library-y", projectPath, "feature x")
 ```
 
 ### Multiple Related Libraries
 ```typescript
 // For complex features spanning libraries:
-add_project_context("next-auth", "credentials provider")
-add_project_context("prisma", "user authentication")
-add_project_context("trpc", "protected procedures")
+const projectPath = "C:\\Users\\Name\\projects\\my-app";  // REQUIRED
+add_project_context("next-auth", projectPath, "credentials provider")
+add_project_context("prisma", projectPath, "user authentication")
+add_project_context("trpc", projectPath, "protected procedures")
 
 // Then synthesize from all three contexts
 ```
 
 ## ⚠️ Important Reminders
 
-1. **Automatic Path Detection** - Tools detect current working directory automatically
-2. **Run from Project Root** - Best results when running from where package.json is located
+1. **ALWAYS Provide Project Path** - MCP servers can't auto-detect the user's project location
+2. **Use Absolute Paths** - Never use relative paths (e.g., `./my-app` won't work)
 3. **Trust Your Knowledge** - Don't download docs for libraries you already know well
 4. **Check Existing Contexts** - Avoid duplicate downloads
 5. **Read Once** - Each context file should be read only once per conversation
@@ -175,7 +186,8 @@ add_project_context("trpc", "protected procedures")
 ## 🎯 Summary
 
 **Key Rules for Every Conversation:**
-- Tools automatically detect current project directory
+- **ALWAYS provide the absolute project path** - MCP servers can't auto-detect it
+- The AI assistant knows the user's project location - pass it explicitly
 - Use Context Master for specialized libraries only
 - Check existing contexts before downloading
 - Read each context file only once per conversation
