@@ -20,7 +20,7 @@ const contextMappings = [
     { keys: ["roo code", "roo-code", "roo"], ruleFile: "./ROO.md", contextDir: "./.roo/", type: "extension", agentsMD: true },
     { keys: ["cline"], ruleFile: ".clinerules", contextDir: "./.cline/", type: "extension", agentsMD: true },
     { keys: ["kilo code", "kilo-code", "kilocode"], ruleFile: "./KILOCODE.md", contextDir: "./.kilocode/", type: "extension", agentsMD: true },
-    { keys: ["github copilot", "copilot"], ruleFile: "copilot-instructions.md", contextDir: "./.github/", type: "extension", agentsMD: true },
+    { keys: ["github copilot", "copilot"], ruleFile: "./.github/copilot-instructions.md", contextDir: "./.github/", type: "extension", agentsMD: true },
     { keys: ["claude code"], ruleFile: "./CLAUDE.md", contextDir: "./.claude/", type: "extension", agentsMD: true },
     { keys: ["gemini cli"], ruleFile: "./GEMINI.md", contextDir: "./.gemini/", type: "extension", agentsMD: true },
     { keys: ["warp"], ruleFile: "./WARP.md", contextDir: "./.warp/", type: "extension", agentsMD: false },
@@ -32,14 +32,14 @@ const contextMappings = [
     // IDEs (priority 2)
     { keys: ["cursor"], ruleFile: ".cursorrules", contextDir: "./.cursor/", type: "ide", agentsMD: true },
     { keys: ["vs code", "vscode", "visual studio code"], ruleFile: "./VSCODE.md", contextDir: "./.vscode/", type: "ide", agentsMD: true },
-    { keys: ["kiro"], ruleFile: "context-master-instructions.md", contextDir: "./.kiro/steering/", type: "ide", agentsMD: false },
+    { keys: ["kiro"], ruleFile: "./.kiro/steering/context-master-instructions.md", contextDir: "./.kiro/steering/", type: "ide", agentsMD: false },
     { keys: ["zed"], ruleFile: "./ZED.md", contextDir: "./.zed/", type: "ide", agentsMD: true },
 
     // Models (priority 3)
     { keys: ["gemini"], ruleFile: "./GEMINI.md", contextDir: "./.gemini/", type: "model", agentsMD: true },
     { keys: ["claude"], ruleFile: "./CLAUDE.md", contextDir: "./.claude/", type: "model", agentsMD: false },
     { keys: ["gpt"], ruleFile: "./OPENAI.md", contextDir: "./.openai/", type: "model", agentsMD: true },
-    { keys: ["copilot"], ruleFile: "copilot-instructions.md", contextDir: "./.github/", type: "model", agentsMD: true },
+    // { keys: ["copilot"], ruleFile: "./.github/copilot-instructions.md", contextDir: "./.github/", type: "model", agentsMD: true },
     { keys: ["qwen"], ruleFile: "./QWEN.md", contextDir: "./.qwen/", type: "model", agentsMD: true },
 
     // Providers (priority 4)
