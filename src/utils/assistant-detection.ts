@@ -49,23 +49,43 @@ export async function detectCodingAssistantAndGetContextFile(projectPath: string
     let match = null;
     
     if (ContextMappingHelper.isValid(info.extension)) {
+      logs.push(`Checking extension: "${info.extension}"`);
       match = ContextMappingHelper.findMatch(info.extension!, "extension");
-      if (match) logs.push(`Found extension match: ${info.extension} -> ${ContextMappingHelper.buildContextFilePath(match)}`);
+      if (match) {
+        logs.push(`✅ Found extension match: ${info.extension} -> ${ContextMappingHelper.buildContextFilePath(match)}`);
+      } else {
+        logs.push(`❌ No extension match found for: ${info.extension}`);
+      }
     }
     
     if (!match && ContextMappingHelper.isValid(info.ide)) {
+      logs.push(`Checking IDE: "${info.ide}"`);
       match = ContextMappingHelper.findMatch(info.ide!, "ide");
-      if (match) logs.push(`Found IDE match: ${info.ide} -> ${ContextMappingHelper.buildContextFilePath(match)}`);
+      if (match) {
+        logs.push(`✅ Found IDE match: ${info.ide} -> ${ContextMappingHelper.buildContextFilePath(match)}`);
+      } else {
+        logs.push(`❌ No IDE match found for: ${info.ide}`);
+      }
     }
     
     if (!match && ContextMappingHelper.isValid(info.model)) {
+      logs.push(`Checking model: "${info.model}"`);
       match = ContextMappingHelper.findMatch(info.model, "model");
-      if (match) logs.push(`Found model match: ${info.model} -> ${ContextMappingHelper.buildContextFilePath(match)}`);
+      if (match) {
+        logs.push(`✅ Found model match: ${info.model} -> ${ContextMappingHelper.buildContextFilePath(match)}`);
+      } else {
+        logs.push(`❌ No model match found for: ${info.model}`);
+      }
     }
     
     if (!match && ContextMappingHelper.isValid(info.provider)) {
+      logs.push(`Checking provider: "${info.provider}"`);
       match = ContextMappingHelper.findMatch(info.provider, "provider");
-      if (match) logs.push(`Found provider match: ${info.provider} -> ${ContextMappingHelper.buildContextFilePath(match)}`);
+      if (match) {
+        logs.push(`✅ Found provider match: ${info.provider} -> ${ContextMappingHelper.buildContextFilePath(match)}`);
+      } else {
+        logs.push(`❌ No provider match found for: ${info.provider}`);
+      }
     }
 
     if (match) {

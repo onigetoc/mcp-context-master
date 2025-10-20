@@ -14,7 +14,7 @@ import { detectCodingAssistantAndGetContextFile } from '../utils/assistant-detec
 
 export const setupProjectContextTool = {
   name: "setup_project_context",
-  description: "Initialize and setup Context Master for a project. Use when user says init context master, setup context master, or /cm-ai-infos or /cm-setup. Creates .context-master directory, downloads templates from GitHub, analyzes project dependencies, and downloads documentation for important libraries. IMPORTANT: Always provide the absolute path to the user's project directory as projectPath parameter.",
+  description: "SECOND STEP to complete Context Master setup. This tool should ONLY be called AFTER initialize_context_master and AFTER creating cm-ai-infos.yaml. Use when user says setup context master, or /cm-setup, or as step 2 after initialization. Completes setup by downloading templates from GitHub, analyzing project dependencies, and downloading documentation for important libraries. CRITICAL: Do NOT call this directly for 'init context master' - call initialize_context_master first. IMPORTANT: Always provide the absolute path to the user's project directory as projectPath parameter.",
   inputSchema: {
     type: 'object',
     properties: {
@@ -364,6 +364,39 @@ This is NOT the user's project directory - you must provide the correct path.`
       maxDependencies,
       providedPath: projectPath
     });
+
+    // Check if initialization was done (cm-ai-infos.md template should exist)
+    const contextMasterDir = path.join(fullPath, '.context-master');
+    const templatePath = path.join(contextMasterDir, 'cm-ai-infos.md');
+    
+    if (!await fs.pathExists(templatePath)) {
+      return {
+        content: [{
+          type: "text",
+          text: `# ⚠️ Context Master Not Initialized
+
+## Error
+Context Master has not been initialized yet. The setup process requires two steps:
+
+## Required Steps
+1. **FIRST**: Call \`initialize_context_master("${fullPath}")\`
+2. **THEN**: Create \`.context-master/cm-ai-infos.yaml\` with your AI assistant info
+3. **FINALLY**: Call \`setup_project_context("${fullPath}")\`
+
+## What's Missing
+The initialization template \`cm-ai-infos.md\` was not found in \`.context-master/\` directory.
+
+## Solution
+Please run the initialization first:
+\`\`\`typescript
+initialize_context_master("${fullPath}")
+\`\`\`
+
+Then follow the instructions to create the YAML configuration file before calling setup.`
+        }]
+      };
+    }
+
   } catch (error) {
     return {
       content: [{

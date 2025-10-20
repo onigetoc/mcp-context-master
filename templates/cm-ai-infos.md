@@ -11,14 +11,37 @@ Extract these values from your system configuration or prompt system:
 - **ide**: Your IDE/editor environment (e.g., VS Code, Cursor, Zed, Kiro)
 - **extension**: Your extension name (e.g., Claude Code, Roo Code, Cline, GitHub Copilot)
 
-### task 3: Create Configuration File or Rewrite if the file already exist
-UPDATE or CREATE a YAML file if it does not already exist named: `.context-master/cm-ai-infos.yaml` with this following exact YAML structure:
+### task 3: Create Configuration File or Update if it already exists
+**ALWAYS UPDATE** the YAML file named: `.context-master/cm-ai-infos.yaml` with this following exact YAML structure:
 
 ```yaml
 provider: YOUR_PROVIDER
 model: YOUR_MODEL
 ide: YOUR_IDE
 extension: YOUR_EXTENSION
+```
+
+**CRITICAL NOTES:**
+- If the file already exists with old values (like Gemini CLI, VS Code, etc.), you MUST replace it with YOUR CURRENT configuration
+- Use lowercase values for better detection (kiro, not Kiro)
+- Do NOT keep old values from previous sessions
+- This file determines which context files get updated
+
+**Examples:**
+For Kiro:
+```yaml
+provider: anthropic
+model: claude-sonnet-4
+ide: kiro
+extension: kiro
+```
+
+For Cursor with Claude:
+```yaml
+provider: anthropic
+model: claude-sonnet-4
+ide: cursor
+extension: claude code
 ```
 
 ### task 4: Verification

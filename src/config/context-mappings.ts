@@ -19,6 +19,7 @@ export const contextMappings: ContextMapping[] = [
   { keys: ["github copilot", "copilot"], ruleFile: "copilot-instructions.md", contextDir: "./.github/", type: "extension", agentsMD: true },
   { keys: ["claude code"], ruleFile: "./CLAUDE.md", contextDir: null, type: "extension", agentsMD: true },
   { keys: ["gemini cli"], ruleFile: "./GEMINI.md", contextDir: null, type: "extension", agentsMD: true },
+  { keys: ["kiro", "kiro ai", "kiro ai assistant"], ruleFile: "context-master-instructions.md", contextDir: "./.kiro/steering/", type: "extension", agentsMD: false },
   { keys: ["warp"], ruleFile: "./WARP.md", contextDir: null, type: "extension", agentsMD: false },
   { keys: ["windsurf"], ruleFile: "./WINDSURF.md", contextDir: null, type: "extension", agentsMD: true },
   { keys: ["auggie"], ruleFile: "./AUGMENT.md", contextDir: null, type: "extension", agentsMD: true },
@@ -28,7 +29,7 @@ export const contextMappings: ContextMapping[] = [
   // IDEs (priority 2)
   { keys: ["cursor"], ruleFile: ".cursorrules", contextDir: "./.cursor/", type: "ide", agentsMD: true },
   { keys: ["vs code", "vscode", "visual studio code"], ruleFile: "./VSCODE.md", contextDir: null, type: "ide", agentsMD: true },
-  { keys: ["kiro"], ruleFile: "context-master-instructions.md", contextDir: "./.kiro/steering/", type: "ide", agentsMD: false },
+  { keys: ["kiro", "kiro ai", "kiro ai assistant"], ruleFile: "context-master-instructions.md", contextDir: "./.kiro/steering/", type: "ide", agentsMD: false },
   { keys: ["zed"], ruleFile: "./ZED.md", contextDir: null, type: "ide", agentsMD: true },
 
   // Models (priority 3)
@@ -53,10 +54,14 @@ export class ContextMappingHelper {
   }
 
   static findMatch(value: string, type: string): ContextMapping | undefined {
-    const lowerValue = value.toLowerCase();
+    const lowerValue = value.toLowerCase().trim();
     return contextMappings.find(mapping => 
       mapping.type === type && 
-      mapping.keys.some(key => lowerValue.includes(key))
+      mapping.keys.some(key => {
+        const lowerKey = key.toLowerCase();
+        // Exact match or contains match
+        return lowerValue === lowerKey || lowerValue.includes(lowerKey);
+      })
     );
   }
 

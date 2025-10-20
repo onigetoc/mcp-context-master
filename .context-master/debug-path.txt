@@ -343,3 +343,31 @@
 }
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-20T22:48:30.150Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\AppData\Local\Programs\Kiro
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "toolName": "setup_project_context",
+  "maxDependencies": 10,
+  "providedPath": "C:\\Users\\LENOVO\\APPS\\0-MCP\\mcp-context-master"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

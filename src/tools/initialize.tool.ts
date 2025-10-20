@@ -9,7 +9,7 @@ import axios from 'axios';
 
 export const initializeContextMasterTool = {
   name: "initialize_context_master",
-  description: "First step to initialize Context Master. Downloads the cm-ai-infos.md template from GitHub, creates .context-master directory, and guides the LLM to configure the AI assistant identity. Use when user says 'init context master', 'initialize context master', or '/cm-init' calling the `initialize_context_master` tool to Get AI assistant informations. the LLM should read cm-ai-infos.md and follow its instructions to create cm-ai-infos.yaml, then call setup_project_context. IMPORTANT: Always provide the absolute path to the user's project directory as projectPath parameter.",
+  description: "FIRST STEP to initialize Context Master. This tool MUST be called FIRST when user says 'init context master', 'initialize context master', or '/cm-init'. Downloads the cm-ai-infos.md template from GitHub, creates .context-master directory, and guides the LLM to configure the AI assistant identity. The LLM should read cm-ai-infos.md and follow its instructions to create cm-ai-infos.yaml, then call setup_project_context. CRITICAL: This is step 1 of 2 - do NOT skip to setup_project_context directly. IMPORTANT: Always provide the absolute path to the user's project directory as projectPath parameter.",
   inputSchema: {
     type: 'object',
     properties: {
@@ -97,7 +97,7 @@ This is NOT the user's project directory - you must provide the correct path.`
   // Use PathResolverService to validate the project path
   const pathResolver = new PathResolverService();
   let fullPath: string;
-  
+
   try {
     fullPath = await pathResolver.resolveProjectPath(projectPath, false, {
       toolName: 'initialize_context_master',
@@ -187,10 +187,51 @@ ${templateContent}
 
 ---
 
-## ⚠️ Important
-Do NOT proceed to other tasks until you have:
-1. Created the cm-ai-infos.yaml file with correct values
-2. Called setup_project_context with the project path
+## 🚨 CRITICAL INSTRUCTIONS FOR AI ASSISTANTS
+
+**STEP 1 COMPLETE** - You have successfully called \`initialize_context_master\`
+
+**NEXT REQUIRED STEPS:**
+
+1. **READ the template above carefully**
+2. **UPDATE OR CREATE \`.context-master/cm-ai-infos.yaml\`** with YOUR ACTUAL configuration:
+   - **provider**: Your AI provider (anthropic, openai, google, etc.)
+   - **model**: Your specific model (claude-sonnet-4, gpt-4, gemini-2.0-flash, etc.)
+   - **ide**: Your IDE (kiro, cursor, vs code, zed, etc.)
+   - **extension**: Your extension (kiro, cline, claude code, etc.)
+
+3. **CALL \`setup_project_context("${fullPath}")\`** to complete setup
+
+**IMPORTANT NOTES:**
+- If cm-ai-infos.yaml already exists with old values (like Gemini CLI), you MUST update it with current values
+- Do NOT skip updating the YAML file even if it exists
+- Use lowercase values for better detection (kiro, not Kiro)
+- Do NOT use placeholder values like "UNKNOWN"
+
+**EXAMPLE for Kiro:**
+\`\`\`yaml
+provider: anthropic
+model: claude-sonnet-4
+ide: kiro
+extension: kiro
+\`\`\`
+
+**EXAMPLE for updating existing file:**
+If the file contains old values like:
+\`\`\`yaml
+provider: Google
+model: Gemini
+ide: VS Code
+extension: Gemini CLI
+\`\`\`
+
+You MUST replace it with your current configuration:
+\`\`\`yaml
+provider: anthropic
+model: claude-sonnet-4
+ide: kiro
+extension: kiro
+\`\`\`
 
 This ensures Context Master is properly configured for your specific AI assistant.`
 
