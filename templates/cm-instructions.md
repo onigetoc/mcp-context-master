@@ -476,7 +476,7 @@ add_project_context("react", "hooks typescript patterns");
 
 ### Context Integration During Package Installation
 
-Whenever you install a library or dependency — whether it’s **NodeJS (npm, yarn, pnpm)**, **Python (pip, poetry)**, or any other package manager — you must always request **Context Master** to add the appropriate project context.  
+Whenever you install a library or dependency — whether it’s **NodeJS (npm, yarn, pnpm)**, **Python (pip, poetry) or any API added by you or asked by the user available on Github and/or Context7**, or any other package manager — you must always request **Context Master** to add the appropriate project context.  
 This ensures that the downloaded documentation and metadata remain synchronized with the current project environment.
 
 #### Context Addition Rules
