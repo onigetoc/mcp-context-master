@@ -59,7 +59,6 @@
 #### Templates :
 - `templates/cm-instructions.md` : Toutes les références mises à jour
 - `templates/cm-context-reader-APG.md` : Toutes les références mises à jour  
-- `templates/agent-prompt.md` : Path mis à jour
 
 #### Configuration :
 - `.claude/agents/context-reader.md` : Toutes les références mises à jour

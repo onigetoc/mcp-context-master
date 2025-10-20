@@ -21,7 +21,6 @@ Key files that reference the context directory:
 - `.context-master/cm-status.md` - references context directory
 
 ### 3. Template Files (templates/**)
-- `templates/agent-prompt.md`
 - `templates/cm-context-reader-APG.md` - extensive references
 - `templates/cm-instructions.md` - multiple references
 
