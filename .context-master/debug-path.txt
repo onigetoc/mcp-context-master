@@ -84,3 +84,234 @@
 }
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-20T21:54:23.430Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\AppData\Local\Programs\Kiro
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "library": "react",
+  "topic": "hooks",
+  "tokens": 3000,
+  "toolName": "add_project_context"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-20T21:55:48.146Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\AppData\Local\Programs\Kiro
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "library": "nextjs",
+  "topic": "app-router",
+  "tokens": 4000,
+  "toolName": "add_project_context"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-20T21:57:12.359Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\AppData\Local\Programs\Kiro
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "library": "lodash",
+  "topic": "array-methods",
+  "tokens": 3000,
+  "toolName": "add_project_context"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-20T22:03:57.542Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\AppData\Local\Programs\Kiro
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "library": "express",
+  "topic": "middleware",
+  "tokens": 3500,
+  "toolName": "add_project_context"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-20T22:07:02.042Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\AppData\Local\Programs\Kiro
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "library": "moment",
+  "topic": "formatting",
+  "tokens": 3000,
+  "toolName": "add_project_context"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-20T22:07:16.151Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\AppData\Local\Programs\Kiro
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "library": "uuid",
+  "topic": "generation",
+  "tokens": 2500,
+  "toolName": "add_project_context"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-20T22:10:33.540Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\AppData\Local\Programs\Kiro
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "library": "bcrypt",
+  "topic": "password hashing",
+  "tokens": 3500,
+  "toolName": "add_project_context"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-20T22:12:27.025Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\AppData\Local\Programs\Kiro
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "toolName": "setup_project_context",
+  "maxDependencies": 10,
+  "providedPath": "C:\\Users\\LENOVO\\APPS\\0-MCP\\mcp-context-master"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

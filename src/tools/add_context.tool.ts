@@ -35,7 +35,7 @@ export const addProjectContextTool = {
       }
     },
     required: ['libraryName']
-}
+  }
 } as const;
 
 export async function handleAddProjectContextTool(request: any): Promise<McpToolResponse> {
@@ -87,7 +87,7 @@ export async function handleAddProjectContextTool(request: any): Promise<McpTool
       toolName: 'add_project_context'
     }
   );
-  
+
   debugLog(`Using projectPath: ${fullPath}`);
   debugLog(`Adding context for library: ${libraryName}`);
   debugLog(`Topic: ${topic || 'none (full context)'}`);
@@ -103,9 +103,9 @@ export async function handleAddProjectContextTool(request: any): Promise<McpTool
     const searchResults = await searcher.searchDependencies([libraryName], false, topic, finalTokens);
 
     if (searchResults.length === 0) {
-      return { 
-        content: [{ 
-          type: 'text', 
+      return {
+        content: [{
+          type: 'text',
           text: JSON.stringify({
             success: false,
             error: 'Library not found',
@@ -116,7 +116,7 @@ export async function handleAddProjectContextTool(request: any): Promise<McpTool
               'Verify the library exists on npm or PyPI'
             ]
           }, null, 2)
-        }] 
+        }]
       };
     }
 
@@ -124,43 +124,43 @@ export async function handleAddProjectContextTool(request: any): Promise<McpTool
     const docsPath = path.join(fullPath, '.context-master', 'knowledge');
     debugLog(`Generated docsPath: ${docsPath}`);
     await downloader.ensureDocsFolder(docsPath);
-    
+
     // Download the documentation (topic and finalTokens will be handled in the URL construction)
     const downloadedFiles = await downloader.downloadDocumentation(searchResults, docsPath);
 
     if (downloadedFiles.length === 0) {
-        return { 
-          content: [{ 
-            type: 'text', 
-            text: JSON.stringify({
-              success: false,
-              error: 'Download failed',
-              message: `Found repository for ${libraryName}, but failed to download the context.`,
-              details: `Searched: ${searchResults.map(r => r.repoName).join(', ')}`,
-              suggestions: [
-                'The library may not be available on Context7 yet',
-                'Try adding it at: https://context7.com/add-library',
-                'Check if the repository is public and accessible',
-                'Retry in a moment (might be temporary network issue)'
-              ],
-              troubleshooting: {
-                githubUrl: searchResults[0]?.url,
-                context7Url: searchResults[0]?.context7Url
-              }
-            }, null, 2)
-          }] 
-        };
+      return {
+        content: [{
+          type: 'text',
+          text: JSON.stringify({
+            success: false,
+            error: 'Download failed',
+            message: `Found repository for ${libraryName}, but failed to download the context.`,
+            details: `Searched: ${searchResults.map(r => r.repoName).join(', ')}`,
+            suggestions: [
+              'The library may not be available on Context7 yet',
+              'Try adding it at: https://context7.com/add-library',
+              'Check if the repository is public and accessible',
+              'Retry in a moment (might be temporary network issue)'
+            ],
+            troubleshooting: {
+              githubUrl: searchResults[0]?.url,
+              context7Url: searchResults[0]?.context7Url
+            }
+          }, null, 2)
+        }]
+      };
     }
 
     // Update the manifest
     await updateKnowledgeManifest(fullPath);
 
     const result = {
-        success: true,
-        message: `Successfully added context for ${libraryName}${topic ? ` (topic: ${topic})` : ''} with ${finalTokens} tokens.`,
-        downloadedFiles,
-        contextPath: docsPath,
-        source: searchResults[0]?.url
+      success: true,
+      message: `Successfully added context for ${libraryName}${topic ? ` (topic: ${topic})` : ''} with ${finalTokens} tokens.`,
+      downloadedFiles,
+      contextPath: docsPath,
+      source: searchResults[0]?.url
     };
 
     return {
@@ -175,7 +175,7 @@ export async function handleAddProjectContextTool(request: any): Promise<McpTool
   } catch (error) {
     // Analyze the error
     const errorInfo = analyzeNetworkError(error);
-    
+
     // Network/connectivity errors
     if (errorInfo.type === 'network' || errorInfo.type === 'timeout') {
       return {
@@ -201,7 +201,7 @@ export async function handleAddProjectContextTool(request: any): Promise<McpTool
         }]
       };
     }
-    
+
     // Rate limiting
     if (errorInfo.type === 'rate_limit') {
       return {
@@ -221,7 +221,7 @@ export async function handleAddProjectContextTool(request: any): Promise<McpTool
         }]
       };
     }
-    
+
     // Path resolution errors
     if (error instanceof Error && error.message.includes('Cannot resolve project path')) {
       return {
@@ -241,12 +241,12 @@ export async function handleAddProjectContextTool(request: any): Promise<McpTool
         }]
       };
     }
-    
+
     // MCP-specific errors (re-throw to preserve error codes)
     if (error instanceof McpError) {
       throw error;
     }
-    
+
     // Generic/unexpected errors
     return {
       content: [{

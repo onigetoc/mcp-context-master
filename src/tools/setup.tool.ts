@@ -182,7 +182,8 @@ async function initializeContextMaster(projectPath: string): Promise<{ logs: str
     'cm-ai-infos.md',
     'cm-analyze.md',
     'cm-status.md',
-    'cm-instructions.md'
+    'cm-instructions.md',
+    'AGENTS.md'
   ];
 
   const downloadedTemplates: string[] = [];

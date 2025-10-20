@@ -255,10 +255,10 @@ export class DownloaderService {
         cleanName = cleanName.replace(/[<>:"|?*]/g, '-');
         const date = new Date().toISOString().split('T')[0];
         
-        // If topic is provided, include it in the filename (similar to search-test.js)
+        // If topic is provided, include it in the filename with explicit "topic-" prefix
         if (topic) {
             const topicSlug = topic.replace(/[<>:"|?*@/\\]/g, '-').replace(/\s+/g, '-').toLowerCase();
-            return `cm-${cleanName}-${topicSlug}-${date}.md`;
+            return `cm-${cleanName}-topic-${topicSlug}-${date}.md`;
         }
         
         if (isFullContext) {
