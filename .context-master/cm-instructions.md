@@ -335,6 +335,17 @@ add_project_context("react", "hooks typescript patterns")
 - Read each context file only once per conversation
 - Focus on specialized libraries that need documentation
 
+### Context Integration During Package Installation
+
+Whenever you install a library or dependency — whether it’s **NodeJS (npm, yarn, pnpm)**, **Python (pip, poetry)**, or any other package manager — you must always request **Context Master** to add the appropriate project context.  
+This ensures that the downloaded documentation and metadata remain synchronized with the current project environment.
+
+#### Context Addition Rules
+
+- **Never use more than two keywords** in a single topic when calling `add_project_context` tool.  
+- If multiple new contexts need to be added, it’s better to **invoke the `add_project_context` tool multiple times**, each time using **only one or two highly specific keywords**.  
+  This guarantees **fine-grained and precise context mapping**, instead of broad or ambiguous additions.
+
 ### Context Handling Rules for MCP-Context-Master
 
 Before responding to the user, always follow these steps:

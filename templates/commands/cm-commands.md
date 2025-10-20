@@ -7,7 +7,7 @@ When you see `/cm-` followed by a command, execute the corresponding action:
 ### Core Commands
 
 - **`/cm-help`**: Show this numbered list of available commands for selection
-- **`/cm-init`**: Get AI assistant informations then call setup tool
+- **`/cm-init`**: calling the `initialize_context_master` tool to Get AI assistant informations followed by setup tool call
 - **`/cm-setup`**: Setup project with knowledge base and get assistant info (execute setup `setup_project_context` tool call and cm-ai-infos.md instructions)
 - **`/cm-analyze`**: Analyze project dependencies and suggest documentation downloads
 - **`/cm-download`**: Download documentation for high-priority dependencies
@@ -31,6 +31,7 @@ When you see `/cm-` followed by a command, execute the corresponding action:
 ## Command Recognition
 
 These commands are designed to be recognized by:
+
 - Cursor IDE
 - GitHub Copilot
 - Cline

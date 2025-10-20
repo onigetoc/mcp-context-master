@@ -1,3 +1,5 @@
+
+<!-- START: CONTEXT-MASTER -->
 ## Context Master (mcp-context-master) Instructions
 
 ### Overview
@@ -6,7 +8,7 @@ Context Master is an MCP server designed to enhance AI coding assistance by prov
 ### Core Philosophy: Use Selectively
 
 ✅ **DO use for:**
-- Specialized libraries (Remotion, Clerk, tRPC, Prisma)
+- Specialized libraries (eg: Remotion, Clerk, tRPC, Prisma)
 - Specific features you're uncertain about
 - Complex integrations or advanced patterns
 
@@ -56,7 +58,7 @@ add_project_context(
 - No need to manually specify paths in most cases
 
 ### Available Commands
-- `/cm-ai-infos`: Get AI assistant information
+- `/cm-init`: Initialize Context Master, Get coding AI assistant informations and run setup
 - `/cm-setup`: Setup and analyze project dependencies automatically and add libraries/API knowledge file to the project
 - `/cm-add [library] [topic]`: Add documentation for a specific library/API
 - `/cm-search [library]`: Find library on GitHub
@@ -332,6 +334,17 @@ add_project_context("react", "hooks typescript patterns")
 - Check existing contexts before downloading
 - Read each context file only once per conversation
 - Focus on specialized libraries that need documentation
+
+### Context Integration During Package Installation
+
+Whenever you install a library or dependency — whether it’s **NodeJS (npm, yarn, pnpm)**, **Python (pip, poetry)**, or any other package manager — you must always request **Context Master** to add the appropriate project context.  
+This ensures that the downloaded documentation and metadata remain synchronized with the current project environment.
+
+#### Context Addition Rules
+
+- **Never use more than two keywords** in a single topic when calling `add_project_context` tool.  
+- If multiple new contexts need to be added, it’s better to **invoke the `add_project_context` tool multiple times**, each time using **only one or two highly specific keywords**.  
+  This guarantees **fine-grained and precise context mapping**, instead of broad or ambiguous additions.
 
 ### Context Handling Rules for MCP-Context-Master
 

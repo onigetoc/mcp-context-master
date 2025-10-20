@@ -16,12 +16,27 @@ export const listAvailableContextsTool = {
 } as const;
 
 export async function handleListAvailableContextsTool(request: any): Promise<McpToolResponse> {
-  const manifestPath = path.join(process.cwd(), '.context-master', 'knowledge', 'knowledge-manifest.yaml');
+  // Try to find .context-master directory in current working directory or parent directories
+  let manifestPath: string | null = null;
+  let currentDir = process.cwd();
+  
+  // Search up to 5 levels up for .context-master directory
+  for (let i = 0; i < 5; i++) {
+    const testPath = path.join(currentDir, '.context-master', 'knowledge', 'knowledge-manifest.yaml');
+    if (await fs.pathExists(testPath)) {
+      manifestPath = testPath;
+      break;
+    }
+    const parentDir = path.dirname(currentDir);
+    if (parentDir === currentDir) break; // Reached root
+    currentDir = parentDir;
+  }
+  
+  if (!manifestPath) {
+    return { content: [{ type: 'text', text: 'Knowledge manifest not found. Run setup_project_context to generate it, or ensure you are in the correct project directory.' }] };
+  }
 
   try {
-    if (!await fs.pathExists(manifestPath)) {
-      return { content: [{ type: 'text', text: 'Knowledge manifest not found. Run setup_project_context to generate it.' }] };
-    }
 
     const manifestContent = await fs.readFile(manifestPath, 'utf8');
     const manifest = yaml.load(manifestContent) as { files: string[] };
@@ -72,12 +87,27 @@ export async function handleReadSpecificContextTool(request: any): Promise<McpTo
     throw new McpError(ErrorCode.InvalidParams, 'fileName is required');
   }
 
-  const filePath = path.join(process.cwd(), '.context-master', 'knowledge', fileName);
+  // Try to find .context-master directory in current working directory or parent directories
+  let filePath: string | null = null;
+  let currentDir = process.cwd();
+  
+  // Search up to 5 levels up for .context-master directory
+  for (let i = 0; i < 5; i++) {
+    const testPath = path.join(currentDir, '.context-master', 'knowledge', fileName);
+    if (await fs.pathExists(testPath)) {
+      filePath = testPath;
+      break;
+    }
+    const parentDir = path.dirname(currentDir);
+    if (parentDir === currentDir) break; // Reached root
+    currentDir = parentDir;
+  }
+  
+  if (!filePath) {
+    return { content: [{ type: 'text', text: `Knowledge file not found: ${fileName}. Ensure you are in the correct project directory.` }] };
+  }
 
   try {
-    if (!await fs.pathExists(filePath)) {
-      return { content: [{ type: 'text', text: `Knowledge file not found: ${fileName}` }] };
-    }
 
     const fileContent = await fs.readFile(filePath, 'utf8');
 

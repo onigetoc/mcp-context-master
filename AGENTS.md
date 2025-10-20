@@ -1,5 +1,29 @@
 # AGENTS.md
 
+## 🚨 CRITICAL: Context Master Development Guidelines
+
+### File Structure Understanding
+
+**NEVER modify files in `.context-master/` directory directly!**
+
+- **`.context-master/`** = Generated files from Context Master initialization (READ-ONLY)
+- **`templates/`** = Source files that get copied during initialization (MODIFY HERE)
+
+### Development Workflow
+```
+templates/ (SOURCE) → setup_project_context() → .context-master/ (GENERATED)
+```
+
+**Rules:**
+1. **To modify templates**: Edit files in `templates/` directory
+2. **To modify commands**: Edit files in `templates/commands/` directory  
+3. **To test changes**: Run initialization again to regenerate `.context-master/`
+4. **Never edit**: Files in `.context-master/` - they get overwritten during initialization
+
+This is a Context Master MCP server development project. The `.context-master/` directory contains generated files for testing purposes only.
+
+---
+
 # Project: mcp-context-master
 
 ## Project Overview

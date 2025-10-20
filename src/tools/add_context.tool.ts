@@ -153,7 +153,7 @@ export async function handleAddProjectContextTool(request: any): Promise<McpTool
     }
 
     // Update the manifest
-    await updateKnowledgeManifest();
+    await updateKnowledgeManifest(fullPath);
 
     const result = {
         success: true,

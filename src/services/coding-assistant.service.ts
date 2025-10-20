@@ -5,6 +5,7 @@ import { z } from "zod";
 import fs from "fs-extra";
 import path from "path";
 import yaml from "js-yaml";
+import { ContextMappingHelper } from "../config/context-mappings.js";
 
 // --- Schema Definition ---
 const InfoSchema = z.object({
@@ -13,43 +14,6 @@ const InfoSchema = z.object({
     ide: z.string().optional(),
     extension: z.string().optional(),
 });
-
-// --- Context Mappings ---
-const contextMappings = [
-    // Extensions (priority 1)
-    { keys: ["roo code", "roo-code", "roo"], ruleFile: "./ROO.md", contextDir: "./.roo/", type: "extension", agentsMD: true },
-    { keys: ["cline"], ruleFile: ".clinerules", contextDir: "./.cline/", type: "extension", agentsMD: true },
-    { keys: ["kilo code", "kilo-code", "kilocode"], ruleFile: "./KILOCODE.md", contextDir: "./.kilocode/", type: "extension", agentsMD: true },
-    { keys: ["github copilot", "copilot"], ruleFile: "./.github/copilot-instructions.md", contextDir: "./.github/", type: "extension", agentsMD: true },
-    { keys: ["claude code"], ruleFile: "./CLAUDE.md", contextDir: "./.claude/", type: "extension", agentsMD: true },
-    { keys: ["gemini cli"], ruleFile: "./GEMINI.md", contextDir: "./.gemini/", type: "extension", agentsMD: true },
-    { keys: ["warp"], ruleFile: "./WARP.md", contextDir: "./.warp/", type: "extension", agentsMD: false },
-    { keys: ["windsurf"], ruleFile: "./WINDSURF.md", contextDir: "./.windsurf/", type: "extension", agentsMD: true },
-    { keys: ["auggie"], ruleFile: "./AUGMENT.md", contextDir: "./.augment/", type: "extension", agentsMD: true },
-    { keys: ["opencode"], ruleFile: "./OPENCODE.md", contextDir: "./.opencode/", type: "extension", agentsMD: true },
-    { keys: ["codex"], ruleFile: "./CODEX.md", contextDir: "./.codex/", type: "extension", agentsMD: true },
-
-    // IDEs (priority 2)
-    { keys: ["cursor"], ruleFile: ".cursorrules", contextDir: "./.cursor/", type: "ide", agentsMD: true },
-    { keys: ["vs code", "vscode", "visual studio code"], ruleFile: "./VSCODE.md", contextDir: "./.vscode/", type: "ide", agentsMD: true },
-    { keys: ["kiro"], ruleFile: "./.kiro/steering/context-master-instructions.md", contextDir: "./.kiro/steering/", type: "ide", agentsMD: false },
-    { keys: ["zed"], ruleFile: "./ZED.md", contextDir: "./.zed/", type: "ide", agentsMD: true },
-
-    // Models (priority 3)
-    { keys: ["gemini"], ruleFile: "./GEMINI.md", contextDir: "./.gemini/", type: "model", agentsMD: true },
-    { keys: ["claude"], ruleFile: "./CLAUDE.md", contextDir: "./.claude/", type: "model", agentsMD: false },
-    { keys: ["gpt"], ruleFile: "./OPENAI.md", contextDir: "./.openai/", type: "model", agentsMD: true },
-    // { keys: ["copilot"], ruleFile: "./.github/copilot-instructions.md", contextDir: "./.github/", type: "model", agentsMD: true },
-    { keys: ["qwen"], ruleFile: "./QWEN.md", contextDir: "./.qwen/", type: "model", agentsMD: true },
-
-    // Providers (priority 4)
-    { keys: ["google"], ruleFile: "./GEMINI.md", contextDir: "./.gemini/", type: "provider", agentsMD: true },
-    { keys: ["anthropic"], ruleFile: "./CLAUDE.md", contextDir: "./.claude/", type: "provider", agentsMD: true },
-    { keys: ["openai"], ruleFile: "./OPENAI.md", contextDir: "./.openai/", type: "provider", agentsMD: true },
-
-    // Shared standard
-    { keys: ["agents.md", "agents"], ruleFile: "./AGENTS.md", contextDir: null, type: "shared", agentsMD: true },
-];
 
 // --- Parse configuration with Zod ---
 function parseInfo(json: any) {
@@ -61,49 +25,7 @@ function parseInfo(json: any) {
     return result.data;
 }
 
-// --- Find the appropriate context file ---
-function getContextFile(info: z.infer<typeof InfoSchema>) {
-    const isValid = (val?: string) => val && val.trim() !== "" && val.trim().toLowerCase() !== "unknown";
 
-    const findMatch = (value: string, type: string) => {
-        const lowerValue = value.toLowerCase();
-        return contextMappings.find(mapping =>
-            mapping.type === type &&
-            mapping.keys.some(key => lowerValue.includes(key))
-        );
-    };
-
-    const buildPath = (match: typeof contextMappings[0]) => {
-        if (!match.contextDir) return match.ruleFile;
-        return path.join(match.contextDir, match.ruleFile).replace(/\\/g, '/');
-    };
-
-    // Priority 1: Extension
-    if (isValid(info.extension)) {
-        const match = findMatch(info.extension!, "extension");
-        if (match) return buildPath(match);
-    }
-
-    // Priority 2: IDE
-    if (isValid(info.ide)) {
-        const match = findMatch(info.ide!, "ide");
-        if (match) return buildPath(match);
-    }
-
-    // Priority 3: Model
-    if (isValid(info.model)) {
-        const match = findMatch(info.model, "model");
-        if (match) return buildPath(match);
-    }
-
-    // Priority 4: Provider
-    if (isValid(info.provider)) {
-        const match = findMatch(info.provider, "provider");
-        if (match) return buildPath(match);
-    }
-
-    return "AGENTS.md";
-}
 
 export class CodingAssistantService {
     /**
@@ -151,7 +73,7 @@ export class CodingAssistantService {
                 };
             }
 
-            const contextFile = getContextFile(info);
+            const contextFile = this.getContextFile(info);
 
             return {
                 success: true,
@@ -175,5 +97,37 @@ export class CodingAssistantService {
     async getContextFilePath(projectPath: string): Promise<string> {
         const result = await this.detectAssistant(projectPath);
         return result.contextFile || "AGENTS.md";
+    }
+
+    /**
+     * Find the appropriate context file based on AI assistant configuration
+     * @param info - Parsed AI assistant configuration
+     * @returns Path to the context file
+     */
+    private getContextFile(info: z.infer<typeof InfoSchema>): string {
+        // Priority matching: Extension > IDE > Model > Provider
+        let match = null;
+        
+        if (ContextMappingHelper.isValid(info.extension)) {
+            match = ContextMappingHelper.findMatch(info.extension!, "extension");
+        }
+        
+        if (!match && ContextMappingHelper.isValid(info.ide)) {
+            match = ContextMappingHelper.findMatch(info.ide!, "ide");
+        }
+        
+        if (!match && ContextMappingHelper.isValid(info.model)) {
+            match = ContextMappingHelper.findMatch(info.model, "model");
+        }
+        
+        if (!match && ContextMappingHelper.isValid(info.provider)) {
+            match = ContextMappingHelper.findMatch(info.provider, "provider");
+        }
+
+        if (match) {
+            return ContextMappingHelper.buildContextFilePath(match);
+        }
+
+        return "AGENTS.md";
     }
 }

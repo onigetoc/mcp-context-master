@@ -1,6 +1,6 @@
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🔍 DEBUG Path Resolution - 2025-10-19T22:33:42.388Z
+🔍 DEBUG Path Resolution - 2025-10-20T20:43:24.295Z
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 📂 process.cwd()              : C:\Users\LENOVO\AppData\Local\Programs\Kiro
@@ -21,8 +21,66 @@
 📦 Additional Info:
 {
   "toolName": "setup_project_context",
-  "maxDependencies": 20,
+  "maxDependencies": 10,
   "providedPath": "C:\\Users\\LENOVO\\APPS\\0-MCP\\mcp-context-master"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-20T20:45:50.676Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\AppData\Local\Programs\Kiro
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "library": "axios",
+  "topic": "none",
+  "tokens": 3000,
+  "toolName": "add_project_context"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-10-20T21:15:30.890Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO\AppData\Local\Programs\Kiro
+📂 projectPath (hint from LLM): C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : C:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "library": "axios",
+  "topic": "http requests",
+  "tokens": 4000,
+  "toolName": "add_project_context"
 }
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
