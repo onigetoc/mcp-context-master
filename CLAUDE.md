@@ -202,4 +202,4 @@ bun run build && bun run test-tools
 
 
 ## Context Master Instructions
-Use and follow the Context Master instructions from here: .context-master/context-master-agents-instructions.md
+Use and follow the Context Master instructions from here: .context-master/cm-instructions.md

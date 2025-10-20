@@ -230,4 +230,4 @@ _"Build a REST API with Node.js and Express that handles CRUD operations for a '
 - ALWAYS Do all comments, text, errors etc.. All text and everything in english except if user tell you otherwise.
 
 # Context Master Instructions
-Read and use and follow the Context Master instructions from here: .context-master/context-master-agents-instructions.md
+Read and use and follow the Context Master instructions from here: .context-master/cm-instructions.md

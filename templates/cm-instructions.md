@@ -8,7 +8,7 @@ Context Master is an MCP server designed to enhance AI coding assistance by prov
 ### Core Philosophy: Use Selectively
 
 ✅ **DO use for:**
-- Specialized libraries (Remotion, Clerk, tRPC, Prisma)
+- Specialized libraries (eg: Remotion, Clerk, tRPC, Prisma)
 - Specific features you're uncertain about
 - Complex integrations or advanced patterns
 
