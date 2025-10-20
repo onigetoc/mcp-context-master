@@ -518,3 +518,4 @@ Before responding to the user, always follow these steps:
 By following these rules, MCP-Context-Master ensures that coding LLMs (such as GitHub Copilot, Cursor, Roo Code, Cline, Gemini CLI, Claude Code, etc.) always have the right context and documentation to assist the user effectively.
 
 <!-- END: CONTEXT-MASTER -->
+
