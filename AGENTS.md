@@ -109,7 +109,6 @@ node test/test-simple.js            # Basic connectivity test
 - `src/tools/project-master.ts` - **★ Main tool** - Complete project analysis and setup
 - `src/tools/registry-manager.ts` - Tools registry management
 - `src/tools/init-tool.ts` - Environment initialization
-- `src/tools/coding-assistant.ts` - AI assistant detection and configuration
 
 ### Business Logic Services
 
