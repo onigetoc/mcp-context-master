@@ -9,7 +9,7 @@ import axios from 'axios';
 
 export const initializeContextMasterTool = {
   name: "initialize_context_master",
-  description: "First step to initialize Context Master. Downloads the cm-ai-infos.md template from GitHub, creates .context-master directory, and guides the LLM to configure the AI assistant identity. Use when user says 'init context master', 'initialize context master', or '/cm-init'. After this tool completes, the LLM should read cm-ai-infos.md and follow its instructions to create cm-ai-infos.yaml, then call setup_project_context. IMPORTANT: Always provide the absolute path to the user's project directory as projectPath parameter.",
+  description: "First step to initialize Context Master. Downloads the cm-ai-infos.md template from GitHub, creates .context-master directory, and guides the LLM to configure the AI assistant identity. Use when user says 'init context master', 'initialize context master', or '/cm-init' calling the `initialize_context_master` tool to Get AI assistant informations. the LLM should read cm-ai-infos.md and follow its instructions to create cm-ai-infos.yaml, then call setup_project_context. IMPORTANT: Always provide the absolute path to the user's project directory as projectPath parameter.",
   inputSchema: {
     type: 'object',
     properties: {

@@ -25,6 +25,8 @@ async function testCodingAssistantDetection() {
   // Context mappings (copied from setup.tool.ts)
   const contextMappings = [
     { keys: ["kiro"], ruleFile: "context-master-instructions.md", contextDir: ".kiro/steering/", type: "ide", agentsMD: false },
+    { keys: ["gemini"], ruleFile: "GEMINI.md", contextDir: null, type: "model", agentsMD: true },
+    { keys: ["github copilot", "copilot"], ruleFile: "copilot-instructions.md", contextDir: ".github/", type: "extension", agentsMD: true },
     // Add other mappings as needed for testing
   ];
   

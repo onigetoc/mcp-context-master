@@ -1,6 +1,7 @@
 import { readFile } from 'fs/promises';
 import * as path from 'path';
 import { debugLog } from '../utils/logger.js';
+import { shouldDownloadDocumentation } from '../utils/exclusion-list.js';
 
 export interface PackageInfo {
   name: string;
@@ -27,11 +28,18 @@ export class PackageParser {
       const dependencies = packageData.dependencies || {};
       const devDependencies = packageData.devDependencies || {};
       
-      // Combine all dependencies for searching
+      // Combine all dependencies for searching, using the new exclusion system
       const allDependencies = [
         ...Object.keys(dependencies),
         ...Object.keys(devDependencies)
-      ].filter(dep => !this.shouldSkipDependency(dep));
+      ].filter(dep => {
+        const exclusionResult = shouldDownloadDocumentation(dep);
+        if (exclusionResult.exclude) {
+          debugLog(`⏭️  Skipping ${dep}: ${exclusionResult.reason} (${exclusionResult.matchedPattern})`);
+          return false;
+        }
+        return true;
+      });
       
       const packageInfo: PackageInfo = {
         name: packageData.name || 'unknown',
@@ -52,21 +60,13 @@ export class PackageParser {
   }
 
   /**
-   * Determines if a dependency should be skipped from Context7 search
+   * Legacy method - now using the comprehensive exclusion list
+   * @deprecated Use shouldDownloadDocumentation from exclusion-list.ts instead
    */
   private shouldSkipDependency(dep: string): boolean {
-    const skipPatterns = [
-      // Type definitions
-      /^@types\//,
-      // Build tools that rarely have useful docs
-      /^(typescript|webpack|babel|eslint|prettier)$/,
-      // Very common utilities that don't need context
-      /^(lodash|moment|uuid|debug)$/,
-      // Test frameworks (usually well documented)
-      /^(jest|mocha|chai|sinon)$/
-    ];
-    
-    return skipPatterns.some(pattern => pattern.test(dep));
+    // This method is now deprecated in favor of the comprehensive exclusion list
+    // Keeping it for backward compatibility but it's no longer used
+    return false;
   }
 
   /**
@@ -101,7 +101,14 @@ export class PackageParser {
         .map(line => line.trim())
         .filter(line => line && !line.startsWith('#'))
         .map(line => line.split(/[>=<]/)[0].trim())
-        .filter(dep => !this.shouldSkipPythonDependency(dep));
+        .filter(dep => {
+          const exclusionResult = shouldDownloadDocumentation(dep);
+          if (exclusionResult.exclude) {
+            debugLog(`⏭️  Skipping Python package ${dep}: ${exclusionResult.reason} (${exclusionResult.matchedPattern})`);
+            return false;
+          }
+          return !this.shouldSkipPythonDependency(dep);
+        });
       
       debugLog(`✓ Found ${dependencies.length} Python dependencies`);
       return dependencies;

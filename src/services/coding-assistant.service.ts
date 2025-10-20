@@ -17,38 +17,38 @@ const InfoSchema = z.object({
 // --- Context Mappings ---
 const contextMappings = [
     // Extensions (priority 1)
-    { keys: ["roo code", "roo-code", "roo"], ruleFile: "ROO.md", contextDir: ".roo/", type: "extension", agentsMD: true },
-    { keys: ["cline"], ruleFile: ".clinerules", contextDir: ".cline/", type: "extension", agentsMD: true },
-    { keys: ["kilo code", "kilo-code", "kilocode"], ruleFile: "KILOCODE.md", contextDir: ".kilocode/", type: "extension", agentsMD: true },
-    { keys: ["github copilot", "copilot"], ruleFile: ".github/copilot-instructions.md", contextDir: ".github/", type: "extension", agentsMD: true },
-    { keys: ["claude code"], ruleFile: "CLAUDE.md", contextDir: ".claude/", type: "extension", agentsMD: true },
-    { keys: ["gemini cli"], ruleFile: "GEMINI.md", contextDir: ".gemini/", type: "extension", agentsMD: true },
-    { keys: ["warp"], ruleFile: "WARP.md", contextDir: ".warp/", type: "extension", agentsMD: false },
-    { keys: ["windsurf"], ruleFile: "WINDSURF.md", contextDir: ".windsurf/", type: "extension", agentsMD: true },
-    { keys: ["auggie"], ruleFile: "AUGMENT.md", contextDir: ".augment/", type: "extension", agentsMD: true },
-    { keys: ["opencode"], ruleFile: "OPENCODE.md", contextDir: ".opencode/", type: "extension", agentsMD: true },
-    { keys: ["codex"], ruleFile: "CODEX.md", contextDir: ".codex/", type: "extension", agentsMD: true },
+    { keys: ["roo code", "roo-code", "roo"], ruleFile: "./ROO.md", contextDir: "./.roo/", type: "extension", agentsMD: true },
+    { keys: ["cline"], ruleFile: ".clinerules", contextDir: "./.cline/", type: "extension", agentsMD: true },
+    { keys: ["kilo code", "kilo-code", "kilocode"], ruleFile: "./KILOCODE.md", contextDir: "./.kilocode/", type: "extension", agentsMD: true },
+    { keys: ["github copilot", "copilot"], ruleFile: "copilot-instructions.md", contextDir: "./.github/", type: "extension", agentsMD: true },
+    { keys: ["claude code"], ruleFile: "./CLAUDE.md", contextDir: "./.claude/", type: "extension", agentsMD: true },
+    { keys: ["gemini cli"], ruleFile: "./GEMINI.md", contextDir: "./.gemini/", type: "extension", agentsMD: true },
+    { keys: ["warp"], ruleFile: "./WARP.md", contextDir: "./.warp/", type: "extension", agentsMD: false },
+    { keys: ["windsurf"], ruleFile: "./WINDSURF.md", contextDir: "./.windsurf/", type: "extension", agentsMD: true },
+    { keys: ["auggie"], ruleFile: "./AUGMENT.md", contextDir: "./.augment/", type: "extension", agentsMD: true },
+    { keys: ["opencode"], ruleFile: "./OPENCODE.md", contextDir: "./.opencode/", type: "extension", agentsMD: true },
+    { keys: ["codex"], ruleFile: "./CODEX.md", contextDir: "./.codex/", type: "extension", agentsMD: true },
 
     // IDEs (priority 2)
-    { keys: ["cursor"], ruleFile: ".cursorrules", contextDir: ".cursor/", type: "ide", agentsMD: true },
-    { keys: ["vs code", "vscode", "visual studio code"], ruleFile: "VSCODE.md", contextDir: ".vscode/", type: "ide", agentsMD: true },
-    { keys: ["kiro"], ruleFile: ".kiro/steering/context-master-instructions.md", contextDir: ".kiro/", type: "ide", agentsMD: false },
-    { keys: ["zed"], ruleFile: "ZED.md", contextDir: ".zed/", type: "ide", agentsMD: true },
+    { keys: ["cursor"], ruleFile: ".cursorrules", contextDir: "./.cursor/", type: "ide", agentsMD: true },
+    { keys: ["vs code", "vscode", "visual studio code"], ruleFile: "./VSCODE.md", contextDir: "./.vscode/", type: "ide", agentsMD: true },
+    { keys: ["kiro"], ruleFile: "context-master-instructions.md", contextDir: "./.kiro/steering/", type: "ide", agentsMD: false },
+    { keys: ["zed"], ruleFile: "./ZED.md", contextDir: "./.zed/", type: "ide", agentsMD: true },
 
     // Models (priority 3)
-    { keys: ["gemini"], ruleFile: "GEMINI.md", contextDir: ".gemini/", type: "model", agentsMD: true },
-    { keys: ["claude"], ruleFile: "CLAUDE.md", contextDir: ".claude/", type: "model", agentsMD: false },
-    { keys: ["gpt"], ruleFile: "OPENAI.md", contextDir: ".openai/", type: "model", agentsMD: true },
-    { keys: ["copilot"], ruleFile: "copilot-instructions.md", contextDir: ".github/", type: "model", agentsMD: true },
-    { keys: ["qwen"], ruleFile: "QWEN.md", contextDir: ".qwen/", type: "model", agentsMD: true },
+    { keys: ["gemini"], ruleFile: "./GEMINI.md", contextDir: "./.gemini/", type: "model", agentsMD: true },
+    { keys: ["claude"], ruleFile: "./CLAUDE.md", contextDir: "./.claude/", type: "model", agentsMD: false },
+    { keys: ["gpt"], ruleFile: "./OPENAI.md", contextDir: "./.openai/", type: "model", agentsMD: true },
+    { keys: ["copilot"], ruleFile: "copilot-instructions.md", contextDir: "./.github/", type: "model", agentsMD: true },
+    { keys: ["qwen"], ruleFile: "./QWEN.md", contextDir: "./.qwen/", type: "model", agentsMD: true },
 
     // Providers (priority 4)
-    { keys: ["google"], ruleFile: "GEMINI.md", contextDir: ".gemini/", type: "provider", agentsMD: true },
-    { keys: ["anthropic"], ruleFile: "CLAUDE.md", contextDir: ".claude/", type: "provider", agentsMD: true },
-    { keys: ["openai"], ruleFile: "OPENAI.md", contextDir: ".openai/", type: "provider", agentsMD: true },
+    { keys: ["google"], ruleFile: "./GEMINI.md", contextDir: "./.gemini/", type: "provider", agentsMD: true },
+    { keys: ["anthropic"], ruleFile: "./CLAUDE.md", contextDir: "./.claude/", type: "provider", agentsMD: true },
+    { keys: ["openai"], ruleFile: "./OPENAI.md", contextDir: "./.openai/", type: "provider", agentsMD: true },
 
     // Shared standard
-    { keys: ["agents.md", "agents"], ruleFile: "AGENTS.md", contextDir: null, type: "shared", agentsMD: true },
+    { keys: ["agents.md", "agents"], ruleFile: "./AGENTS.md", contextDir: null, type: "shared", agentsMD: true },
 ];
 
 // --- Parse configuration with Zod ---

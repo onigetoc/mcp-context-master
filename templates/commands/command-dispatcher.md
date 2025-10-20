@@ -9,7 +9,7 @@ When you encounter a message starting with `/cm-`, execute the corresponding tas
 | Command | Task File | Description |
 |---------|-----------|-------------|
 | `/cm-help` | `.context-master/tasks/cm-help.md` | Show available commands |
-| `/cm-ai-infos` | `.context-master/cm-ai-infos.md` | Get AI assistant informations |
+| `/cm-init` | calling the `initialize_context_master` tool | Get AI assistant informations |
 | `/cm-setup` | `.context-master/commands/cm-setup_project_context.md` | Tool calling `setup_project_context` to Initialize project
 | `/cm-analyze` | `.context-master/commands/cm-analyze.md` | Analyze dependencies |
 | `/cm-download` | `.context-master/commands/cm-download.md` | Download high-priority docs |

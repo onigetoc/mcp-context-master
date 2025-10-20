@@ -20,6 +20,7 @@
     "migrate": "node scripts/migrate-to-yaml.js"
   },
   "keywords": [
+    "context-master",
     "mcp",
     "mcp-server",
     "github-search",

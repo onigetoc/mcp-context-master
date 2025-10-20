@@ -58,7 +58,7 @@ add_project_context(
 - Without the correct path, files will be created in the wrong location
 
 ### Available Commands
-- `/cm-init`: Initialize Context Master (first-time setup - downloads template only)
+- `/cm-init`: calling the `initialize_context_master` tool to Initialize Context Master (first-time setup - downloads template only)
 - `/cm-ai-infos`: Configure AI assistant information (creates cm-ai-infos.yaml)
 - `/cm-setup`: Complete setup - analyze dependencies and download documentation
 - `/cm-add [library] [topic]`: Add documentation for a specific library/API

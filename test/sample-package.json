@@ -1,0 +1,32 @@
+{
+  "name": "test-project",
+  "version": "1.0.0",
+  "dependencies": {
+    "react": "^18.0.0",
+    "next": "^14.0.0",
+    "prisma": "^5.0.0",
+    "@prisma/client": "^5.0.0",
+    "trpc": "^10.0.0",
+    "@trpc/server": "^10.0.0",
+    "remotion": "^4.0.0",
+    "stripe": "^14.0.0",
+    "lodash": "^4.17.21",
+    "axios": "^1.6.0",
+    "uuid": "^9.0.0",
+    "fs-extra": "^11.0.0",
+    "sharp": "^0.33.0",
+    "three": "^0.160.0",
+    "@radix-ui/react-dialog": "^1.0.0",
+    "tailwindcss": "^3.4.0",
+    "zustand": "^4.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/react": "^18.0.0",
+    "typescript": "^5.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "jest": "^29.0.0",
+    "@testing-library/react": "^14.0.0"
+  }
+}
