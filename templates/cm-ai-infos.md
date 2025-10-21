@@ -1,34 +1,64 @@
-## AI Assistant Identity Configuration
+# 🎯 Context Master AI Assistant Configuration
 
-### task 1: Create Directory
-Create a `.context-master` folder in the project root if it doesn't exist.
-CREATE .context-master
+## MANDATORY STEPS TO COMPLETE INITIALIZATION
 
-### task 2: Identify Your Configuration
-Extract these values from your system configuration or prompt system:
-- **provider**: Your AI provider (e.g., Anthropic, OpenAI, Google)
-- **model**: Your specific model name (e.g., claude-sonnet-4-20250514, gpt-4, gemini-2.0-flash)
-- **ide**: Your IDE/editor environment (e.g., VS Code, Cursor, Zed, Kiro)
-- **extension**: Your extension name (e.g., Claude Code, Roo Code, Cline, GitHub Copilot)
+### Step 1: Identify Your AI Assistant Configuration
 
-### task 3: Create Configuration File or ALWA Update if it already exists
-**ALWAYS UPDATE** the YAML file named: `.context-master/cm-ai-infos.yaml` with this following exact YAML structure:
+You need to identify these 4 values from your current AI assistant:
+
+| Field | Description | Examples |
+|-------|-------------|----------|
+| **provider** | Your AI provider | `anthropic`, `openai`, `google` |
+| **model** | Your specific model | `claude-sonnet-4`, `gpt-4`, `gemini-2.0-flash` |
+| **ide** | Your IDE/editor | `kiro`, `cursor`, `vscode`, `zed` |
+| **extension** | Your extension name | `kilo code`, `roo code`, `cline`, `kiro` |
+
+### Step 2: Create/Update YAML Configuration File
+
+**🚨 MANDATORY ACTION**: Create or update `.context-master/cm-ai-infos.yaml`
+
+**Even if this file already exists, you MUST update it with your current configuration.**
 
 ```yaml
-provider: YOUR_PROVIDER
-model: YOUR_MODEL
-ide: YOUR_IDE
-extension: YOUR_EXTENSION
+provider: YOUR_PROVIDER    # Replace with actual value
+model: YOUR_MODEL          # Replace with actual value  
+ide: YOUR_IDE              # Replace with actual value
+extension: YOUR_EXTENSION  # Replace with actual value (see table below)
 ```
 
-**CRITICAL NOTES:**
-- If the file already exists with old values (like Gemini CLI, VS Code, etc.), you MUST replace it with YOUR CURRENT configuration
-- Use lowercase values for better detection (kiro, not Kiro)
-- Do NOT keep old values from previous sessions
-- This file determines which context files get updated
+### Step 3: Extension Names Reference
 
-**Examples:**
-For Kiro:
+**⚠️ CRITICAL: Use EXACT extension names (case-sensitive):**
+
+| AI Assistant | Extension Value |
+|--------------|----------------|
+| Kilo Code | `kilo code` |
+| Roo Code | `roo code` |
+| Cline | `cline` |
+| Claude Code | `claude code` |
+| Kiro | `kiro` |
+| GitHub Copilot | `github copilot` |
+| Cursor | `cursor` |
+
+### Step 4: Configuration Examples
+
+**For Kilo Code users:**
+```yaml
+provider: anthropic
+model: claude-sonnet-4
+ide: vscode
+extension: kilo code
+```
+
+**For Roo Code users:**
+```yaml
+provider: anthropic
+model: claude-sonnet-4
+ide: vscode
+extension: roo code
+```
+
+**For Kiro users:**
 ```yaml
 provider: anthropic
 model: claude-sonnet-4
@@ -36,16 +66,25 @@ ide: kiro
 extension: kiro
 ```
 
-For Cursor with Claude:
-```yaml
-provider: anthropic
-model: claude-sonnet-4
-ide: cursor
-extension: claude code
+### Step 5: Verify Configuration
+
+After creating the file, verify it contains your actual values (not placeholders like `YOUR_PROVIDER`).
+
+### Step 6: Complete Setup
+
+Call the setup tool to finish Context Master configuration:
+```typescript
+setup_project_context()
 ```
 
-### task 4: Verification
-After creation, read and display the file contents to confirm the configuration was saved correctly. 
+---
 
-### task 5: calling the context master setup tool
-Call Context Master tool `setup_project_context` to initiate the setup and configure Context Master for your project.
+## 🎯 Why This Matters
+
+The `extension` value determines which context files get created:
+- `kilo code` → Creates `KILOCODE.md`
+- `roo code` → Creates `ROO.md`  
+- `cline` → Creates `.clinerules`
+- `kiro` → Creates `.kiro/steering/context-master-instructions.md`
+
+**Wrong extension = Wrong context files created!**

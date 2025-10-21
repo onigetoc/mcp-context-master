@@ -140,97 +140,24 @@ Could not resolve project directory: ${error instanceof Error ? error.message : 
 ## ✅ Initialization Results
 ${logs.map(log => `${log}`).join('\n')}
 
-## 📋 Next Steps - IMPORTANT
+## 📋 Next Steps
 
-You must now follow the instructions in the downloaded template to configure the AI assistant identity:
-
-### Task 1: Read the Template
-The template has been downloaded to: \`${templatePath}\`
-
-### Task 2: Create Configuration File
-Based on the template instructions, you need to:
-
-1. **Identify Your Configuration** from your system:
-   - **provider**: Your AI provider (e.g., Anthropic, OpenAI, Google)
-   - **model**: Your specific model name (e.g., claude-sonnet-4, gpt-4, gemini-2.0-flash)
-   - **ide**: Your IDE/editor (e.g., VS Code, Cursor, Zed, Kiro)
-   - **extension**: Your extension name (e.g., Claude Code, Roo Code, Cline, GitHub Copilot)
-
-2. **Create \`.context-master/cm-ai-infos.yaml\`** with this structure:
-\`\`\`yaml
-provider: YOUR_PROVIDER
-model: YOUR_MODEL
-ide: YOUR_IDE
-extension: YOUR_EXTENSION
-\`\`\`
-
-### Task 3: Call Setup Tool
-After creating the YAML configuration file, you MUST call:
-\`\`\`typescript
-setup_project_context("${fullPath}")
-\`\`\`
-
-This will complete the Context Master setup by:
-- Downloading additional templates
-- Analyzing project dependencies
-- Downloading documentation for important libraries
-- Creating the knowledge manifest
-- Updating AGENTS.md
+**Follow the instructions in the template below to complete the initialization.**
 
 ---
 
-## 📄 Template Content
-
-Here is the content of cm-ai-infos.md for your reference:
+## 📄 Template Instructions
 
 ${templateContent}
 
 ---
 
-## 🚨 CRITICAL INSTRUCTIONS FOR AI ASSISTANTS
+## 🚨 AFTER FOLLOWING THE TEMPLATE INSTRUCTIONS
 
-**STEP 1 COMPLETE** - You have successfully called \`initialize_context_master\`
+Once you have created/updated the \`.context-master/cm-ai-infos.yaml\` file as instructed in the template above, call:
 
-**NEXT REQUIRED STEPS:**
-
-1. **READ the template above carefully**
-2. **UPDATE OR CREATE \`.context-master/cm-ai-infos.yaml\`** with YOUR ACTUAL configuration:
-   - **provider**: Your AI provider (anthropic, openai, google, etc.)
-   - **model**: Your specific model (claude-sonnet-4, gpt-4, gemini-2.0-flash, etc.)
-   - **ide**: Your IDE (kiro, cursor, vs code, zed, etc.)
-   - **extension**: Your extension (kiro, cline, claude code, etc.)
-
-3. **CALL \`setup_project_context("${fullPath}")\`** to complete setup
-
-**IMPORTANT NOTES:**
-- If cm-ai-infos.yaml already exists with old values (like Gemini CLI), you MUST update it with current values
-- Do NOT skip updating the YAML file even if it exists
-- Use lowercase values for better detection (kiro, not Kiro)
-- Do NOT use placeholder values like "UNKNOWN"
-
-**EXAMPLE for Kiro:**
-\`\`\`yaml
-provider: anthropic
-model: claude-sonnet-4
-ide: kiro
-extension: kiro
-\`\`\`
-
-**EXAMPLE for updating existing file:**
-If the file contains old values like:
-\`\`\`yaml
-provider: Google
-model: Gemini
-ide: VS Code
-extension: Gemini CLI
-\`\`\`
-
-You MUST replace it with your current configuration:
-\`\`\`yaml
-provider: anthropic
-model: claude-sonnet-4
-ide: kiro
-extension: kiro
+\`\`\`typescript
+setup_project_context("${fullPath}")
 \`\`\`
 
 This ensures Context Master is properly configured for your specific AI assistant.`

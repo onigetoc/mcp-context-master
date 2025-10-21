@@ -368,6 +368,7 @@ This is NOT the user's project directory - you must provide the correct path.`
     // Check if initialization was done (cm-ai-infos.md template should exist)
     const contextMasterDir = path.join(fullPath, '.context-master');
     const templatePath = path.join(contextMasterDir, 'cm-ai-infos.md');
+    const yamlPath = path.join(contextMasterDir, 'cm-ai-infos.yaml');
     
     if (!await fs.pathExists(templatePath)) {
       return {
@@ -395,6 +396,143 @@ initialize_context_master("${fullPath}")
 Then follow the instructions to create the YAML configuration file before calling setup.`
         }]
       };
+    }
+
+    // Check if YAML configuration file exists and is properly configured
+    if (!await fs.pathExists(yamlPath)) {
+      return {
+        content: [{
+          type: "text",
+          text: `# ⚠️ Missing YAML Configuration
+
+## Error
+The required configuration file \`.context-master/cm-ai-infos.yaml\` is missing.
+
+## What You Need To Do
+After calling \`initialize_context_master\`, you MUST create the YAML configuration file:
+
+### Create \`.context-master/cm-ai-infos.yaml\` with:
+\`\`\`yaml
+provider: [YOUR_PROVIDER]    # anthropic, openai, google
+model: [YOUR_MODEL]          # claude-sonnet-4, gpt-4, gemini-2.0-flash
+ide: [YOUR_IDE]              # kiro, cursor, vscode, zed
+extension: [YOUR_EXTENSION]  # "kilo code", "roo code", "cline", etc.
+\`\`\`
+
+### Example for different assistants:
+\`\`\`yaml
+# For Kilo Code
+provider: anthropic
+model: claude-sonnet-4
+ide: vscode
+extension: kilo code
+
+# For Roo Code  
+provider: anthropic
+model: claude-sonnet-4
+ide: vscode
+extension: roo code
+
+# For Kiro
+provider: anthropic
+model: claude-sonnet-4
+ide: kiro
+extension: kiro
+\`\`\`
+
+**⚠️ This file determines which context files get created in your project.**
+
+## Then retry setup:
+\`\`\`typescript
+setup_project_context("${fullPath}")
+\`\`\``
+        }]
+      };
+    }
+
+    // Validate YAML content
+    try {
+      const yamlContent = await fs.readFile(yamlPath, 'utf8');
+      const yaml = await import('js-yaml');
+      const config = yaml.load(yamlContent) as any;
+      
+      // Check for placeholder values that indicate the file wasn't properly updated
+      if (!config || 
+          config.provider === 'YOUR_PROVIDER' || 
+          config.model === 'YOUR_MODEL' || 
+          config.ide === 'YOUR_IDE' || 
+          config.extension === 'YOUR_EXTENSION' ||
+          config.provider === 'UNKNOWN' ||
+          config.model === 'UNKNOWN' ||
+          config.ide === 'UNKNOWN' ||
+          config.extension === 'UNKNOWN') {
+        
+        return {
+          content: [{
+            type: "text",
+            text: `# ⚠️ YAML Configuration Not Updated
+
+## Error
+The \`.context-master/cm-ai-infos.yaml\` file contains placeholder values and needs to be updated with your actual AI assistant information.
+
+## Current Content:
+\`\`\`yaml
+${yamlContent}
+\`\`\`
+
+## Required Action
+Replace the placeholder values with your actual configuration:
+
+\`\`\`yaml
+provider: anthropic     # Your actual provider (not YOUR_PROVIDER)
+model: claude-sonnet-4  # Your actual model (not YOUR_MODEL)
+ide: vscode            # Your actual IDE (not YOUR_IDE)
+extension: kilo code   # Your actual extension (not YOUR_EXTENSION)
+\`\`\`
+
+**⚠️ The LLM must update this file with real values, not placeholders.**
+
+## Then retry setup:
+\`\`\`typescript
+setup_project_context("${fullPath}")
+\`\`\``
+          }]
+        };
+      }
+      
+    } catch (yamlError) {
+      return {
+        content: [{
+          type: "text",
+          text: `# ⚠️ Invalid YAML Configuration
+
+## Error
+The \`.context-master/cm-ai-infos.yaml\` file exists but contains invalid YAML syntax.
+
+**YAML Error**: ${yamlError instanceof Error ? yamlError.message : String(yamlError)}
+
+## Solution
+Fix the YAML syntax in \`.context-master/cm-ai-infos.yaml\`:
+
+\`\`\`yaml
+provider: anthropic
+model: claude-sonnet-4
+ide: vscode
+extension: kilo code
+\`\`\`
+
+**Make sure:**
+- No tabs, only spaces for indentation
+- Proper YAML syntax
+- No special characters in values
+
+## Then retry setup:
+\`\`\`typescript
+setup_project_context("${fullPath}")
+\`\`\``
+        }]
+      };
+    }
     }
 
   } catch (error) {
@@ -543,9 +681,108 @@ Use these slash commands to interact with Context Master:
     };
 
   } catch (error) {
+    // Analyze the error to provide better user guidance
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    
+    // Check for common connection issues
+    if (errorMessage.includes('ETIMEDOUT') || 
+        errorMessage.includes('ECONNABORTED') || 
+        errorMessage.includes('timeout') ||
+        errorMessage.includes('Connection closed')) {
+      
+      return {
+        content: [{
+          type: "text",
+          text: `# ⚠️ Connection Timeout Error
+
+## What Happened
+Context Master setup failed due to a network timeout while downloading documentation from GitHub or Context7.
+
+**Error**: ${errorMessage}
+
+## 🔄 Quick Fix
+**Simply retry the setup** - this is usually a temporary network issue:
+
+\`\`\`typescript
+setup_project_context("${projectPath}", ${maxDependencies})
+\`\`\`
+
+## Why This Happens
+- Network congestion or slow connection
+- GitHub/Context7 servers temporarily overloaded
+- Firewall or proxy interference
+- Large documentation downloads timing out
+
+## Troubleshooting Steps
+1. **Retry immediately** - often works on second attempt
+2. Check your internet connection
+3. Try with fewer dependencies: \`maxDependencies: 10\`
+4. If using corporate network, check proxy settings
+
+## Alternative
+If retries keep failing, you can:
+1. Complete basic setup without documentation
+2. Add specific library contexts later using \`add_project_context\`
+
+**This is a common, temporary issue that usually resolves with a retry.**`
+        }]
+      };
+    }
+    
+    // Check for other network-related errors
+    if (errorMessage.includes('ENOTFOUND') || 
+        errorMessage.includes('ECONNREFUSED') || 
+        errorMessage.includes('network') ||
+        errorMessage.includes('fetch')) {
+      
+      return {
+        content: [{
+          type: "text",
+          text: `# 🌐 Network Connection Error
+
+## What Happened
+Context Master setup failed due to a network connectivity issue.
+
+**Error**: ${errorMessage}
+
+## Possible Causes
+- No internet connection
+- DNS resolution issues
+- Firewall blocking requests
+- Corporate proxy configuration
+
+## Solutions
+1. **Check internet connection**
+2. **Retry the setup**:
+   \`\`\`typescript
+   setup_project_context("${projectPath}", ${maxDependencies})
+   \`\`\`
+3. **Try with fewer dependencies** if network is slow
+4. **Check firewall/proxy settings** if on corporate network
+
+## Need Help?
+If the issue persists, you can still use Context Master by adding contexts manually:
+\`\`\`typescript
+add_project_context("library-name", "topic")
+\`\`\`
+
+**Network issues are usually temporary - please retry.**`
+        }]
+      };
+    }
+    
+    // For other errors, provide general guidance
     throw new McpError(
       ErrorCode.InternalError,
-      `Context Master setup failed: ${error instanceof Error ? error.message : String(error)}`
+      `Context Master setup failed: ${errorMessage}
+
+**Troubleshooting:**
+1. Verify project path exists: ${projectPath}
+2. Check cm-ai-infos.yaml configuration
+3. Ensure internet connectivity
+4. Try retrying the setup
+
+**If issue persists, you can add contexts manually using add_project_context tool.**`
     );
   }
 }

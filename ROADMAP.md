@@ -1,11 +1,13 @@
 # MCP Context Master - Roadmap & Task List
 
 ## 🎯 **Vision du projet**
+
 Créer un MCP server intelligent qui aide les développeurs à démarrer leurs projets en trouvant et téléchargeant automatiquement la documentation contextuelle la plus pertinente.
 
 ## ✅ **Fonctionnalités actuelles (Terminées)**
 
 ### Core Features
+
 - [x] Analyse automatique des projets (package.json, requirements.txt)
 - [x] Recherche GitHub avec normalisation des packages scoped (@scope/package)
 - [x] Génération d'URLs Context7 avec paramètres (topic, tokens)
@@ -15,6 +17,7 @@ Créer un MCP server intelligent qui aide les développeurs à démarrer leurs p
 - [x] Script CLI de test avec téléchargement (`search-test.js`)
 
 ### Architecture
+
 - [x] Structure MCP complète avec tools et handlers
 - [x] Parsers modulaires (package.json, requirements.txt, README)
 - [x] Support Node.js et Python
@@ -23,7 +26,9 @@ Créer un MCP server intelligent qui aide les développeurs à démarrer leurs p
 ## 🚧 **En cours / Priorité haute**
 
 ### Validation et qualité des résultats
+
 - [ ] **Système de scoring automatique des repos**
+
   - [ ] Score basé sur stars, forks, activité récente
   - [ ] Détection des repos archivés/abandonnés
   - [ ] Évaluation de la qualité de documentation
@@ -35,7 +40,9 @@ Créer un MCP server intelligent qui aide les développeurs à démarrer leurs p
   - [ ] Raisons de la sélection (`matchReasons`)
 
 ### Guidance pour LLMs
+
 - [ ] **Steering files pour critères d'évaluation**
+
   - [ ] `.kiro/steering/project-validation-criteria.md`
   - [ ] `.kiro/steering/dependency-selection-guidelines.md`
   - [ ] Critères spécifiques par langage/framework
@@ -48,13 +55,16 @@ Créer un MCP server intelligent qui aide les développeurs à démarrer leurs p
 ## 📋 **Backlog / Priorité moyenne**
 
 ### Amélioration de la recherche
+
 - [ ] **Support de plus de langages**
+
   - [ ] Go (go.mod)
   - [ ] Rust (Cargo.toml)
   - [ ] Java (pom.xml, build.gradle)
   - [ ] C# (.csproj, packages.config)
 
 - [ ] **Recherche multi-critères**
+
   - [ ] Filtrage par langage de programmation
   - [ ] Filtrage par licence
   - [ ] Filtrage par date de dernière activité
@@ -66,7 +76,9 @@ Créer un MCP server intelligent qui aide les développeurs à démarrer leurs p
   - [ ] Exclusion de mots-clés non pertinents
 
 ### Gestion des téléchargements
+
 - [ ] **Organisation intelligente des fichiers**
+
   - [ ] Sous-dossiers par catégorie (web-frameworks/, ui-libraries/)
   - [ ] Métadonnées dans les noms de fichiers (axios-http-client-context.md)
   - [ ] Index automatique des fichiers téléchargés
@@ -77,7 +89,9 @@ Créer un MCP server intelligent qui aide les développeurs à démarrer leurs p
   - [ ] Historique des versions téléchargées
 
 ### Interface et UX
+
 - [ ] **Amélioration du CLI**
+
   - [ ] Mode interactif pour sélectionner les résultats
   - [ ] Preview du contenu avant téléchargement
   - [ ] Batch download de plusieurs résultats
@@ -90,7 +104,9 @@ Créer un MCP server intelligent qui aide les développeurs à démarrer leurs p
 ## 🔮 **Idées futures / Priorité basse**
 
 ### Intelligence avancée
+
 - [ ] **Analyse de dépendances transitive**
+
   - [ ] Analyse des dépendances des dépendances
   - [ ] Détection des conflits potentiels
   - [ ] Suggestions d'alternatives
@@ -101,7 +117,9 @@ Créer un MCP server intelligent qui aide les développeurs à démarrer leurs p
   - [ ] Recommandations personnalisées
 
 ### Intégrations
+
 - [ ] **Support d'autres sources de documentation**
+
   - [ ] npm registry pour packages Node.js
   - [ ] PyPI pour packages Python
   - [ ] Documentation officielle (MDN, etc.)
@@ -121,12 +139,14 @@ Créer un MCP server intelligent qui aide les développeurs à démarrer leurs p
 ## 📝 **Notes de développement**
 
 ### Décisions architecturales
+
 - Garder la logique MCP simple et focalisée
 - Éviter les appels LLM directs (pas dans le scope MCP)
 - Privilégier les métadonnées riches pour guider les LLMs
 - Maintenir la compatibilité avec tous les IDE AI (Cursor, Kiro, Cline, etc.)
 
 ### Métriques de succès
+
 - Temps de setup d'un nouveau projet < 2 minutes
 - Pertinence des résultats > 80%
 - Adoption par la communauté MCP

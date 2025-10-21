@@ -99,6 +99,48 @@ export async function downloadWithRetry(
   
   for (let attempt = 1; attempt <= maxRetries; attempt++) {
     try {
+      debugLog(`🔄 Attempt ${attempt}/${maxRetries} for: ${url}`);
+      
+      // Add timeout and connection settings for better reliability
+      const requestConfig: AxiosRequestConfig = {
+        timeout: 30000, // 30 seconds timeout
+        ...config,
+        headers: {
+          'User-Agent': 'MCP-Context-Master/1.0',
+          ...config.headers
+        }
+      };
+      
+      const response = await axios.get(url, requestConfig);
+      debugLog(`✅ Success on attempt ${attempt}`);
+      return response;
+      
+    } catch (error) {
+      lastError = error;
+      const errorInfo = analyzeNetworkError(error);
+      
+      debugLog(`❌ Attempt ${attempt} failed: ${errorInfo.message}`);
+      
+      // Don't retry if error is not retryable
+      if (!errorInfo.retryable) {
+        debugLog(`🚫 Error not retryable, stopping attempts`);
+        break;
+      }
+      
+      // Don't wait after the last attempt
+      if (attempt < maxRetries) {
+        const delay = Math.min(initialDelay * Math.pow(backoffMultiplier, attempt - 1), maxDelay);
+        debugLog(`⏳ Waiting ${delay}ms before retry...`);
+        await new Promise(resolve => setTimeout(resolve, delay));
+      }
+    }
+  }
+  
+  // If we get here, all attempts failed
+  const errorInfo = analyzeNetworkError(lastError);
+  throw new Error(`Failed after ${maxRetries} attempts: ${errorInfo.message}`);
+}
+    try {
       debugLog(`📥 Download attempt ${attempt}/${maxRetries}: ${url}`);
       
       const response = await axios.get(url, {
