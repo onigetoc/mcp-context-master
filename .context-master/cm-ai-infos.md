@@ -25,6 +25,6 @@ extension: YOUR_EXTENSION
 After creation, read and display the file contents to confirm the configuration was saved correctly. 
 
 ### task 5: calling the context master setup tool
-Call Context Master `setup_project_context` tool to initiate the setup and configure Context Master for your project.
+Call Context Master tool `setup_project_context` to initiate the setup and configure Context Master for your project.
 
     

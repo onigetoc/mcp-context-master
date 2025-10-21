@@ -11,7 +11,7 @@ Extract these values from your system configuration or prompt system:
 - **ide**: Your IDE/editor environment (e.g., VS Code, Cursor, Zed, Kiro)
 - **extension**: Your extension name (e.g., Claude Code, Roo Code, Cline, GitHub Copilot)
 
-### task 3: Create Configuration File or Update if it already exists
+### task 3: Create Configuration File or ALWA Update if it already exists
 **ALWAYS UPDATE** the YAML file named: `.context-master/cm-ai-infos.yaml` with this following exact YAML structure:
 
 ```yaml
@@ -48,6 +48,4 @@ extension: claude code
 After creation, read and display the file contents to confirm the configuration was saved correctly. 
 
 ### task 5: calling the context master setup tool
-Call Context Master `setup_project_context` tool to initiate the setup and configure Context Master for your project.
-
-    
+Call Context Master tool `setup_project_context` to initiate the setup and configure Context Master for your project.
