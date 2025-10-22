@@ -140,58 +140,6 @@ export async function downloadWithRetry(
   const errorInfo = analyzeNetworkError(lastError);
   throw new Error(`Failed after ${maxRetries} attempts: ${errorInfo.message}`);
 }
-    try {
-      debugLog(`📥 Download attempt ${attempt}/${maxRetries}: ${url}`);
-      
-      const response = await axios.get(url, {
-        timeout: 30000,
-        headers: {
-          'User-Agent': 'MCP-Context-Master/1.0.0',
-          ...config.headers
-        },
-        ...config
-      });
-      
-      debugLog(`✅ Download successful on attempt ${attempt}`);
-      return response;
-      
-    } catch (error) {
-      lastError = error;
-      const errorInfo = analyzeNetworkError(error);
-      const isLastAttempt = attempt === maxRetries;
-      
-      debugLog(`❌ Attempt ${attempt} failed: ${errorInfo.message}`);
-      
-      // Don't retry if error is not retryable
-      if (!errorInfo.retryable) {
-        debugLog(`⚠️  Error is not retryable, aborting.`);
-        throw error;
-      }
-      
-      // Don't retry on last attempt
-      if (isLastAttempt) {
-        debugLog(`⚠️  Max retries reached, giving up.`);
-        throw error;
-      }
-      
-      // Calculate delay with exponential backoff
-      let delay = initialDelay * Math.pow(backoffMultiplier, attempt - 1);
-      
-      // Special case: rate limiting (wait longer)
-      if (errorInfo.type === 'rate_limit') {
-        delay = Math.max(delay, 60000); // At least 60s for rate limits
-      }
-      
-      // Cap the delay
-      delay = Math.min(delay, maxDelay);
-      
-      debugLog(`⏳ Waiting ${delay}ms before retry ${attempt + 1}...`);
-      await new Promise(resolve => setTimeout(resolve, delay));
-    }
-  }
-  
-  throw lastError;
-}
 
 /**
  * Validates if a Context7 URL is accessible (quick HEAD request)

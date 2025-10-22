@@ -160,11 +160,26 @@ When you see `/cm-` followed by a command, execute the corresponding MCP tool or
 #### Core Commands
 
 - **`/cm-help`**: Show numbered list of available commands for selection
-- **`/cm-init`**: Call `initialize_context_master` tool to get AI assistant informations and setup
+- **`/cm-init`**: 🚨 EXECUTE BOTH: `initialize_context_master` THEN `setup_project_context` (NO user confirmation between steps)
 - **`/cm-setup`**: Call `setup_project_context` tool to analyze dependencies and download documentation
 - **`/cm-add [library] [topic]`**: Call `add_project_context` tool for specific library/API
 - **`/cm-list`**: Call `list_available_contexts` tool to show downloaded contexts
 - **`/cm-read [file]`**: Call `read_specific_context` tool to read specific documentation
+
+#### 🚨 CRITICAL EXECUTION RULE FOR `/cm-init`:
+
+```typescript
+// When user says "init context master" or "/cm-init":
+// STEP 1: Initialize (auto-creates all files)
+initialize_context_master("ABSOLUTE_PROJECT_PATH");
+
+// STEP 2: Setup (IMMEDIATELY after step 1, no waiting)
+setup_project_context("ABSOLUTE_PROJECT_PATH");
+
+// DONE. Both tools handle everything automatically.
+```
+
+**⚠️ NEVER ask user to create files manually. NEVER skip step 2.**
 
 #### Utility Commands
 
@@ -473,6 +488,30 @@ add_project_context("react", "hooks typescript patterns");
 - Check existing contexts before downloading
 - Read each context file only once per conversation
 - Focus on specialized libraries that need documentation
+
+### 🚨 SPECIAL INSTRUCTIONS FOR WEAKER LLMs (GPT-4.1, etc.)
+
+**If you are GPT-4.1 or similar, follow these EXACT steps:**
+
+#### For "init context master":
+
+1. Call `initialize_context_master("ABSOLUTE_PATH")`
+2. IMMEDIATELY call `setup_project_context("ABSOLUTE_PATH")`
+3. Do NOT ask user anything between steps
+4. Do NOT ask user to create files manually
+
+#### For any errors:
+
+1. Retry the same command
+2. Do NOT ask user to fix anything
+3. Tools auto-create missing files
+
+#### Path format examples:
+
+- Windows: `"C:\\Users\\Name\\projects\\my-app"`
+- Linux: `"/home/user/projects/my-app"`
+
+**These tools are designed to work automatically. Trust them and execute both commands in sequence.**
 
 ### Context Integration During Package Installation
 

@@ -9,7 +9,7 @@ import axios from 'axios';
 
 export const initializeContextMasterTool = {
   name: "initialize_context_master",
-  description: "FIRST STEP to initialize Context Master. This tool MUST be called FIRST when user says 'init context master', 'initialize context master', or '/cm-init'. Downloads the cm-ai-infos.md template from GitHub, creates .context-master directory, and guides the LLM to configure the AI assistant identity. The LLM should read cm-ai-infos.md and follow its instructions to create cm-ai-infos.yaml, then call setup_project_context. CRITICAL: This is step 1 of 2 - do NOT skip to setup_project_context directly. IMPORTANT: Always provide the absolute path to the user's project directory as projectPath parameter.",
+  description: "🚨 MANDATORY STEP 1: Initialize Context Master. When user says 'init context master' or '/cm-init', call this tool FIRST, then IMMEDIATELY call setup_project_context. DO NOT ask user for confirmation between steps. DO NOT ask user to create files manually. This tool auto-creates all required files including cm-ai-infos.yaml. CRITICAL: After this tool completes, you MUST call setup_project_context with the same projectPath. No exceptions.",
   inputSchema: {
     type: 'object',
     properties: {
@@ -135,32 +135,70 @@ Could not resolve project directory: ${error instanceof Error ? error.message : 
     // Read the template content to show to the LLM
     const templateContent = await fs.readFile(templatePath, 'utf8');
 
-    const initGuide = `# 🎯 Context Master Initialization - Step 1 Complete
+    // Create the YAML file automatically with default values
+    const yamlPath = path.join(fullPath, '.context-master', 'cm-ai-infos.yaml');
+    const defaultYamlContent = `provider: openai
+model: gpt-4
+ide: vscode
+extension: github copilot
+`;
+    
+    await fs.writeFile(yamlPath, defaultYamlContent, 'utf8');
+    logs.push(`✅ Created cm-ai-infos.yaml with default values`);
 
-## ✅ Initialization Results
+    // Include the key instructions directly in the response
+    const keyInstructions = `
+## 🚨 CONTEXT MASTER INSTRUCTIONS FOR THIS CONVERSATION
+
+### MANDATORY EXECUTION SEQUENCE
+When user says "init context master":
+1. Call \`initialize_context_master("ABSOLUTE_PATH")\` ✅ (DONE)
+2. **IMMEDIATELY** call \`setup_project_context("ABSOLUTE_PATH")\` ⚠️ (DO THIS NOW)
+
+### CRITICAL RULES FOR FUTURE USE
+- **ALWAYS** provide absolute project path: "${fullPath}"
+- **USE FOR**: Specialized libraries (Remotion, Clerk, tRPC, Prisma)
+- **SKIP FOR**: Well-known libraries (React, Express, Axios, Lodash)
+- **CHECK FIRST**: .context-master/knowledge/ for existing files
+- **READ ONCE**: Each context file per conversation
+
+### AVAILABLE TOOLS
+- \`add_project_context("library", "${fullPath}", "topic")\` - Download specific library docs
+- \`list_available_contexts()\` - See downloaded contexts
+- \`read_specific_context("filename")\` - Read context file
+
+### DECISION WORKFLOW
+\`\`\`
+User asks about library → Already know well? → YES: Answer directly
+                      ↓ NO
+Already read in conversation? → YES: Use existing knowledge  
+                      ↓ NO
+Check .context-master/knowledge/ → Exists? → YES: Read once
+                      ↓ NO
+add_project_context(library, "${fullPath}", topic)
+\`\`\`
+
+**Remember these instructions for the rest of this conversation.**
+`;
+
+    const initGuide = `# ✅ Context Master Initialization Complete
+
+## Results
 ${logs.map(log => `${log}`).join('\n')}
 
-## 📋 Next Steps
+## 🚨 MANDATORY NEXT STEP
 
-**Follow the instructions in the template below to complete the initialization.**
-
----
-
-## 📄 Template Instructions
-
-${templateContent}
-
----
-
-## 🚨 AFTER FOLLOWING THE TEMPLATE INSTRUCTIONS
-
-Once you have created/updated the \`.context-master/cm-ai-infos.yaml\` file as instructed in the template above, call:
+**YOU MUST NOW call setup_project_context:**
 
 \`\`\`typescript
 setup_project_context("${fullPath}")
 \`\`\`
 
-This ensures Context Master is properly configured for your specific AI assistant.`
+**⚠️ DO NOT skip this step. The initialization is incomplete without setup.**
+
+${keyInstructions}
+
+**Call setup_project_context now to finish initialization.**`
 
     return {
       content: [{ type: "text", text: initGuide }]

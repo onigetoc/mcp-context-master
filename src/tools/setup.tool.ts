@@ -14,7 +14,7 @@ import { detectCodingAssistantAndGetContextFile } from '../utils/assistant-detec
 
 export const setupProjectContextTool = {
   name: "setup_project_context",
-  description: "SECOND STEP to complete Context Master setup. This tool should ONLY be called AFTER initialize_context_master and AFTER creating cm-ai-infos.yaml. Use when user says setup context master, or /cm-setup, or as step 2 after initialization. Completes setup by downloading templates from GitHub, analyzing project dependencies, and downloading documentation for important libraries. CRITICAL: Do NOT call this directly for 'init context master' - call initialize_context_master first. IMPORTANT: Always provide the absolute path to the user's project directory as projectPath parameter.",
+  description: "🚨 MANDATORY STEP 2: Complete Context Master setup. This tool is AUTOMATICALLY called after initialize_context_master. When user says 'init context master', you MUST call initialize_context_master first, then IMMEDIATELY call this tool. DO NOT ask user for confirmation. DO NOT ask user to create files manually. This tool auto-handles all missing configurations and completes the setup process.",
   inputSchema: {
     type: 'object',
     properties: {
@@ -365,87 +365,71 @@ This is NOT the user's project directory - you must provide the correct path.`
       providedPath: projectPath
     });
 
-    // Check if initialization was done (cm-ai-infos.md template should exist)
+    // Check if initialization was done, if not, auto-initialize
     const contextMasterDir = path.join(fullPath, '.context-master');
     const templatePath = path.join(contextMasterDir, 'cm-ai-infos.md');
     const yamlPath = path.join(contextMasterDir, 'cm-ai-infos.yaml');
     
     if (!await fs.pathExists(templatePath)) {
-      return {
-        content: [{
-          type: "text",
-          text: `# ⚠️ Context Master Not Initialized
+      // Auto-initialize instead of failing
+      try {
+        const { handleInitializeContextMasterTool } = await import('./initialize.tool.js');
+        await handleInitializeContextMasterTool({ params: { arguments: { projectPath: fullPath } } });
+      } catch (initError) {
+        return {
+          content: [{
+            type: "text",
+            text: `# 🚨 Auto-Initialization Failed
 
 ## Error
-Context Master has not been initialized yet. The setup process requires two steps:
+Context Master setup requires initialization first, but auto-initialization failed.
 
-## Required Steps
-1. **FIRST**: Call \`initialize_context_master("${fullPath}")\`
-2. **THEN**: Create \`.context-master/cm-ai-infos.yaml\` with your AI assistant info
-3. **FINALLY**: Call \`setup_project_context("${fullPath}")\`
+**Error**: ${initError instanceof Error ? initError.message : String(initError)}
 
-## What's Missing
-The initialization template \`cm-ai-infos.md\` was not found in \`.context-master/\` directory.
+## Manual Solution
+Call initialize first, then setup:
 
-## Solution
-Please run the initialization first:
 \`\`\`typescript
 initialize_context_master("${fullPath}")
+setup_project_context("${fullPath}")
 \`\`\`
 
-Then follow the instructions to create the YAML configuration file before calling setup.`
-        }]
-      };
+**Both commands are required for complete setup.**`
+          }]
+        };
+      }
     }
 
-    // Check if YAML configuration file exists and is properly configured
+    // Check if YAML configuration file exists and create it if missing
     if (!await fs.pathExists(yamlPath)) {
+      // Auto-create with default values instead of failing
+      const defaultYamlContent = `provider: openai
+model: gpt-4
+ide: vscode
+extension: github copilot
+`;
+      await fs.writeFile(yamlPath, defaultYamlContent, 'utf8');
+      
       return {
         content: [{
           type: "text",
-          text: `# ⚠️ Missing YAML Configuration
+          text: `# ✅ YAML Configuration Auto-Created
 
-## Error
-The required configuration file \`.context-master/cm-ai-infos.yaml\` is missing.
+## Action Taken
+Created \`.context-master/cm-ai-infos.yaml\` with default values:
 
-## What You Need To Do
-After calling \`initialize_context_master\`, you MUST create the YAML configuration file:
-
-### Create \`.context-master/cm-ai-infos.yaml\` with:
 \`\`\`yaml
-provider: [YOUR_PROVIDER]    # anthropic, openai, google
-model: [YOUR_MODEL]          # claude-sonnet-4, gpt-4, gemini-2.0-flash
-ide: [YOUR_IDE]              # kiro, cursor, vscode, zed
-extension: [YOUR_EXTENSION]  # "kilo code", "roo code", "cline", etc.
+provider: openai
+model: gpt-4
+ide: vscode
+extension: github copilot
 \`\`\`
 
-### Example for different assistants:
-\`\`\`yaml
-# For Kilo Code
-provider: anthropic
-model: claude-sonnet-4
-ide: vscode
-extension: kilo code
+## Setup Continuing
+Context Master setup will now proceed with these default values.
+You can update the YAML file later if needed.
 
-# For Roo Code  
-provider: anthropic
-model: claude-sonnet-4
-ide: vscode
-extension: roo code
-
-# For Kiro
-provider: anthropic
-model: claude-sonnet-4
-ide: kiro
-extension: kiro
-\`\`\`
-
-**⚠️ This file determines which context files get created in your project.**
-
-## Then retry setup:
-\`\`\`typescript
-setup_project_context("${fullPath}")
-\`\`\``
+**Setup is continuing automatically...**`
         }]
       };
     }
@@ -456,46 +440,33 @@ setup_project_context("${fullPath}")
       const yaml = await import('js-yaml');
       const config = yaml.load(yamlContent) as any;
       
-      // Check for placeholder values that indicate the file wasn't properly updated
+      // Accept any valid YAML values, including defaults
       if (!config || 
-          config.provider === 'YOUR_PROVIDER' || 
-          config.model === 'YOUR_MODEL' || 
-          config.ide === 'YOUR_IDE' || 
-          config.extension === 'YOUR_EXTENSION' ||
-          config.provider === 'UNKNOWN' ||
-          config.model === 'UNKNOWN' ||
-          config.ide === 'UNKNOWN' ||
-          config.extension === 'UNKNOWN') {
+          typeof config.provider !== 'string' || 
+          typeof config.model !== 'string' || 
+          typeof config.ide !== 'string' || 
+          typeof config.extension !== 'string') {
+        
+        // Auto-fix invalid YAML by recreating with defaults
+        const defaultYamlContent = `provider: openai
+model: gpt-4
+ide: vscode
+extension: github copilot
+`;
+        await fs.writeFile(yamlPath, defaultYamlContent, 'utf8');
         
         return {
           content: [{
             type: "text",
-            text: `# ⚠️ YAML Configuration Not Updated
+            text: `# ✅ YAML Configuration Fixed
 
-## Error
-The \`.context-master/cm-ai-infos.yaml\` file contains placeholder values and needs to be updated with your actual AI assistant information.
+## Action Taken
+Fixed invalid YAML configuration with default values.
 
-## Current Content:
-\`\`\`yaml
-${yamlContent}
-\`\`\`
+## Setup Continuing
+Context Master setup will now proceed.
 
-## Required Action
-Replace the placeholder values with your actual configuration:
-
-\`\`\`yaml
-provider: anthropic     # Your actual provider (not YOUR_PROVIDER)
-model: claude-sonnet-4  # Your actual model (not YOUR_MODEL)
-ide: vscode            # Your actual IDE (not YOUR_IDE)
-extension: kilo code   # Your actual extension (not YOUR_EXTENSION)
-\`\`\`
-
-**⚠️ The LLM must update this file with real values, not placeholders.**
-
-## Then retry setup:
-\`\`\`typescript
-setup_project_context("${fullPath}")
-\`\`\``
+**Setup is continuing automatically...**`
           }]
         };
       }
@@ -532,7 +503,6 @@ setup_project_context("${fullPath}")
 \`\`\``
         }]
       };
-    }
     }
 
   } catch (error) {
@@ -634,6 +604,46 @@ Use these slash commands to interact with Context Master:
     }
 
     // 4. Generate comprehensive result
+    // Include usage instructions directly in the response
+    const usageInstructions = `
+## 🎯 HOW TO USE CONTEXT MASTER (Remember for this conversation)
+
+### WHEN TO USE
+✅ **USE FOR**: Specialized libraries (Remotion, Clerk, tRPC, Prisma, Zustand)
+❌ **SKIP FOR**: Well-known libraries (React, Express, Axios, Lodash, Jest)
+
+### WORKFLOW
+1. **Check existing**: \`list_available_contexts()\` or check .context-master/knowledge/
+2. **Add if needed**: \`add_project_context("library", "${fullPath}", "specific-topic")\`
+3. **Read once**: \`read_specific_context("filename")\`
+
+### EXAMPLES
+\`\`\`typescript
+// ✅ Good use cases
+add_project_context("remotion", "${fullPath}", "srt captions")
+add_project_context("clerk", "${fullPath}", "authentication")
+add_project_context("trpc", "${fullPath}", "mutations")
+
+// ❌ Skip these (you already know them)
+// React, Express, Axios, Lodash, Jest basics
+\`\`\`
+
+### DECISION TREE
+\`\`\`
+User asks about library feature
+    ↓
+Already know this well? → YES: Answer directly
+    ↓ NO
+Already read in conversation? → YES: Use existing knowledge
+    ↓ NO
+Check .context-master/knowledge/ → Exists? → YES: Read once
+    ↓ NO
+add_project_context("library", "${fullPath}", "topic")
+\`\`\`
+
+**Use this workflow for the rest of our conversation.**
+`;
+
     const successGuide = `# Context Master Setup Complete ✅
 
 ## Initialization Results
@@ -650,31 +660,30 @@ ${downloadedFiles.length > 0 ? downloadedFiles.map(file => `- ${file}`).join('\n
 ## Search Results Summary
 ${searchResults.map(result => `- **${result.originalPackageName}**: ${result.repoName} - ${result.url}`).join('\n')}
 
+${usageInstructions}
+
 ## Created/Updated Files
-- **Templates**: cm-ai-infos.md, cm-analyze.md, cm-status.md, cm-instructions.md (includes commands)
+- **Templates**: cm-ai-infos.md, cm-analyze.md, cm-status.md, cm-instructions.md
 - **Knowledge**: knowledge-manifest.yaml (updated with new files)
 - **Configuration**: cm-ai-infos.yaml (configured for your coding assistant)
 - **Context Files**: Updated IDE-specific files and/or AGENTS.md with Context Master instructions
 
-## Available Commands
-Use these slash commands to interact with Context Master:
-- \\\`/cm-help\\\` - Show all available commands
-- \\\`/cm-analyze\\\` - Analyze project dependencies  
-- \\\`/cm-status\\\` - Show current context status
-- \\\`/cm-download\\\` - Download high-priority documentation
-- \\\`/cm-clean\\\` - Clean up downloaded documentation
-
 ## Available MCP Tools
-1. **add_project_context** - Download documentation for additional libraries
-2. **list_available_contexts** - See what documentation is available
-3. **read_specific_context** - Read downloaded documentation
-
-## Next Steps
-1. Review the updated AGENTS.md file for Context Master integration
-2. Update cm-ai-infos.yaml with your AI assistant details
+1. **add_project_context("library", "${fullPath}", "topic")** - Download specific library docs
+2. **list_available_contexts()** - See what documentation is available
+3. **read_specific_context("filename")** - Read downloaded documentation
 
 ---
-**Context Master is fully configured and ready to use!**`;
+**Context Master is fully configured and ready to use! Follow the workflow above.**
+
+## 🚨 IMPORTANT: Instructions Now Available
+
+The complete Context Master instructions have been added to your project files:
+- **AGENTS.md** (updated with Context Master section)
+- **.context-master/cm-instructions.md** (full instructions)
+
+**For this conversation**: Use the workflow and decision tree shown above.
+**For future conversations**: The LLM will automatically read the updated AGENTS.md file.`;
 
     return {
       content: [{ type: "text", text: successGuide }]

@@ -16,31 +16,34 @@ Context Master is an MCP server that provides intelligent, up-to-date documentat
 ## 🚀 Core Workflow
 
 ### 1. Project Path Requirement - CRITICAL
+
 All Context Master tools REQUIRE the absolute path to the user's project directory. MCP servers run in their own directory and cannot auto-detect the user's project location.
 
 ```typescript
 // ✅ CORRECT - Always provide project path
 add_project_context(
   "remotion",
-  "C:\\Users\\Name\\projects\\my-app",  // REQUIRED
+  "C:\\Users\\Name\\projects\\my-app", // REQUIRED
   "srt captions"
-)
-setup_project_context("C:\\Users\\Name\\projects\\my-app")
+);
+setup_project_context("C:\\Users\\Name\\projects\\my-app");
 
 // ❌ WRONG - Missing project path will fail
-add_project_context("remotion", "srt captions")
-setup_project_context()
+add_project_context("remotion", "srt captions");
+setup_project_context();
 ```
 
 ### 2. Smart Documentation Strategy
 
 **✅ USE Context Master for:**
+
 - Specialized libraries (Remotion, Clerk, tRPC, Prisma)
 - Complex APIs with unique patterns
 - Libraries with poor web documentation
 - Specific features you're uncertain about
 
 **❌ SKIP Context Master for:**
+
 - Well-known libraries (React, Express, Axios, Lodash)
 - Basic operations (useState, map, filter)
 - Libraries already covered in current conversation
@@ -67,6 +70,7 @@ add_project_context(library, specific_topic)
 ### Primary Tools
 
 1. **`initialize_context_master(projectPath)`**
+
    - **FIRST STEP** - Downloads configuration template only
    - **REQUIRES absolute project path** (MCP server can't auto-detect)
    - Creates `.context-master` directory
@@ -76,6 +80,7 @@ add_project_context(library, specific_topic)
    - **After this**: LLM must create `cm-ai-infos.yaml` and call `setup_project_context`
 
 2. **`setup_project_context(projectPath, maxDependencies?)`**
+
    - **SECOND STEP** - Completes full project setup
    - Analyzes entire project dependencies
    - **REQUIRES absolute project path** (MCP server can't auto-detect)
@@ -84,16 +89,18 @@ add_project_context(library, specific_topic)
    - **Prerequisite**: `cm-ai-infos.yaml` must exist
 
 3. **`add_project_context(library, projectPath, topic?, tokens?)`**
+
    - Downloads focused documentation for a specific library
    - **REQUIRES absolute project path** (MCP server can't auto-detect)
    - Saves to `.context-master/knowledge/`
    - Example: `add_project_context("remotion", "C:\\Users\\Name\\projects\\my-app", "srt captions", 5000)`
 
-3. **`list_available_contexts()`**
+4. **`list_available_contexts()`**
+
    - Lists all downloaded documentation files
    - Check before downloading to avoid duplicates
 
-4. **`read_specific_context(fileName)`**
+5. **`read_specific_context(fileName)`**
    - Reads a specific context file
    - Use only once per conversation per file
 
@@ -105,22 +112,28 @@ add_project_context(library, specific_topic)
 ## 📋 Best Practices
 
 ### 1. Check Before Download
+
 Always check `.context-master/knowledge/` or use `list_available_contexts()` before downloading new documentation.
 
 ### 2. Use Specific Topics
+
 - ✅ Good: "authentication", "srt captions", "server actions"
 - ❌ Bad: "docs", "help", "guide"
 
 ### 3. One Read Per Conversation
+
 Don't re-read files already loaded in the current conversation.
 
 ### 4. Token Management
+
 - 3000-5000 tokens: Focused feature (default: 3000)
 - 5000-8000 tokens: Broader overview
 - Avoid >10000 tokens
 
 ### 5. Library Name Variations
+
 Context Master automatically finds the correct repository:
+
 - "React Query" → finds TanStack/query
 - "Vercel AI SDK" → finds vercel/ai
 - "Next.js" → finds vercel/next.js
@@ -128,17 +141,20 @@ Context Master automatically finds the correct repository:
 ## 🎯 Priority System
 
 ### 🔴 HIGH PRIORITY - Always Download
+
 - Specialized frameworks (remotion, zustand)
 - Complex APIs (prisma, trpc)
 - Lesser-known libraries (< 10k GitHub stars)
 - Recent or rapidly changing libraries
 
 ### 🟡 MEDIUM PRIORITY - Evaluate Based on Context
+
 - Popular libraries with extensive APIs
 - Configuration-heavy tools
 - Framework-specific patterns
 
 ### 🟢 LOW PRIORITY - Skip
+
 - Mainstream frameworks (react, express)
 - Simple utility libraries (lodash, axios)
 - Industry standards (jest, webpack basics)
@@ -154,12 +170,13 @@ Check file dates - newer files have more current documentation.
 ## 🔄 Typical Workflows
 
 ### Starting New Project (First Time)
+
 ```typescript
 // 1. User: "Initialize Context Master"
-const projectPath = "C:\\Users\\Name\\projects\\my-app";  // REQUIRED
+const projectPath = "C:\\Users\\Name\\projects\\my-app"; // REQUIRED
 
 // Step 1: Initialize (downloads template only)
-initialize_context_master(projectPath)
+initialize_context_master(projectPath);
 
 // Step 2: LLM reads template and creates cm-ai-infos.yaml
 // Example content:
@@ -169,7 +186,7 @@ initialize_context_master(projectPath)
 // extension: Kiro
 
 // Step 3: Complete setup (analyzes dependencies, downloads docs)
-setup_project_context(projectPath)
+setup_project_context(projectPath);
 
 // 4. Review dependencies automatically
 // 5. Suggest contexts for specialized libs only
@@ -178,22 +195,24 @@ setup_project_context(projectPath)
 ```
 
 ### During Development
+
 ```typescript
 // User: "How do I use feature X in library Y?"
 // 1. Assess: Is Y well-known? → Skip if yes
 // 2. Check existing contexts
 // 3. If needed:
-const projectPath = "C:\\Users\\Name\\projects\\my-app";  // REQUIRED
-add_project_context("library-y", projectPath, "feature x")
+const projectPath = "C:\\Users\\Name\\projects\\my-app"; // REQUIRED
+add_project_context("library-y", projectPath, "feature x");
 ```
 
 ### Multiple Related Libraries
+
 ```typescript
 // For complex features spanning libraries:
-const projectPath = "C:\\Users\\Name\\projects\\my-app";  // REQUIRED
-add_project_context("next-auth", projectPath, "credentials provider")
-add_project_context("prisma", projectPath, "user authentication")
-add_project_context("trpc", projectPath, "protected procedures")
+const projectPath = "C:\\Users\\Name\\projects\\my-app"; // REQUIRED
+add_project_context("next-auth", projectPath, "credentials provider");
+add_project_context("prisma", projectPath, "user authentication");
+add_project_context("trpc", projectPath, "protected procedures");
 
 // Then synthesize from all three contexts
 ```
@@ -209,6 +228,7 @@ add_project_context("trpc", projectPath, "protected procedures")
 ## 🎯 Summary
 
 **Key Rules for Every Conversation:**
+
 - **ALWAYS provide the absolute project path** - MCP servers can't auto-detect it
 - The AI assistant knows the user's project location - pass it explicitly
 - Use Context Master for specialized libraries only
