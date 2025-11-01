@@ -29,7 +29,7 @@ package-lock.json
 .gemini/settings.json
 .gemini/*.env
 .kiro/settings/
-.kiro/settings/mcp.json
+.kiro/settings/mcp.json 
 .roo/
 .roo/settings/
 .roo/mcp.json
