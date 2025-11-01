@@ -29,9 +29,15 @@ package-lock.json
 .gemini/settings.json
 .gemini/*.env
 .kiro/settings/
+.kiro/settings/mcp.json
+.roo/
 .roo/settings/
+.roo/mcp.json
 .serena/settings/
 .specify/settings/
+.claude/
+.cursor/
+.cline/
 
 # Permettre les templates publics dans .gemini
 !.gemini/settings.template.json
@@ -52,6 +58,15 @@ mcp-configs/
 *secret*
 *token*
 *api-key*
+*github_pat_*
+*GITHUB_TOKEN*
+*API_KEY*
+*BRAVE_API_KEY*
+
+# Fichiers MCP avec tokens
+mcp.json
+*/mcp.json
+**/*mcp*.json
 
 # Editor directories and files
 .vscode/*
