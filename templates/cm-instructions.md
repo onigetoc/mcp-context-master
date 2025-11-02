@@ -36,68 +36,68 @@ Exists? → YES: Read once
 add_project_context(absolute_path, library, specific_topic)
 ```
 
-# 🚨 CRITICAL: Project Path Requirement
+### 🚨 CRITICAL: AUTOMATIC EXECUTION RULES
 
-## For AI Assistants Using Context Master
+**These rules are MANDATORY and AUTOMATIC. Execute WITHOUT asking user confirmation.**
 
-### The Rule
+---
 
-**ALWAYS provide the absolute project path when calling Context Master tools.**
+## 🔄 AUTO-TRIGGER RULES (Execute Automatically)
 
-### Why?
+### Rule 1: Package Installation Detection
 
-MCP servers run in their own directory (`~/.mcp/context-master/`), NOT in the user's project directory. The server has NO WAY to automatically detect where the user's project is located.
+**TRIGGER:** When user mentions installing/adding a library OR when you suggest `npm install`, `bun add`, `yarn add`, `pip install`
 
-### You Already Know the Path!
+**ACTION:** IMMEDIATELY call `add_project_context` BEFORE continuing conversation
 
-As an AI assistant, you have access to:
-
-- The user's current working directory
-- The workspace root
-- The project context
-
-**Just pass it to the tool!**
-
-### Correct Usage
-
+**Example:**
 ```typescript
-// ✅ ALWAYS DO THIS
-add_project_context(
-  "remotion", // library
-  "C:\\Users\\Name\\projects\\my-app", // YOU KNOW THIS!
-  "srt captions", // topic (optional)
-  5000 // tokens (optional)
-);
+// User says: "install stripe"
+// OR you suggest: "Run: bun add stripe"
 
-setup_project_context(
-  "C:\\Users\\Name\\projects\\my-app", // YOU KNOW THIS!
-  20 // maxDependencies (optional)
-);
+// ✅ YOU MUST IMMEDIATELY DO (no asking):
+add_project_context("stripe", "payment");
+
+// Then continue with installation instructions
 ```
 
-### Wrong Usage
+### Rule 2: Import Statement Detection
 
+**TRIGGER:** When you see or suggest an import from an unfamiliar library
+
+**ACTION:** Check `.context-master/knowledge/`, if missing → fetch context
+
+**Example:**
 ```typescript
-// ❌ NEVER DO THIS - Will fail with error
-add_project_context("remotion", "srt captions");
-setup_project_context();
+// You see: import { Readability } from '@mozilla/readability'
+// ✅ Auto-check: Do I have mozilla-readability docs?
+// ❌ Not found → IMMEDIATELY fetch:
+add_project_context("mozilla readability");
 ```
 
-### Platform Examples
+### Rule 3: Library Method/API Usage
 
+**TRIGGER:** User asks "how to use X with Y library"
+
+**ACTION:** BEFORE answering, fetch context if missing
+
+**Example:**
 ```typescript
-// Windows
-"C:\\Users\\Name\\projects\\my-app";
-
-// Linux
-"/home/user/projects/my-app";
-
-// Mac
-"/Users/name/projects/my-app";
-
-// WSL
-"/mnt/c/Users/Name/projects/my-app";
+// User: "How do I use Stripe webhooks?"
+// ✅ YOU MUST DO (automatically):
+add_project_context("stripe", "webhooks");
+// Then answer with fresh documentation
 ```
+
+### Rule 4: Error/Type Issues with External Libraries
+
+**TRIGGER:** User reports error with a library
+
+**ACTION:** Fetch updated docs to ensure accuracy
+
+---
+
+## 📋 EXECUTION CHECKLIST (Internal - Every Response
 
 ### What Happens If You Forget?
 
