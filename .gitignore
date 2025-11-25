@@ -38,6 +38,9 @@ package-lock.json
 .claude/
 .cursor/
 .cline/
+project-tree.md
+protocol-test.js
+test/
 
 # Permettre les templates publics dans .gemini
 !.gemini/settings.template.json
