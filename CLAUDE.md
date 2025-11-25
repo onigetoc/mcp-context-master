@@ -62,7 +62,7 @@ bun run search             # Test GitHub search capabilities
 - **Server**: `src/server/mcp-server.ts` (MCP protocol implementation)
 - **Tools**: `src/tools/index.ts` (tool definitions and registry)
 
-## Configuration
+## Configuration only for test
 
 Create `.env` file in root:
 ```
