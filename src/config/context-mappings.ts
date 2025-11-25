@@ -8,7 +8,7 @@ export interface ContextMapping {
   ruleFile: string;
   contextDir: string | null;
   type: 'extension' | 'ide' | 'model' | 'provider';
-  agentsMD: boolean;
+  agentsMD: boolean; 
 }
 
 export const contextMappings: ContextMapping[] = [
@@ -25,6 +25,8 @@ export const contextMappings: ContextMapping[] = [
   { keys: ["auggie"], ruleFile: "./AUGMENT.md", contextDir: null, type: "extension", agentsMD: true },
   { keys: ["opencode"], ruleFile: "./OPENCODE.md", contextDir: null, type: "extension", agentsMD: true },
   { keys: ["codex"], ruleFile: "./CODEX.md", contextDir: null, type: "extension", agentsMD: true },
+  { keys: ["antigravity"], ruleFile: "./ANTIGRAVITY.md", contextDir: null, type: "extension", agentsMD: true },
+  // { keys: ["antigravity"], ruleFile: "./ANTIGRAVITY.md", contextDir: null, type: "extension", agentsMD: true },
 
   // IDEs (priority 2)
   { keys: ["cursor"], ruleFile: ".cursorrules", contextDir: "./.cursor/", type: "ide", agentsMD: true },
@@ -55,8 +57,8 @@ export class ContextMappingHelper {
 
   static findMatch(value: string, type: string): ContextMapping | undefined {
     const lowerValue = value.toLowerCase().trim();
-    return contextMappings.find(mapping => 
-      mapping.type === type && 
+    return contextMappings.find(mapping =>
+      mapping.type === type &&
       mapping.keys.some(key => {
         const lowerKey = key.toLowerCase();
         // Exact match or contains match

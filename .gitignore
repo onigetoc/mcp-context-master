@@ -79,3 +79,32 @@ mcp.json
 *.sln
 *.sw?
 .aider*
+
+# Context Master generated files
+.context-master/
+.gemini/
+!.gemini/todos.md
+
+# Environment
+.env
+.env.local
+
+# Build output
+build/
+dist/
+
+# Dependencies
+node_modules/
+.bun/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+coverage/
+*.log

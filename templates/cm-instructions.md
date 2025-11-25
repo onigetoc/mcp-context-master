@@ -1,5 +1,43 @@
 <!-- START: CONTEXT-MASTER -->
 
+# Context Master Instructions
+
+## Overview
+Context Master provides intelligent project bootstrapping through automated context discovery and analysis.
+
+## Core Workflows
+
+### 1. Project Initialization
+- Analyze dependencies with priority scoring
+- Search GitHub for relevant libraries
+- Download Context7 documentation for high-priority items
+- Generate project context automatically
+
+### 2. Development Tasks
+- Use `project_starter` for comprehensive project setup
+- Apply priority logic: focus on specialized libraries
+- Leverage bulk operations for efficiency
+- Track progress with todo lists
+
+### 3. Code Organization
+- Maximum 500 lines per file
+- Modular structure with clear separation of concerns
+- Comprehensive TypeScript with Zod validation
+- Graceful error handling throughout
+
+## Configuration Files
+- `.env` - Environment variables (GITHUB_TOKEN required)
+- `tools-registry.json` - MCP tools manifest
+- `package.json` - Dependencies and scripts
+
+## Command Reference
+```bash
+bun install        # Install dependencies
+bun run build      # Compile TypeScript
+bun start          # Start MCP server
+bun test           # Run test suite
+```
+
 ## Context Master (mcp-context-master) Instructions
 
 ### Overview

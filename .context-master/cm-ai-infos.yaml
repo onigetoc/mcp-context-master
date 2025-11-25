@@ -1,4 +1,4 @@
-provider: anthropic
-model: claude-sonnet-4
-ide: kiro
-extension: kiro
+provider: openai
+model: gpt-4
+ide: vscode
+extension: github copilot

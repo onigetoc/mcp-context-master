@@ -24,6 +24,7 @@ function determineExpectedFile(realJson) {
     { keys: ["auggie"], ruleFile: "AUGMENT.md", type: "extension" },
     { keys: ["opencode"], ruleFile: "OPENCODE.md", type: "extension" },
     { keys: ["codex"], ruleFile: "CODEX.md", type: "extension" },
+    { keys: ["antigravity"], ruleFile: "ANTIGRAVITY.md", type: "extension" },
     
     // IDEs (priorité 2)
     { keys: ["cursor"], ruleFile: ".cursorrules", type: "ide" },

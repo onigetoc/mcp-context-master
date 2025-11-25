@@ -371,3 +371,31 @@
 }
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔍 DEBUG Path Resolution - 2025-11-25T00:16:55.408Z
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📂 process.cwd()              : C:\Users\LENOVO
+📂 projectPath (hint from LLM): c:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 resolvedPath (final)       : c:\Users\LENOVO\APPS\0-MCP\mcp-context-master
+📂 Path source                : hint
+
+🔄 Comparisons:
+   cwd === hint?              : ❌ NO
+   cwd === resolved?          : ❌ NO
+   hint === resolved?         : ✅ YES
+
+🖥️  Platform Info:
+   OS Platform                : win32
+   Path separator             : \
+   Node.js version            : v24.3.0
+
+📦 Additional Info:
+{
+  "toolName": "setup_project_context",
+  "maxDependencies": 40,
+  "providedPath": "c:\\Users\\LENOVO\\APPS\\0-MCP\\mcp-context-master"
+}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━

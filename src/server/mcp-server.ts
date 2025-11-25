@@ -10,6 +10,14 @@ import {
   McpError
 } from '@modelcontextprotocol/sdk/types.js';
 import { tools, toolHandlers } from '../tools/index.js';
+import {
+  listAvailableContextsTool,
+  readSpecificContextTool,
+  listAddedContextsDetailsTool,
+  handleListAvailableContextsTool,
+  handleReadSpecificContextTool,
+  handleListAddedContextsDetailsTool,
+} from '../tools/read_context.tool.js';
 
 // Protocol-compliant logging function
 function protocolLog(category: string, message: string, data?: any) {
@@ -38,7 +46,12 @@ console.error('[Setup] Server initialized successfully');
 
 // Tool definitions
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
-  tools
+  tools: [
+    ...tools,
+    listAvailableContextsTool,
+    readSpecificContextTool,
+    listAddedContextsDetailsTool,
+  ]
 }));
 
 // Tool request handler

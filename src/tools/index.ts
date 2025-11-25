@@ -1,7 +1,7 @@
 import { initializeContextMasterTool, handleInitializeContextMasterTool } from './initialize.tool.js';
 import { setupProjectContextTool, handleSetupProjectContextTool } from './setup.tool.js';
 import { addProjectContextTool, handleAddProjectContextTool } from './add_context.tool.js';
-import { listAvailableContextsTool, handleListAvailableContextsTool, readSpecificContextTool, handleReadSpecificContextTool } from './read_context.tool.js';
+import { listAvailableContextsTool, handleListAvailableContextsTool, readSpecificContextTool, handleReadSpecificContextTool, listAddedContextsDetailsTool, handleListAddedContextsDetailsTool } from './read_context.tool.js';
 import { readTemplateTool, handleReadTemplateTool } from './read-template.tool.js';
 import { searchAdvisorTool, handleSearchAdvisorTool } from './search-advisor.tool.js';
 import { updateAgentsTool, handleUpdateAgentsTool } from './agents-updater.tool.js';
@@ -30,3 +30,12 @@ export const toolHandlers: Record<string, ToolHandler> = {
   'read_template': handleReadTemplateTool,
   'update_agents_file': handleUpdateAgentsTool,
 };
+
+export {
+  listAvailableContextsTool,
+  handleListAvailableContextsTool,
+  readSpecificContextTool,
+  handleReadSpecificContextTool,
+  listAddedContextsDetailsTool,
+  handleListAddedContextsDetailsTool,
+} from './read_context.tool.js';

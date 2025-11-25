@@ -126,3 +126,86 @@ export async function handleReadSpecificContextTool(request: any): Promise<McpTo
     );
   }
 }
+
+// --- Tool 3: List Added Contexts with Details ---
+
+export const listAddedContextsDetailsTool = {
+  name: "list_added_contexts_details",
+  description: "Lists all available knowledge files with metadata including title, description, and creation date.",
+  inputSchema: {
+    type: 'object',
+    properties: {},
+  }
+} as const;
+
+export async function handleListAddedContextsDetailsTool(request: any): Promise<McpToolResponse> {
+  let manifestPath: string | null = null;
+  let knowledgeDir: string | null = null;
+  let currentDir = process.cwd();
+  
+  // Search up to 5 levels up for .context-master directory
+  for (let i = 0; i < 5; i++) {
+    const testPath = path.join(currentDir, '.context-master', 'knowledge', 'knowledge-manifest.yaml');
+    if (await fs.pathExists(testPath)) {
+      manifestPath = testPath;
+      knowledgeDir = path.dirname(testPath);
+      break;
+    }
+    const parentDir = path.dirname(currentDir);
+    if (parentDir === currentDir) break; // Reached root
+    currentDir = parentDir;
+  }
+  
+  if (!manifestPath || !knowledgeDir) {
+    return { content: [{ type: 'text', text: 'Knowledge manifest not found. Run setup_project_context to generate it first.' }] };
+  }
+
+  try {
+    const manifestContent = await fs.readFile(manifestPath, 'utf8');
+    const manifest = yaml.load(manifestContent) as { files: string[] };
+
+    if (!manifest.files || manifest.files.length === 0) {
+      return { content: [{ type: 'text', text: 'No context files have been added yet.' }] };
+    }
+
+    const contextDetails: string[] = [];
+    
+    for (const fileName of manifest.files) {
+      const filePath = path.join(knowledgeDir, fileName);
+      if (!await fs.pathExists(filePath)) continue;
+
+      const fileContent = await fs.readFile(filePath, 'utf8');
+      const stats = await fs.stat(filePath);
+      
+      // Extract title from first heading
+      const titleMatch = fileContent.match(/^#\s+(.+)$/m);
+      const title = titleMatch ? titleMatch[1] : 'No title';
+      
+      // Extract description from first paragraph
+      const descMatch = fileContent.match(/^#+\s+.+?\n\n(.+?)(?:\n\n|$)/s);
+      const description = descMatch ? descMatch[1].substring(0, 100) : 'No description';
+
+      contextDetails.push(
+        `📄 ${fileName}\n` +
+        `   Title: ${title}\n` +
+        `   Description: ${description}...\n` +
+        `   Added: ${stats.birthtime.toLocaleDateString()}`
+      );
+    }
+
+    const details = contextDetails.join('\n\n');
+    return {
+      content: [
+        {
+          type: 'text',
+          text: `Available Context Files (${manifest.files.length}):\n\n${details}`
+        }
+      ]
+    };
+  } catch (error) {
+    throw new McpError(
+      ErrorCode.InternalError,
+      `Failed to list context details: ${error instanceof Error ? error.message : String(error)}`
+    );
+  }
+}

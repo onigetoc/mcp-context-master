@@ -36,68 +36,68 @@ Exists? → YES: Read once
 add_project_context(absolute_path, library, specific_topic)
 ```
 
-# 🚨 CRITICAL: Project Path Requirement
+### 🚨 CRITICAL: AUTOMATIC EXECUTION RULES
 
-## For AI Assistants Using Context Master
+**These rules are MANDATORY and AUTOMATIC. Execute WITHOUT asking user confirmation.**
 
-### The Rule
+---
 
-**ALWAYS provide the absolute project path when calling Context Master tools.**
+## 🔄 AUTO-TRIGGER RULES (Execute Automatically)
 
-### Why?
+### Rule 1: Package Installation Detection
 
-MCP servers run in their own directory (`~/.mcp/context-master/`), NOT in the user's project directory. The server has NO WAY to automatically detect where the user's project is located.
+**TRIGGER:** When user mentions installing/adding a library OR when you suggest `npm install`, `bun add`, `yarn add`, `pip install`
 
-### You Already Know the Path!
+**ACTION:** IMMEDIATELY call `add_project_context` BEFORE continuing conversation
 
-As an AI assistant, you have access to:
-
-- The user's current working directory
-- The workspace root
-- The project context
-
-**Just pass it to the tool!**
-
-### Correct Usage
-
+**Example:**
 ```typescript
-// ✅ ALWAYS DO THIS
-add_project_context(
-  "remotion", // library
-  "C:\\Users\\Name\\projects\\my-app", // YOU KNOW THIS!
-  "srt captions", // topic (optional)
-  5000 // tokens (optional)
-);
+// User says: "install stripe"
+// OR you suggest: "Run: bun add stripe"
 
-setup_project_context(
-  "C:\\Users\\Name\\projects\\my-app", // YOU KNOW THIS!
-  20 // maxDependencies (optional)
-);
+// ✅ YOU MUST IMMEDIATELY DO (no asking):
+add_project_context("stripe", "payment");
+
+// Then continue with installation instructions
 ```
 
-### Wrong Usage
+### Rule 2: Import Statement Detection
 
+**TRIGGER:** When you see or suggest an import from an unfamiliar library
+
+**ACTION:** Check `.context-master/knowledge/`, if missing → fetch context
+
+**Example:**
 ```typescript
-// ❌ NEVER DO THIS - Will fail with error
-add_project_context("remotion", "srt captions");
-setup_project_context();
+// You see: import { Readability } from '@mozilla/readability'
+// ✅ Auto-check: Do I have mozilla-readability docs?
+// ❌ Not found → IMMEDIATELY fetch:
+add_project_context("mozilla readability");
 ```
 
-### Platform Examples
+### Rule 3: Library Method/API Usage
 
+**TRIGGER:** User asks "how to use X with Y library"
+
+**ACTION:** BEFORE answering, fetch context if missing
+
+**Example:**
 ```typescript
-// Windows
-"C:\\Users\\Name\\projects\\my-app";
-
-// Linux
-"/home/user/projects/my-app";
-
-// Mac
-"/Users/name/projects/my-app";
-
-// WSL
-"/mnt/c/Users/Name/projects/my-app";
+// User: "How do I use Stripe webhooks?"
+// ✅ YOU MUST DO (automatically):
+add_project_context("stripe", "webhooks");
+// Then answer with fresh documentation
 ```
+
+### Rule 4: Error/Type Issues with External Libraries
+
+**TRIGGER:** User reports error with a library
+
+**ACTION:** Fetch updated docs to ensure accuracy
+
+---
+
+## 📋 EXECUTION CHECKLIST (Internal - Every Response
 
 ### What Happens If You Forget?
 
@@ -160,11 +160,26 @@ When you see `/cm-` followed by a command, execute the corresponding MCP tool or
 #### Core Commands
 
 - **`/cm-help`**: Show numbered list of available commands for selection
-- **`/cm-init`**: Call `initialize_context_master` tool to get AI assistant informations and setup
+- **`/cm-init`**: 🚨 EXECUTE BOTH: `initialize_context_master` THEN `setup_project_context` (NO user confirmation between steps)
 - **`/cm-setup`**: Call `setup_project_context` tool to analyze dependencies and download documentation
 - **`/cm-add [library] [topic]`**: Call `add_project_context` tool for specific library/API
 - **`/cm-list`**: Call `list_available_contexts` tool to show downloaded contexts
 - **`/cm-read [file]`**: Call `read_specific_context` tool to read specific documentation
+
+#### 🚨 CRITICAL EXECUTION RULE FOR `/cm-init`:
+
+```typescript
+// When user says "init context master" or "/cm-init":
+// STEP 1: Initialize (auto-creates all files)
+initialize_context_master("ABSOLUTE_PROJECT_PATH");
+
+// STEP 2: Setup (IMMEDIATELY after step 1, no waiting)
+setup_project_context("ABSOLUTE_PROJECT_PATH");
+
+// DONE. Both tools handle everything automatically.
+```
+
+**⚠️ NEVER ask user to create files manually. NEVER skip step 2.**
 
 #### Utility Commands
 
@@ -473,6 +488,30 @@ add_project_context("react", "hooks typescript patterns");
 - Check existing contexts before downloading
 - Read each context file only once per conversation
 - Focus on specialized libraries that need documentation
+
+### 🚨 SPECIAL INSTRUCTIONS FOR WEAKER LLMs (GPT-4.1, etc.)
+
+**If you are GPT-4.1 or similar, follow these EXACT steps:**
+
+#### For "init context master":
+
+1. Call `initialize_context_master("ABSOLUTE_PATH")`
+2. IMMEDIATELY call `setup_project_context("ABSOLUTE_PATH")`
+3. Do NOT ask user anything between steps
+4. Do NOT ask user to create files manually
+
+#### For any errors:
+
+1. Retry the same command
+2. Do NOT ask user to fix anything
+3. Tools auto-create missing files
+
+#### Path format examples:
+
+- Windows: `"C:\\Users\\Name\\projects\\my-app"`
+- Linux: `"/home/user/projects/my-app"`
+
+**These tools are designed to work automatically. Trust them and execute both commands in sequence.**
 
 ### Context Integration During Package Installation
 
